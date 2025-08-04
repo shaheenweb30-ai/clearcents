@@ -195,41 +195,56 @@ export function PageManager() {
 
             {/* Pages List */}
             <div className="space-y-2">
-              <h3 className="font-semibold">Existing Pages</h3>
+              <h3 className="font-semibold">Existing Pages ({pages.length})</h3>
               {loading ? (
-                <p>Loading pages...</p>
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  <p>Loading pages...</p>
+                </div>
               ) : pages.length === 0 ? (
-                <p className="text-muted-foreground">No pages created yet.</p>
+                <div className="p-4 border rounded-lg bg-muted/50">
+                  <p className="text-muted-foreground">No pages created yet.</p>
+                  <p className="text-sm text-muted-foreground mt-1">Click "Create New Page" to get started.</p>
+                </div>
               ) : (
-                pages.map((page) => (
-                  <div key={page.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <h4 className="font-medium">{page.title}</h4>
-                      <p className="text-sm text-muted-foreground">/{page.slug}</p>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        page.is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {page.is_published ? 'Published' : 'Draft'}
-                      </span>
+                <div className="max-h-64 overflow-y-auto space-y-2">
+                  {pages.map((page) => (
+                    <div key={page.id} className="flex items-center justify-between p-3 border rounded-lg bg-card">
+                      <div className="flex-1">
+                        <h4 className="font-medium">{page.title}</h4>
+                        <p className="text-sm text-muted-foreground">/{page.slug}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className={`text-xs px-2 py-1 rounded ${
+                            page.is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {page.is_published ? 'Published' : 'Draft'}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            Created: {new Date(page.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEditDialog(page)}
+                          title="Edit page"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDelete(page)}
+                          title="Delete page"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openEditDialog(page)}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(page)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
           </div>
