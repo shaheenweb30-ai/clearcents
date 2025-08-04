@@ -6,15 +6,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Edit, Upload } from 'lucide-react';
 import { useHomepageContent, HomepageContent } from '@/hooks/useHomepageContent';
+import { useFeaturesContent, FeaturesContent } from '@/hooks/useFeaturesContent';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AdminEditButtonProps {
   sectionId: string;
-  currentContent?: HomepageContent;
+  currentContent?: HomepageContent | FeaturesContent;
+  contentType?: 'homepage' | 'features';
 }
 
-export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonProps) {
+export function AdminEditButton({ sectionId, currentContent, contentType = 'homepage' }: AdminEditButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -26,12 +28,14 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
     title_color: '#000000',
     subtitle_color: '#000000',
     description_color: '#666666',
+    background_color: '#FFFFFF',
     image_url: ''
   });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { updateContent } = useHomepageContent();
+  const { updateContent: updateHomepageContent } = useHomepageContent();
+  const { updateContent: updateFeaturesContent } = useFeaturesContent();
 
   // Update form data when dialog opens or currentContent changes
   const handleDialogOpen = (open: boolean) => {
@@ -46,6 +50,7 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
         title_color: currentContent.title_color || '#000000',
         subtitle_color: currentContent.subtitle_color || '#000000',
         description_color: currentContent.description_color || '#666666',
+        background_color: (currentContent as FeaturesContent).background_color || '#FFFFFF',
         image_url: currentContent.image_url || ''
       });
     }
@@ -57,7 +62,8 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
     console.log('Form data:', formData);
     setSaving(true);
     try {
-      const result = await updateContent(sectionId, formData);
+      const updateFunction = contentType === 'features' ? updateFeaturesContent : updateHomepageContent;
+      const result = await updateFunction(sectionId, formData);
       console.log('Save successful:', result);
       toast.success('Content updated successfully!');
       setIsOpen(false);
@@ -231,6 +237,18 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
               />
             </div>
           </div>
+          
+          {contentType === 'features' && (
+            <div>
+              <Label htmlFor="background_color">Background Color</Label>
+              <Input
+                id="background_color"
+                type="color"
+                value={formData.background_color}
+                onChange={(e) => handleInputChange('background_color', e.target.value)}
+              />
+            </div>
+          )}
           
           <div>
             <Label htmlFor="image_url">Image</Label>
