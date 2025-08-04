@@ -31,13 +31,17 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
   const { updateContent } = useHomepageContent();
 
   const handleSave = async () => {
+    console.log('Attempting to save content for section:', sectionId);
+    console.log('Form data:', formData);
     setSaving(true);
     try {
-      await updateContent(sectionId, formData);
+      const result = await updateContent(sectionId, formData);
+      console.log('Save successful:', result);
       toast.success('Content updated successfully!');
       setIsOpen(false);
       window.location.reload(); // Refresh to show changes
     } catch (error) {
+      console.error('Save failed:', error);
       toast.error('Failed to update content. Please try again.');
     } finally {
       setSaving(false);
