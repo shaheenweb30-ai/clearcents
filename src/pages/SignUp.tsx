@@ -5,7 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DollarSign, User, Mail, Lock, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +15,9 @@ const SignUp = () => {
     email: "",
     password: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,10 +27,42 @@ const SignUp = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This would normally connect to authentication
-    console.log("Sign up attempted with:", formData);
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: formData.name,
+          }
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Account created successfully!",
+          description: "Please check your email to verify your account.",
+        });
+        navigate("/");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Sign up failed",
+        description: error.message || "An error occurred during sign up",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -109,8 +146,8 @@ const SignUp = () => {
                       </div>
                     </div>
                     
-                    <Button type="submit" variant="hero" size="xl" className="w-full">
-                      Create My Account
+                    <Button type="submit" variant="hero" size="xl" className="w-full" disabled={isLoading}>
+                      {isLoading ? "Creating Account..." : "Create My Account"}
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                   </form>
