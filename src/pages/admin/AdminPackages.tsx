@@ -54,9 +54,14 @@ export default function AdminPackages() {
   }, []); // Empty dependency array - only run once on mount
 
   const handleSave = async () => {
+    console.log('=== PACKAGE SAVE DEBUG ===');
+    console.log('Current pricing data:', pricingData);
+    console.log('Price value:', pricingData.price);
+    console.log('Parsed price:', parseFloat(pricingData.price));
+    
     setSaving(true);
     try {
-      await updateContent('pricing', {
+      const saveData = {
         title: pricingData.title,
         description: pricingData.description,
         button_text: pricingData.buttonText,
@@ -66,10 +71,26 @@ export default function AdminPackages() {
         button_color: pricingData.buttonColor,
         button_text_color: pricingData.buttonTextColor,
         background_color: pricingData.backgroundColor
-      });
+      };
+      
+      console.log('Data being saved:', saveData);
+      
+      const result = await updateContent('pricing', saveData);
+      console.log('Save result:', result);
+      
       toast.success('Package configuration updated successfully!');
+      
+      // Refresh the data after successful save
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error('Error saving package config:', error);
+      console.error('Error details:', {
+        message: error?.message,
+        code: error?.code,
+        details: error?.details
+      });
       toast.error('Failed to save package configuration');
     } finally {
       setSaving(false);
