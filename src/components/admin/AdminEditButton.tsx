@@ -6,8 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Edit, Upload } from 'lucide-react';
 import { useHomepageContent, HomepageContent } from '@/hooks/useHomepageContent';
-import { useFeaturesContent, FeaturesContent } from '@/hooks/useFeaturesContent';
-import { usePricingContent, PricingContent } from '@/hooks/usePricingContent';
+import type { FeaturesContent } from '@/hooks/useFeaturesContent';
+import type { PricingContent } from '@/hooks/usePricingContent';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -36,8 +36,6 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { updateContent: updateHomepageContent } = useHomepageContent();
-  const { updateContent: updateFeaturesContent } = useFeaturesContent();
-  const { updateContent: updatePricingContent } = usePricingContent();
 
   // Update form data when dialog opens or currentContent changes
   const handleDialogOpen = (open: boolean) => {
@@ -64,11 +62,17 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
     console.log('Form data:', formData);
     setSaving(true);
     try {
-      const updateFunction = contentType === 'features' 
-        ? updateFeaturesContent 
-        : contentType === 'pricing'
-        ? updatePricingContent
-        : updateHomepageContent;
+      // Dynamically import the hooks to avoid circular dependency issues
+      let updateFunction = updateHomepageContent;
+      
+      if (contentType === 'features') {
+        const { useFeaturesContent } = await import('@/hooks/useFeaturesContent');
+        updateFunction = useFeaturesContent().updateContent;
+      } else if (contentType === 'pricing') {
+        const { usePricingContent } = await import('@/hooks/usePricingContent');
+        updateFunction = usePricingContent().updateContent;
+      }
+      
       const result = await updateFunction(sectionId, formData);
       console.log('Save successful:', result);
       toast.success('Content updated successfully!');
