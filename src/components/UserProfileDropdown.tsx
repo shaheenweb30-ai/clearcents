@@ -6,16 +6,22 @@ import {
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, Settings, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
+import { User, Settings, LayoutDashboard, LogOut, ChevronDown, Shield, Globe, FileText, Package, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export function UserProfileDropdown() {
   const { user } = useAuth();
+  const { isAdmin } = useUserRole(user);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -76,6 +82,44 @@ export function UserProfileDropdown() {
             Settings
           </Link>
         </DropdownMenuItem>
+        
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="cursor-pointer">
+                <Shield className="w-4 h-4 mr-2" />
+                Website Administration
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="bg-background border border-border shadow-lg">
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/admin/footer" className="flex items-center">
+                    <Globe className="w-4 h-4 mr-2" />
+                    Manage Footer
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/admin/pages" className="flex items-center">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Manage Pages
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/admin/faq" className="flex items-center">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Manage FAQ
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/admin/packages" className="flex items-center">
+                    <Package className="w-4 h-4 mr-2" />
+                    Package Configurator
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </>
+        )}
         
         <DropdownMenuSeparator />
         
