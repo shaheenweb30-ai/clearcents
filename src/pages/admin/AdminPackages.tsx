@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 export default function AdminPackages() {
   const { user } = useAuth();
   const { isAdmin } = useUserRole(user);
-  const { getContentBySection, updateContent } = usePricingContent();
+  const { getContentBySection, updateContent, loading } = usePricingContent();
 
   const [pricingData, setPricingData] = useState({
     title: '',
@@ -36,22 +36,24 @@ export default function AdminPackages() {
 
   // Load existing pricing content
   useEffect(() => {
-    const content = getContentBySection('pricing');
-    if (content) {
-      setPricingData(prev => ({
-        ...prev,
-        title: content.title || '',
-        description: content.description || '',
-        price: content.price ? content.price.toString() : '9',
-        buttonText: content.button_text || '',
-        titleColor: content.title_color || '#000000',
-        descriptionColor: content.description_color || '#666666',
-        buttonColor: content.button_color || '#500CB0',
-        buttonTextColor: content.button_text_color || '#FFFFFF',
-        backgroundColor: content.background_color || '#FFFFFF'
-      }));
+    if (!loading) {
+      const content = getContentBySection('pricing');
+      if (content) {
+        setPricingData(prev => ({
+          ...prev,
+          title: content.title || '',
+          description: content.description || '',
+          price: content.price ? content.price.toString() : '9',
+          buttonText: content.button_text || '',
+          titleColor: content.title_color || '#000000',
+          descriptionColor: content.description_color || '#666666',
+          buttonColor: content.button_color || '#500CB0',
+          buttonTextColor: content.button_text_color || '#FFFFFF',
+          backgroundColor: content.background_color || '#FFFFFF'
+        }));
+      }
     }
-  }, [getContentBySection]);
+  }, [loading]);
 
   const handleSave = async () => {
     console.log('=== PACKAGE SAVE DEBUG ===');

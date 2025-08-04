@@ -166,6 +166,7 @@ export type Database = {
       }
       homepage_content: {
         Row: {
+          background_color: string | null
           button_color: string | null
           button_text: string | null
           button_text_color: string | null
@@ -182,6 +183,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          background_color?: string | null
           button_color?: string | null
           button_text?: string | null
           button_text_color?: string | null
@@ -198,6 +200,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          background_color?: string | null
           button_color?: string | null
           button_text?: string | null
           button_text_color?: string | null
