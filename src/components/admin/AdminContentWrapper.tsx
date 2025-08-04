@@ -4,13 +4,14 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { AdminEditButton } from './AdminEditButton';
 import { useHomepageContent } from '@/hooks/useHomepageContent';
 import { useFeaturesContent } from '@/hooks/useFeaturesContent';
+import { usePricingContent } from '@/hooks/usePricingContent';
 
 interface AdminContentWrapperProps {
   sectionId: string;
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
-  contentType?: 'homepage' | 'features';
+  contentType?: 'homepage' | 'features' | 'pricing';
 }
 
 export function AdminContentWrapper({ 
@@ -24,9 +25,12 @@ export function AdminContentWrapper({
   const { isAdmin } = useUserRole(user);
   const { getContentBySection: getHomepageContent } = useHomepageContent();
   const { getContentBySection: getFeaturesContent } = useFeaturesContent();
+  const { getContentBySection: getPricingContent } = usePricingContent();
   
   const currentContent = contentType === 'features' 
     ? getFeaturesContent(sectionId) 
+    : contentType === 'pricing'
+    ? getPricingContent(sectionId)
     : getHomepageContent(sectionId);
 
   return (

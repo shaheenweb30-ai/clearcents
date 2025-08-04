@@ -7,13 +7,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Edit, Upload } from 'lucide-react';
 import { useHomepageContent, HomepageContent } from '@/hooks/useHomepageContent';
 import { useFeaturesContent, FeaturesContent } from '@/hooks/useFeaturesContent';
+import { usePricingContent, PricingContent } from '@/hooks/usePricingContent';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AdminEditButtonProps {
   sectionId: string;
-  currentContent?: HomepageContent | FeaturesContent;
-  contentType?: 'homepage' | 'features';
+  currentContent?: HomepageContent | FeaturesContent | PricingContent;
+  contentType?: 'homepage' | 'features' | 'pricing';
 }
 
 export function AdminEditButton({ sectionId, currentContent, contentType = 'homepage' }: AdminEditButtonProps) {
@@ -36,6 +37,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { updateContent: updateHomepageContent } = useHomepageContent();
   const { updateContent: updateFeaturesContent } = useFeaturesContent();
+  const { updateContent: updatePricingContent } = usePricingContent();
 
   // Update form data when dialog opens or currentContent changes
   const handleDialogOpen = (open: boolean) => {
@@ -50,7 +52,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
         title_color: currentContent.title_color || '#000000',
         subtitle_color: currentContent.subtitle_color || '#000000',
         description_color: currentContent.description_color || '#666666',
-        background_color: (currentContent as FeaturesContent).background_color || '#FFFFFF',
+        background_color: (currentContent as FeaturesContent | PricingContent).background_color || '#FFFFFF',
         image_url: currentContent.image_url || ''
       });
     }
@@ -62,7 +64,11 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
     console.log('Form data:', formData);
     setSaving(true);
     try {
-      const updateFunction = contentType === 'features' ? updateFeaturesContent : updateHomepageContent;
+      const updateFunction = contentType === 'features' 
+        ? updateFeaturesContent 
+        : contentType === 'pricing'
+        ? updatePricingContent
+        : updateHomepageContent;
       const result = await updateFunction(sectionId, formData);
       console.log('Save successful:', result);
       toast.success('Content updated successfully!');
@@ -238,7 +244,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
             </div>
           </div>
           
-          {contentType === 'features' && (
+          {(contentType === 'features' || contentType === 'pricing') && (
             <div>
               <Label htmlFor="background_color">Background Color</Label>
               <Input
