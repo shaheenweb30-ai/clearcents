@@ -78,7 +78,6 @@ const ModernSummaryCards = ({ dateRange }: ModernSummaryCardsProps) => {
       title: "Total Budgeted",
       value: data.totalBudgeted,
       icon: Briefcase,
-      emoji: "💼",
       gradient: "from-blue-500/20 to-blue-600/20",
       iconColor: "text-blue-600",
       bgColor: "bg-blue-50/50"
@@ -87,7 +86,6 @@ const ModernSummaryCards = ({ dateRange }: ModernSummaryCardsProps) => {
       title: "Total Spent",
       value: data.totalSpent,
       icon: CreditCard,
-      emoji: "💳",
       gradient: "from-red-500/20 to-red-600/20",
       iconColor: "text-red-600",
       bgColor: "bg-red-50/50"
@@ -96,7 +94,6 @@ const ModernSummaryCards = ({ dateRange }: ModernSummaryCardsProps) => {
       title: "Remaining",
       value: data.remaining,
       icon: Banknote,
-      emoji: "💸",
       gradient: data.remaining >= 0 ? "from-green-500/20 to-green-600/20" : "from-red-500/20 to-red-600/20",
       iconColor: data.remaining >= 0 ? "text-green-600" : "text-red-600",
       bgColor: data.remaining >= 0 ? "bg-green-50/50" : "bg-red-50/50"
@@ -105,7 +102,6 @@ const ModernSummaryCards = ({ dateRange }: ModernSummaryCardsProps) => {
       title: "Transactions This Period",
       value: data.transactionCount,
       icon: Receipt,
-      emoji: "🧾",
       gradient: "from-purple-500/20 to-purple-600/20",
       iconColor: "text-purple-600",
       bgColor: "bg-purple-50/50",
@@ -141,10 +137,7 @@ const ModernSummaryCards = ({ dateRange }: ModernSummaryCardsProps) => {
               <h3 className="text-sm font-medium text-muted-foreground">
                 {card.title}
               </h3>
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">{card.emoji}</span>
-                <card.icon className={`h-5 w-5 ${card.iconColor}`} />
-              </div>
+              <card.icon className={`h-5 w-5 ${card.iconColor}`} />
             </div>
             <div className="space-y-1">
               <p className="text-2xl font-bold text-foreground">

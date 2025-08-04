@@ -139,10 +139,7 @@ const SpendingChart = ({ dateRange }: SpendingChartProps) => {
   return (
     <Card className="h-96">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <span>Spending by Category</span>
-          <span className="text-2xl">🎯</span>
-        </CardTitle>
+        <CardTitle>Spending by Category</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height="100%">
