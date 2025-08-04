@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CheckCircle, ArrowRight } from "lucide-react";
@@ -5,14 +6,39 @@ import Layout from "@/components/Layout";
 import { Link } from "react-router-dom";
 import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
 import { usePricingContent } from "@/hooks/usePricingContent";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const { getContentBySection } = usePricingContent();
+  const [faqs, setFaqs] = useState([]);
   
   const heroContent = getContentBySection('hero');
   const pricingContent = getContentBySection('pricing');
   const faqContent = getContentBySection('faq');
   const ctaContent = getContentBySection('cta');
+
+  // Fetch FAQs from database
+  useEffect(() => {
+    const fetchFAQs = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('faqs')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order');
+
+        if (error) {
+          console.error('Error fetching FAQs:', error);
+        } else {
+          setFaqs(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching FAQs:', error);
+      }
+    };
+
+    fetchFAQs();
+  }, []);
   
   const features = [
     "Unlimited budgeting categories",
@@ -149,48 +175,20 @@ const Pricing = () => {
                 {faqContent?.description || 'Everything you need to know about FinSuite pricing.'}
               </p>
             </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="border-2 border-transparent hover:border-primary/20 transition-colors">
-              <CardContent className="p-6">
-                <h3 className="font-heading font-semibold text-xl text-foreground mb-3">
-                  Is there a free trial?
-                </h3>
-                <p className="font-body text-muted-foreground">
-                  Yes! You can try FinSuite free for 14 days. No credit card required to start.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-2 border-transparent hover:border-primary/20 transition-colors">
-              <CardContent className="p-6">
-                <h3 className="font-heading font-semibold text-xl text-foreground mb-3">
-                  Can I cancel anytime?
-                </h3>
-                <p className="font-body text-muted-foreground">
-                  Absolutely. Cancel your subscription anytime with just one click. No questions asked.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-2 border-transparent hover:border-primary/20 transition-colors">
-              <CardContent className="p-6">
-                <h3 className="font-heading font-semibold text-xl text-foreground mb-3">
-                  Do you offer refunds?
-                </h3>
-                <p className="font-body text-muted-foreground">
-                  Yes, we offer a 30-day money-back guarantee if you're not completely satisfied.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-2 border-transparent hover:border-primary/20 transition-colors">
-              <CardContent className="p-6">
-                <h3 className="font-heading font-semibold text-xl text-foreground mb-3">
-                  Are there any hidden fees?
-                </h3>
-                <p className="font-body text-muted-foreground">
-                  Never. What you see is what you pay. No setup fees, no transaction fees, no surprises.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {faqs.map((faq, index) => (
+                <Card key={faq.id || index} className="border-2 border-transparent hover:border-primary/20 transition-colors">
+                  <CardContent className="p-6">
+                    <h3 className="font-heading font-semibold text-xl text-foreground mb-3">
+                      {faq.question}
+                    </h3>
+                    <p className="font-body text-muted-foreground">
+                      {faq.answer}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </section>
       </AdminContentWrapper>

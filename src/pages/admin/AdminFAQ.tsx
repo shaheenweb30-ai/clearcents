@@ -18,6 +18,7 @@ interface FAQ {
   question: string;
   answer: string;
   display_order: number;
+  is_active: boolean;
 }
 
 export default function AdminFAQ() {
@@ -27,15 +28,25 @@ export default function AdminFAQ() {
   const [loading, setLoading] = useState(true);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
   const [newFaq, setNewFaq] = useState({ question: '', answer: '' });
+  const [saving, setSaving] = useState(false);
 
   const fetchFAQs = async () => {
     try {
-      // For now, we'll use a mock FAQ structure since the table doesn't exist yet
-      // You can implement this when you create the FAQ table
-      setFaqs([]);
-      setLoading(false);
+      const { data, error } = await supabase
+        .from('faqs')
+        .select('*')
+        .order('display_order');
+
+      if (error) {
+        console.error('Error fetching FAQs:', error);
+        toast.error('Failed to load FAQs');
+      } else {
+        setFaqs(data || []);
+      }
     } catch (error) {
       console.error('Error fetching FAQs:', error);
+      toast.error('Failed to load FAQs');
+    } finally {
       setLoading(false);
     }
   };
@@ -50,14 +61,95 @@ export default function AdminFAQ() {
       return;
     }
 
+    setSaving(true);
     try {
-      // TODO: Implement FAQ saving logic when table is created
-      toast.success('FAQ functionality coming soon!');
+      const { data, error } = await supabase
+        .from('faqs')
+        .insert({
+          question: newFaq.question.trim(),
+          answer: newFaq.answer.trim(),
+          display_order: faqs.length + 1,
+          is_active: true
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      setFaqs([...faqs, data]);
       setNewFaq({ question: '', answer: '' });
+      toast.success('FAQ added successfully!');
     } catch (error) {
       console.error('Error saving FAQ:', error);
       toast.error('Failed to save FAQ');
+    } finally {
+      setSaving(false);
     }
+  };
+
+  const handleDeleteFaq = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('faqs')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw error;
+      }
+
+      setFaqs(faqs.filter(faq => faq.id !== id));
+      toast.success('FAQ deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting FAQ:', error);
+      toast.error('Failed to delete FAQ');
+    }
+  };
+
+  const handleEditFaq = (faq: FAQ) => {
+    setEditingFaq(faq);
+    setNewFaq({ question: faq.question, answer: faq.answer });
+  };
+
+  const handleUpdateFaq = async () => {
+    if (!editingFaq || !newFaq.question.trim() || !newFaq.answer.trim()) {
+      toast.error('Please fill in both question and answer');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { data, error } = await supabase
+        .from('faqs')
+        .update({
+          question: newFaq.question.trim(),
+          answer: newFaq.answer.trim()
+        })
+        .eq('id', editingFaq.id)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      setFaqs(faqs.map(faq => faq.id === editingFaq.id ? data : faq));
+      setEditingFaq(null);
+      setNewFaq({ question: '', answer: '' });
+      toast.success('FAQ updated successfully!');
+    } catch (error) {
+      console.error('Error updating FAQ:', error);
+      toast.error('Failed to update FAQ');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingFaq(null);
+    setNewFaq({ question: '', answer: '' });
   };
 
   if (!isAdmin) {
@@ -93,7 +185,7 @@ export default function AdminFAQ() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Plus className="w-5 h-5 mr-2" />
-              Add New FAQ
+              {editingFaq ? 'Edit FAQ' : 'Add New FAQ'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -116,10 +208,21 @@ export default function AdminFAQ() {
                 rows={4}
               />
             </div>
-            <Button onClick={handleSaveFaq} className="w-full">
-              <Save className="w-4 h-4 mr-2" />
-              Save FAQ
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={editingFaq ? handleUpdateFaq : handleSaveFaq} 
+                disabled={saving}
+                className="flex-1"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {saving ? 'Saving...' : editingFaq ? 'Update FAQ' : 'Save FAQ'}
+              </Button>
+              {editingFaq && (
+                <Button variant="outline" onClick={handleCancelEdit}>
+                  Cancel
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -134,7 +237,7 @@ export default function AdminFAQ() {
             ) : faqs.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground mb-4">No FAQs found</p>
-                <Badge variant="outline">FAQ functionality will be implemented when needed</Badge>
+                <Badge variant="outline">Add your first FAQ above</Badge>
               </div>
             ) : (
               <div className="space-y-4">
@@ -142,17 +245,36 @@ export default function AdminFAQ() {
                   <Card key={faq.id} className="border-2">
                     <CardContent className="pt-6">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold">{faq.question}</h3>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
+                        <div className="flex-1">
+                          <h3 className="font-semibold mb-2">{faq.question}</h3>
+                          <p className="text-muted-foreground">{faq.answer}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Badge variant="outline" className="text-xs">
+                              Order: {faq.display_order}
+                            </Badge>
+                            <Badge variant={faq.is_active ? "default" : "secondary"} className="text-xs">
+                              {faq.is_active ? "Active" : "Inactive"}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleEditFaq(faq)}
+                          >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="outline" className="text-red-600">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-red-600 hover:text-red-700"
+                            onClick={() => handleDeleteFaq(faq.id)}
+                          >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
-                      <p className="text-muted-foreground">{faq.answer}</p>
                     </CardContent>
                   </Card>
                 ))}
