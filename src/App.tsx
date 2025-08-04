@@ -18,6 +18,7 @@ import AdminFooter from "./pages/admin/AdminFooter";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminFAQ from "./pages/admin/AdminFAQ";
 import AdminPackages from "./pages/admin/AdminPackages";
+import AdminBranding from "./pages/admin/AdminBranding";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/admin/pages" element={<AdminPages />} />
             <Route path="/admin/faq" element={<AdminFAQ />} />
             <Route path="/admin/packages" element={<AdminPackages />} />
+            <Route path="/admin/branding" element={<AdminBranding />} />
             {/* Dynamic pages route - must be before catch-all */}
             <Route path="/page/:slug" element={<DynamicPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

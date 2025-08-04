@@ -4,10 +4,12 @@ import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
 import { useHomepageContent } from "@/hooks/useHomepageContent";
 import { useFooterLinks } from "@/hooks/useFooterLinks";
 import { FooterManager } from "@/components/admin/FooterManager";
+import { useBrandingSettings } from "@/hooks/useBrandingSettings";
 
 const Footer = () => {
   const { getContentBySection } = useHomepageContent();
   const { getNavigationByGroup, getSocialLinks, loading } = useFooterLinks();
+  const { settings: brandingSettings } = useBrandingSettings();
   const footerContent = getContentBySection('footer');
 
   const navigationGroups = getNavigationByGroup();
@@ -70,14 +72,22 @@ const Footer = () => {
               {/* Logo and tagline */}
               <div className="lg:col-span-2">
                 <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <div className="w-4 h-3 bg-white rounded-sm"></div>
-                  </div>
+                  {brandingSettings?.logo_url ? (
+                    <img 
+                      src={brandingSettings.logo_url} 
+                      alt={brandingSettings.business_name || "Logo"} 
+                      className="h-8 w-auto object-contain"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <div className="w-4 h-3 bg-white rounded-sm"></div>
+                    </div>
+                  )}
                   <span 
                     className="font-heading font-bold text-xl"
                     style={{ color: footerContent?.title_color || '#111827' }}
                   >
-                    {footerContent?.title || 'FinSuite'}
+                    {brandingSettings?.business_name || footerContent?.title || 'FinSuite'}
                   </span>
                 </div>
                 <p 

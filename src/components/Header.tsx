@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, DollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserProfileDropdown } from "./UserProfileDropdown";
+import { useBrandingSettings } from "@/hooks/useBrandingSettings";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { user, loading } = useAuth();
+  const { settings: brandingSettings } = useBrandingSettings();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -26,10 +28,20 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-heading font-bold text-xl text-navy">ClearCents</span>
+            {brandingSettings?.logo_url ? (
+              <img 
+                src={brandingSettings.logo_url} 
+                alt={brandingSettings.business_name || "Logo"} 
+                className="h-8 w-auto object-contain"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-white" />
+              </div>
+            )}
+            <span className="font-heading font-bold text-xl text-navy">
+              {brandingSettings?.business_name || 'ClearCents'}
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

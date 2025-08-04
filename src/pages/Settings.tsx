@@ -21,8 +21,10 @@ import {
   Database,
   Upload,
   Download,
-  RotateCcw
+  RotateCcw,
+  Palette
 } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const Settings = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -38,6 +40,7 @@ const Settings = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAdmin } = useUserRole(user);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -371,6 +374,92 @@ const Settings = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Admin - Branding Management */}
+          {isAdmin && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-heading flex items-center space-x-2">
+                  <Palette className="w-5 h-5" />
+                  <span>Website Administration</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Branding */}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Brand Management</Label>
+                    <div className="text-sm text-muted-foreground">
+                      Manage business logo, name, and brand colors
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={() => navigate("/admin/branding")}>
+                    Manage
+                  </Button>
+                </div>
+
+                <Separator />
+
+                {/* Pages */}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Page Management</Label>
+                    <div className="text-sm text-muted-foreground">
+                      Create and manage dynamic pages
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={() => navigate("/admin/pages")}>
+                    Manage
+                  </Button>
+                </div>
+
+                <Separator />
+
+                {/* Footer */}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Footer Management</Label>
+                    <div className="text-sm text-muted-foreground">
+                      Manage footer links and social media
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={() => navigate("/admin/footer")}>
+                    Manage
+                  </Button>
+                </div>
+
+                <Separator />
+
+                {/* FAQ */}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">FAQ Management</Label>
+                    <div className="text-sm text-muted-foreground">
+                      Add and manage frequently asked questions
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={() => navigate("/admin/faq")}>
+                    Manage
+                  </Button>
+                </div>
+
+                <Separator />
+
+                {/* Packages */}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Pricing Management</Label>
+                    <div className="text-sm text-muted-foreground">
+                      Manage pricing packages and content
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={() => navigate("/admin/packages")}>
+                    Manage
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Reset Section */}
           <Card className="border-destructive/20">
