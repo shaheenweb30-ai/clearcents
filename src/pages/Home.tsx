@@ -27,37 +27,11 @@ const Home = () => {
               </Button>
             </div>
             <div className="relative">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl p-8 shadow-2xl">
-                <div className="bg-white rounded-2xl p-6 mb-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm text-muted-foreground">My Balance</span>
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                      <DollarSign className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-bold text-charcoal">$9,823.28</div>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-white/20 rounded-xl p-3 text-center">
-                    <div className="w-8 h-8 bg-white rounded-full mx-auto mb-2 flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-blue-500" />
-                    </div>
-                    <div className="text-white text-sm">+12%</div>
-                  </div>
-                  <div className="bg-white/20 rounded-xl p-3 text-center">
-                    <div className="w-8 h-8 bg-white rounded-full mx-auto mb-2 flex items-center justify-center">
-                      <BarChart3 className="w-4 h-4 text-purple-500" />
-                    </div>
-                    <div className="text-white text-sm">Analytics</div>
-                  </div>
-                  <div className="bg-white/20 rounded-xl p-3 text-center">
-                    <div className="w-8 h-8 bg-white rounded-full mx-auto mb-2 flex items-center justify-center">
-                      <Users className="w-4 h-4 text-green-500" />
-                    </div>
-                    <div className="text-white text-sm">Growth</div>
-                  </div>
-                </div>
-              </div>
+              <img 
+                src="/lovable-uploads/b1655491-5f43-4f20-9b15-6638b26f610d.png" 
+                alt="Financial Dashboard Interface" 
+                className="w-full h-auto rounded-3xl shadow-2xl"
+              />
             </div>
           </div>
         </div>
