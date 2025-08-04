@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface PricingContent {
@@ -89,9 +89,9 @@ export function usePricingContent() {
     }
   };
 
-  const getContentBySection = (sectionId: string) => {
+  const getContentBySection = useCallback((sectionId: string) => {
     return content.find(item => item.section_id === sectionId);
-  };
+  }, [content]);
 
   return {
     content,
