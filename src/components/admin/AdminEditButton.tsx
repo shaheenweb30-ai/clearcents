@@ -16,19 +16,38 @@ interface AdminEditButtonProps {
 export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
-    title: currentContent?.title || '',
-    subtitle: currentContent?.subtitle || '',
-    description: currentContent?.description || '',
-    button_text: currentContent?.button_text || '',
-    button_color: currentContent?.button_color || '#500CB0',
-    button_text_color: currentContent?.button_text_color || '#FFFFFF',
-    title_color: currentContent?.title_color || '#000000',
-    subtitle_color: currentContent?.subtitle_color || '#000000',
-    description_color: currentContent?.description_color || '#666666',
-    image_url: currentContent?.image_url || ''
+    title: '',
+    subtitle: '',
+    description: '',
+    button_text: '',
+    button_color: '#500CB0',
+    button_text_color: '#FFFFFF',
+    title_color: '#000000',
+    subtitle_color: '#000000',
+    description_color: '#666666',
+    image_url: ''
   });
   const [saving, setSaving] = useState(false);
   const { updateContent } = useHomepageContent();
+
+  // Update form data when dialog opens or currentContent changes
+  const handleDialogOpen = (open: boolean) => {
+    if (open && currentContent) {
+      setFormData({
+        title: currentContent.title || '',
+        subtitle: currentContent.subtitle || '',
+        description: currentContent.description || '',
+        button_text: currentContent.button_text || '',
+        button_color: currentContent.button_color || '#500CB0',
+        button_text_color: currentContent.button_text_color || '#FFFFFF',
+        title_color: currentContent.title_color || '#000000',
+        subtitle_color: currentContent.subtitle_color || '#000000',
+        description_color: currentContent.description_color || '#666666',
+        image_url: currentContent.image_url || ''
+      });
+    }
+    setIsOpen(open);
+  };
 
   const handleSave = async () => {
     console.log('Attempting to save content for section:', sectionId);
@@ -53,7 +72,7 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleDialogOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
