@@ -377,6 +377,120 @@ export function DynamicHomepage() {
           </div>
         </section>
       </AdminContentWrapper>
+
+      {/* Three Card CTA Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Main CTA Card - spans full width on mobile, takes up space on desktop */}
+            <div className="lg:col-span-2">
+              <div className="bg-gradient-to-br from-indigo-800 to-purple-900 rounded-3xl p-8 lg:p-12 text-white relative overflow-hidden">
+                {/* Background mockups */}
+                <div className="absolute left-8 top-8 bottom-8 w-80 opacity-20">
+                  <div className="grid grid-cols-2 gap-4 h-full">
+                    <div className="space-y-4">
+                      <div className="bg-white/30 rounded-2xl p-4 h-24">
+                        <div className="text-xs opacity-80">Spotify</div>
+                        <div className="text-sm">/month</div>
+                      </div>
+                      <div className="bg-white/30 rounded-2xl p-6 flex-1">
+                        <div className="text-lg font-bold">$1,928.92</div>
+                        <div className="text-xs opacity-80">Total Expense</div>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="bg-white/30 rounded-2xl p-4 h-32">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div className="w-6 h-6 bg-black rounded-full"></div>
+                          <div className="text-xs">iCloud</div>
+                        </div>
+                        <div className="text-lg font-bold">$50</div>
+                        <div className="text-xs opacity-80">/month</div>
+                      </div>
+                      <div className="bg-white/30 rounded-2xl p-4 flex-1">
+                        <div className="text-sm font-semibold mb-3">Add Friends</div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                          <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-lg">+</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="relative z-10 ml-auto max-w-xl">
+                  <h2 className="font-heading font-bold text-4xl lg:text-5xl mb-4">
+                    Ready to Run your
+                    <br />
+                    Business <span className="text-accent-green">Better</span> with us
+                  </h2>
+                  <p className="font-body text-lg text-indigo-100 mb-8">
+                    Welcome to FinSuite, where financial management meets simplicity and efficiency.
+                  </p>
+                  <Button 
+                    variant="default" 
+                    size="lg" 
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-8 py-3"
+                  >
+                    Get Started
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Live Chat Card */}
+            <div className="lg:col-span-1">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-700 rounded-3xl p-8 text-white h-80 flex flex-col justify-between">
+                <div>
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-2 bg-white rounded-full"></div>
+                      <div className="w-2 h-2 bg-white rounded-full ml-1"></div>
+                      <div className="w-2 h-2 bg-white rounded-full ml-1"></div>
+                    </div>
+                  </div>
+                  <h3 className="font-heading font-bold text-3xl mb-4">Live Chat</h3>
+                  <p className="font-body text-purple-100 mb-6">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-2 border-white text-white hover:bg-white hover:text-purple-700 rounded-full w-fit"
+                >
+                  Book a Call
+                </Button>
+              </div>
+            </div>
+            
+            {/* Watch Demo Card */}
+            <div className="lg:col-span-1">
+              <div className="bg-gradient-to-br from-lime-400 to-green-500 rounded-3xl p-8 text-black h-80 flex flex-col justify-between">
+                <div>
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6">
+                    <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                      <div className="w-0 h-0 border-l-4 border-l-white border-t-2 border-t-transparent border-b-2 border-b-transparent ml-1"></div>
+                    </div>
+                  </div>
+                  <h3 className="font-heading font-bold text-3xl mb-4">Watch a Demo</h3>
+                  <p className="font-body text-green-800 mb-6">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-2 border-black text-black hover:bg-black hover:text-white rounded-full w-fit"
+                >
+                  Watch Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </Layout>
   );
 }
