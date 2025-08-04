@@ -10,11 +10,7 @@ import Pricing from "./pages/Pricing";
 import About from "./pages/About";
 import SignUp from "./pages/SignUp";
 import Contact from "./pages/Contact";
-import Dashboard from "./pages/Dashboard";
-import Insights from "./pages/Insights";
-import Budgets from "./pages/Budgets";
 import Settings from "./pages/Settings";
-import Reports from "./pages/Reports";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import DynamicPage from "./pages/DynamicPage";
@@ -36,11 +32,7 @@ const App = () => (
           <Route path="/signup" element={<SignUp />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/insights" element={<Insights />} />
-          <Route path="/budgets" element={<Budgets />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/reports" element={<Reports />} />
             {/* Dynamic pages route - must be before catch-all */}
             <Route path="/page/:slug" element={<DynamicPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
