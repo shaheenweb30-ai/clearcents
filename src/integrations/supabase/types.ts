@@ -48,11 +48,14 @@ export type Database = {
           button_text_color: string | null
           created_at: string
           description: string | null
+          description_color: string | null
           id: string
           image_url: string | null
           section_id: string
           subtitle: string | null
+          subtitle_color: string | null
           title: string | null
+          title_color: string | null
           updated_at: string
         }
         Insert: {
@@ -61,11 +64,14 @@ export type Database = {
           button_text_color?: string | null
           created_at?: string
           description?: string | null
+          description_color?: string | null
           id?: string
           image_url?: string | null
           section_id: string
           subtitle?: string | null
+          subtitle_color?: string | null
           title?: string | null
+          title_color?: string | null
           updated_at?: string
         }
         Update: {
@@ -74,11 +80,50 @@ export type Database = {
           button_text_color?: string | null
           created_at?: string
           description?: string | null
+          description_color?: string | null
           id?: string
           image_url?: string | null
           section_id?: string
           subtitle?: string | null
+          subtitle_color?: string | null
           title?: string | null
+          title_color?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_published: boolean | null
+          meta_description: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          slug?: string
+          title?: string
           updated_at?: string
         }
         Relationships: []

@@ -22,6 +22,9 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
     button_text: currentContent?.button_text || '',
     button_color: currentContent?.button_color || '#500CB0',
     button_text_color: currentContent?.button_text_color || '#FFFFFF',
+    title_color: currentContent?.title_color || '#000000',
+    subtitle_color: currentContent?.subtitle_color || '#000000',
+    description_color: currentContent?.description_color || '#666666',
     image_url: currentContent?.image_url || ''
   });
   const [saving, setSaving] = useState(false);
@@ -120,6 +123,38 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
                 type="color"
                 value={formData.button_text_color}
                 onChange={(e) => handleInputChange('button_text_color', e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="title_color">Title Color</Label>
+              <Input
+                id="title_color"
+                type="color"
+                value={formData.title_color}
+                onChange={(e) => handleInputChange('title_color', e.target.value)}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="subtitle_color">Subtitle Color</Label>
+              <Input
+                id="subtitle_color"
+                type="color"
+                value={formData.subtitle_color}
+                onChange={(e) => handleInputChange('subtitle_color', e.target.value)}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="description_color">Description Color</Label>
+              <Input
+                id="description_color"
+                type="color"
+                value={formData.description_color}
+                onChange={(e) => handleInputChange('description_color', e.target.value)}
               />
             </div>
           </div>

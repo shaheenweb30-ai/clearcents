@@ -17,6 +17,7 @@ import Settings from "./pages/Settings";
 import Reports from "./pages/Reports";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import DynamicPage from "./pages/DynamicPage";
 
 const queryClient = new QueryClient();
 
@@ -38,10 +39,12 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/budgets" element={<Budgets />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/reports" element={<Reports />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/reports" element={<Reports />} />
+            {/* Dynamic pages route - must be before catch-all */}
+            <Route path="/page/:slug" element={<DynamicPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

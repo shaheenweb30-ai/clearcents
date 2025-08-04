@@ -1,5 +1,6 @@
 import { useHomepageContent } from "@/hooks/useHomepageContent";
 import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
+import { PageManager } from "@/components/admin/PageManager";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Users, CreditCard, DollarSign, BarChart3, PieChart, Globe } from "lucide-react";
@@ -37,10 +38,16 @@ export function DynamicHomepage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 className="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-foreground">
+                <h1 
+                  className="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight"
+                  style={{ color: heroContent?.title_color || '#000000' }}
+                >
                   {heroContent?.title || 'Maximize 💰 Your Financial Potential'}
                 </h1>
-                <p className="font-body text-xl md:text-2xl mb-8 text-muted-foreground">
+                <p 
+                  className="font-body text-xl md:text-2xl mb-8"
+                  style={{ color: heroContent?.subtitle_color || '#666666' }}
+                >
                   {heroContent?.subtitle || 'All-in-one Financial Analytics Dashboard'}
                 </p>
                 {heroContent?.button_text && (
@@ -102,11 +109,14 @@ export function DynamicHomepage() {
       <AdminContentWrapper sectionId="empower" className="py-20 bg-background">
         <section>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="font-heading font-bold text-4xl md:text-5xl text-foreground mb-4">
-                {empowerContent?.title || 'Empower Your Financial Future with us'}
-              </h2>
-            </div>
+          <div className="text-center mb-16">
+            <h2 
+              className="font-heading font-bold text-4xl md:text-5xl mb-4"
+              style={{ color: empowerContent?.title_color || '#000000' }}
+            >
+              {empowerContent?.title || 'Empower Your Financial Future with us'}
+            </h2>
+          </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative">
                 {empowerContent?.image_url && (
@@ -118,10 +128,16 @@ export function DynamicHomepage() {
                 )}
               </div>
               <div>
-                <h3 className="font-heading font-bold text-3xl text-foreground mb-6">
+                <h3 
+                  className="font-heading font-bold text-3xl mb-6"
+                  style={{ color: empowerContent?.subtitle_color || '#000000' }}
+                >
                   {empowerContent?.subtitle || 'Comprehensive Financial Analytics Dashboard'}
                 </h3>
-                <p className="font-body text-lg text-muted-foreground mb-8">
+                <p 
+                  className="font-body text-lg mb-8"
+                  style={{ color: empowerContent?.description_color || '#666666' }}
+                >
                   {empowerContent?.description || 'Gain real-time visibility into your financial performance with intuitive dashboards.'}
                 </p>
                 <div className="grid grid-cols-2 gap-4">
@@ -424,10 +440,16 @@ export function DynamicHomepage() {
                   </div>
                   
                   <div className="relative z-10 ml-auto max-w-xl">
-                    <h2 className="font-heading font-bold text-4xl lg:text-5xl mb-4">
+                    <h2 
+                      className="font-heading font-bold text-4xl lg:text-5xl mb-4"
+                      style={{ color: mainCtaContent?.title_color || '#FFFFFF' }}
+                    >
                       {mainCtaContent?.title || 'Ready to Run your Business Better with us'}
                     </h2>
-                    <p className="font-body text-lg text-indigo-100 mb-8">
+                    <p 
+                      className="font-body text-lg mb-8"
+                      style={{ color: mainCtaContent?.description_color || '#E0E7FF' }}
+                    >
                       {mainCtaContent?.description || 'Welcome to FinSuite, where financial management meets simplicity and efficiency.'}
                     </p>
                     {mainCtaContent?.button_text && (
@@ -516,6 +538,9 @@ export function DynamicHomepage() {
           </div>
         </section>
       </AdminContentWrapper>
+      
+      {/* Page Manager for Admins */}
+      <PageManager />
     </Layout>
   );
 }

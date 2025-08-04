@@ -10,6 +10,9 @@ export interface HomepageContent {
   button_text: string | null;
   button_color: string | null;
   button_text_color: string | null;
+  title_color: string | null;
+  subtitle_color: string | null;
+  description_color: string | null;
   image_url: string | null;
 }
 
