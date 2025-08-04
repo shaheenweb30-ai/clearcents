@@ -94,28 +94,12 @@ const Home = () => {
             </h2>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="bg-gradient-to-br from-green-400 to-green-500 rounded-3xl p-8 shadow-2xl">
-              <div className="bg-white rounded-2xl p-6 mb-4">
-                <div className="text-3xl font-bold text-charcoal mb-2">$9,823.28</div>
-                <div className="text-sm text-muted-foreground">Total Balance</div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-white/20 rounded-xl p-3 text-center">
-                  <div className="w-8 h-8 bg-white rounded-full mx-auto mb-2 flex items-center justify-center">
-                    <DollarSign className="w-4 h-4 text-green-500" />
-                  </div>
-                </div>
-                <div className="bg-white/20 rounded-xl p-3 text-center">
-                  <div className="w-8 h-8 bg-white rounded-full mx-auto mb-2 flex items-center justify-center">
-                    <BarChart3 className="w-4 h-4 text-blue-500" />
-                  </div>
-                </div>
-                <div className="bg-white/20 rounded-xl p-3 text-center">
-                  <div className="w-8 h-8 bg-white rounded-full mx-auto mb-2 flex items-center justify-center">
-                    <PieChart className="w-4 h-4 text-purple-500" />
-                  </div>
-                </div>
-              </div>
+            <div className="relative">
+              <img 
+                src="/lovable-uploads/100a1fe7-827d-47cd-8729-df1b9cb0b7ff.png" 
+                alt="Financial dashboard showing balance and chart" 
+                className="w-full h-auto rounded-3xl shadow-2xl"
+              />
             </div>
             <div>
               <h3 className="font-heading font-bold text-3xl text-foreground mb-6">
