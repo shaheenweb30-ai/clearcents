@@ -72,6 +72,9 @@ const Dashboard = () => {
     setRefreshKey(prev => prev + 1);
   };
 
+  // Debug logging
+  console.log('showAddDialog state:', showAddDialog);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -126,9 +129,25 @@ const Dashboard = () => {
           <EnhancedTransactionsTable dateRange={dateRange} key={`transactions-${refreshKey}`} />
         </div>
 
+        {/* Temporary test button */}
+        <div className="mb-4">
+          <button
+            onClick={() => {
+              console.log('Test button clicked, setting showAddDialog to true');
+              setShowAddDialog(true);
+            }}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Test Add Transaction
+          </button>
+        </div>
+
         {/* Floating Action Button */}
         <button
-          onClick={() => setShowAddDialog(true)}
+          onClick={() => {
+            console.log('Add transaction button clicked');
+            setShowAddDialog(true);
+          }}
           className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 flex items-center justify-center z-50"
           aria-label="Add transaction"
         >
