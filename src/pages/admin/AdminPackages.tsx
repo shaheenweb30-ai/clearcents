@@ -22,8 +22,8 @@ export default function AdminPackages() {
   const [pricingData, setPricingData] = useState({
     title: '',
     description: '',
-    price: '',
-    features: '',
+    price: '9',
+    features: 'Unlimited budgeting categories\nUnlimited manual transactions\nCloud sync on all devices\nFull access to all features\nBudget tracking & adjustments\nSimple reports & insights\nEmail support\nCancel anytime',
     buttonText: '',
     titleColor: '#000000',
     descriptionColor: '#666666',
@@ -38,20 +38,19 @@ export default function AdminPackages() {
   useEffect(() => {
     const content = getContentBySection('pricing');
     if (content) {
-      setPricingData({
+      setPricingData(prev => ({
+        ...prev,
         title: content.title || '',
         description: content.description || '',
-        price: '9', // Static for now
-        features: 'Unlimited budgeting categories\nUnlimited manual transactions\nCloud sync on all devices\nFull access to all features\nBudget tracking & adjustments\nSimple reports & insights\nEmail support\nCancel anytime',
         buttonText: content.button_text || '',
         titleColor: content.title_color || '#000000',
         descriptionColor: content.description_color || '#666666',
         buttonColor: content.button_color || '#500CB0',
         buttonTextColor: content.button_text_color || '#FFFFFF',
         backgroundColor: content.background_color || '#FFFFFF'
-      });
+      }));
     }
-  }, [getContentBySection]);
+  }, []); // Empty dependency array - only run once on mount
 
   const handleSave = async () => {
     setSaving(true);
