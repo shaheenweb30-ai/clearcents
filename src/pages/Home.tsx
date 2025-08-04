@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Target, BarChart3, Settings, ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 import Layout from "@/components/Layout";
+import HomeLoginSection from "@/components/HomeLoginSection";
 
 const Home = () => {
   const features = [
@@ -57,7 +58,7 @@ const Home = () => {
               <p className="font-body text-xl md:text-2xl mb-8 text-blue-100">
                 Take control of your money with a simple budgeting tool that works.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link to="/signup">
                   <Button variant="accent" size="xl">
                     Start Your Free Trial
@@ -69,6 +70,11 @@ const Home = () => {
                     Learn More
                   </Button>
                 </Link>
+              </div>
+              
+              {/* Login Section for Guest Users */}
+              <div className="mt-8">
+                <HomeLoginSection />
               </div>
             </div>
             <div className="relative">
