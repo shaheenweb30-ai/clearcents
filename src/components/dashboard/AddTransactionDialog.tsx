@@ -20,6 +20,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
 
+// Add Transaction Dialog Component
+
 interface Category {
   id: string;
   name: string;
