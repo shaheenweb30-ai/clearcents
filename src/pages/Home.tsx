@@ -22,7 +22,7 @@ const Home = () => {
               <p className="font-body text-xl md:text-2xl mb-8 text-muted-foreground">
                 All-in-one Financial Analytics Dashboard
               </p>
-              <Button variant="default" size="lg" className="bg-charcoal text-off-white hover:bg-charcoal-light rounded-full px-8">
+              <Button variant="default" size="lg" className="bg-black text-white hover:bg-gray-800 rounded-full px-8">
                 Get Started
               </Button>
             </div>
@@ -173,7 +173,7 @@ const Home = () => {
               <p className="font-body text-lg text-muted-foreground mb-8">
                 Monitor your spending patterns and identify opportunities to save with our intuitive expense tracking system.
               </p>
-              <Button variant="default" size="lg" className="bg-charcoal text-off-white hover:bg-charcoal-light rounded-full px-8">
+              <Button variant="default" size="lg" className="bg-black text-white hover:bg-gray-800 rounded-full px-8">
                 Get Started
               </Button>
             </div>
@@ -321,7 +321,7 @@ const Home = () => {
               <p className="font-body text-lg text-muted-foreground mb-8">
                 Connect with all your favorite financial tools and platforms for a seamless experience.
               </p>
-              <Button variant="default" size="lg" className="bg-charcoal text-off-white hover:bg-charcoal-light rounded-full px-8">
+              <Button variant="default" size="lg" className="bg-black text-white hover:bg-gray-800 rounded-full px-8">
                 Explore Integrations
               </Button>
             </div>
@@ -358,10 +358,10 @@ const Home = () => {
                 Join thousands of businesses that trust our platform for their financial management needs.
               </p>
               <div className="flex gap-4">
-                <Button variant="default" size="lg" className="bg-neon-lime text-charcoal hover:bg-neon-yellow rounded-full px-8">
+                <Button variant="default" size="lg" className="bg-black text-white hover:bg-gray-800 rounded-full px-8">
                   Get Started
                 </Button>
-                <Button variant="outline" size="lg" className="border-2 border-off-white text-off-white hover:bg-off-white hover:text-charcoal rounded-full px-8">
+                <Button variant="outline" size="lg" className="bg-black text-white hover:bg-gray-800 border-2 border-black rounded-full px-8">
                   Watch a Demo
                 </Button>
               </div>
