@@ -58,17 +58,38 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
   };
 
   const handleSave = async () => {
-    console.log('Attempting to save content for section:', sectionId);
-    console.log('Form data:', formData);
+    console.log('=== ADMIN EDIT SAVE DEBUG ===');
+    console.log('Section ID:', sectionId);
+    console.log('Content Type:', contentType);
+    console.log('Current Content:', currentContent);
+    console.log('Form Data:', formData);
+    console.log('Update Function:', typeof updateContent);
+    
+    if (!updateContent) {
+      console.error('Update function is not available');
+      toast.error('Update function not available. Please refresh the page.');
+      return;
+    }
+    
     setSaving(true);
     try {
+      console.log('Calling updateContent...');
       const result = await updateContent(sectionId, formData);
       console.log('Save successful:', result);
       toast.success('Content updated successfully!');
       setIsOpen(false);
-      window.location.reload(); // Refresh to show changes
+      // Give a small delay before reload to let the toast show
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error('Save failed:', error);
+      console.error('Error details:', {
+        message: error?.message,
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint
+      });
       toast.error('Failed to update content. Please try again.');
     } finally {
       setSaving(false);
