@@ -103,11 +103,12 @@ export function PageManager() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="w-full">
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="rounded-full shadow-lg">
-            Manage Pages
+          <Button className="w-full">
+            <Plus className="w-4 h-4 mr-2" />
+            Create New Page
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
