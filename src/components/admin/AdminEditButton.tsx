@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Edit } from 'lucide-react';
+import { Edit, Upload } from 'lucide-react';
 import { useHomepageContent, HomepageContent } from '@/hooks/useHomepageContent';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminEditButtonProps {
   sectionId: string;
@@ -28,6 +29,8 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
     image_url: ''
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { updateContent } = useHomepageContent();
 
   // Update form data when dialog opens or currentContent changes
@@ -69,6 +72,53 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Create unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${sectionId}-${Date.now()}.${fileExt}`;
+
+      // Upload to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('content-images')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('content-images')
+        .getPublicUrl(fileName);
+
+      // Update form data with the uploaded image URL
+      handleInputChange('image_url', urlData.publicUrl);
+      toast.success('Image uploaded successfully!');
+    } catch (error) {
+      console.error('Upload failed:', error);
+      toast.error('Failed to upload image. Please try again.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -183,13 +233,58 @@ export function AdminEditButton({ sectionId, currentContent }: AdminEditButtonPr
           </div>
           
           <div>
-            <Label htmlFor="image_url">Image URL</Label>
-            <Input
-              id="image_url"
-              value={formData.image_url}
-              onChange={(e) => handleInputChange('image_url', e.target.value)}
-              placeholder="Image URL"
-            />
+            <Label htmlFor="image_url">Image</Label>
+            <div className="space-y-2">
+              <Input
+                id="image_url"
+                value={formData.image_url}
+                onChange={(e) => handleInputChange('image_url', e.target.value)}
+                placeholder="Image URL or upload an image below"
+              />
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="flex items-center gap-2"
+                >
+                  <Upload className="w-4 h-4" />
+                  {uploading ? 'Uploading...' : 'Upload Image'}
+                </Button>
+                {formData.image_url && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleInputChange('image_url', '')}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              {formData.image_url && (
+                <div className="mt-2">
+                  <img 
+                    src={formData.image_url} 
+                    alt="Preview" 
+                    className="w-full h-20 object-cover rounded border"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="flex gap-2 pt-4">
