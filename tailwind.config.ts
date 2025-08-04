@@ -19,8 +19,19 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'heading': ['Poppins', 'sans-serif'],
-				'body': ['Inter', 'sans-serif'],
+				gilroy: ['Inter', 'ui-sans-serif', 'system-ui'], // Using Inter as Gilroy fallback
+				sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+			},
+			fontSize: {
+				// Custom typography scale based on specifications
+				'h1': ['80px', { lineHeight: '92px', fontWeight: '300' }], // Book weight
+				'h2': ['64px', { lineHeight: '72px', fontWeight: '300' }], // Book weight  
+				'h3': ['50px', { lineHeight: '56px', fontWeight: '300' }], // Book weight
+				'h4': ['32px', { lineHeight: '40px', fontWeight: '300' }], // Book weight
+				'h5': ['24px', { lineHeight: '28px', fontWeight: '400' }], // Regular weight
+				'body1': ['16px', { lineHeight: '24px', fontWeight: '400' }], // Regular weight
+				'body2': ['14px', { lineHeight: '22px', fontWeight: '400' }], // Regular weight
+				'caption': ['12px', { lineHeight: '18px', fontWeight: '300' }], // Book weight
 			},
 			colors: {
 				'neon-yellow': 'hsl(var(--neon-yellow))',
