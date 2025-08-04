@@ -2,10 +2,13 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, DollarSign } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserProfileDropdown } from "./UserProfileDropdown";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, loading } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -46,18 +49,26 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Buttons */}
-          <div className="hidden md:flex space-x-3">
-            <Link to="/login">
-              <Button variant="outline" size="default">
-                Log In
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button variant="hero" size="default">
-                Start Free Trial
-              </Button>
-            </Link>
+          {/* CTA Buttons or User Profile */}
+          <div className="hidden md:flex items-center space-x-3">
+            {loading ? (
+              <div className="text-sm text-muted-foreground">Loading...</div>
+            ) : user ? (
+              <UserProfileDropdown />
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" size="default">
+                    Log In
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="hero" size="default">
+                    Start Free Trial
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -89,16 +100,27 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              <Link to="/login" className="px-4">
-                <Button variant="outline" size="default" className="w-full">
-                  Log In
-                </Button>
-              </Link>
-              <Link to="/signup" className="px-4">
-                <Button variant="hero" size="default" className="w-full">
-                  Start Free Trial
-                </Button>
-              </Link>
+              
+              {loading ? (
+                <div className="px-4 text-sm text-muted-foreground">Loading...</div>
+              ) : user ? (
+                <div className="px-4 border-t pt-4">
+                  <UserProfileDropdown />
+                </div>
+              ) : (
+                <>
+                  <Link to="/login" className="px-4">
+                    <Button variant="outline" size="default" className="w-full">
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/signup" className="px-4">
+                    <Button variant="hero" size="default" className="w-full">
+                      Start Free Trial
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
