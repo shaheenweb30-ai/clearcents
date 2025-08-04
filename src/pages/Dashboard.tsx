@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { User, Session } from "@supabase/supabase-js";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import SummaryCards from "@/components/dashboard/SummaryCards";
 import BudgetCategories from "@/components/dashboard/BudgetCategories";
@@ -10,36 +10,37 @@ import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check authentication
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/signup");
-        return;
-      }
-      
-      setUser(session.user);
-      setLoading(false);
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
         if (event === 'SIGNED_OUT' || !session) {
-          navigate("/signup");
+          navigate("/login");
         } else if (session) {
-          setUser(session.user);
+          setLoading(false);
         }
       }
     );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (!session) {
+        navigate("/login");
+      } else {
+        setLoading(false);
+      }
+    });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
