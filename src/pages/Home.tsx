@@ -122,6 +122,34 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Track Expenses Section */}
+      <section className="py-20 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h3 className="font-heading font-bold text-4xl text-foreground mb-6">
+                <span className="text-primary">Track</span> Your all the
+                <br />
+                Expense Easily
+              </h3>
+              <p className="font-body text-lg text-muted-foreground mb-8">
+                Effortlessly monitor and manage all your expenses with our intuitive tracking system. Stay on top of your finances by easily recording and categorizing expenses, ensuring you have a clear overview of your spending habits.
+              </p>
+              <Button variant="default" size="lg" className="bg-primary text-white hover:bg-primary/90 rounded-full px-8">
+                Get Started
+              </Button>
+            </div>
+            <div className="relative">
+              <img 
+                src="/lovable-uploads/05e650a3-966d-4ae9-aa26-f123f9802b09.png" 
+                alt="Expense tracking dashboard with pie chart and subscription management" 
+                className="w-full h-auto rounded-3xl shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Send Money Section */}
       <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
