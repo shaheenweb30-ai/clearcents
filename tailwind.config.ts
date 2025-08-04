@@ -19,8 +19,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'heading': ['Montserrat', 'sans-serif'],
-				'body': ['Open Sans', 'sans-serif'],
+				'heading': ['Nunito', 'sans-serif'],
+				'body': ['Nunito', 'sans-serif'],
 			},
 			colors: {
 				navy: 'hsl(var(--navy))',
