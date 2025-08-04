@@ -51,7 +51,7 @@ export default function AdminPackages() {
         backgroundColor: content.background_color || '#FFFFFF'
       }));
     }
-  }, []); // Empty dependency array - only run once on mount
+  }, [getContentBySection]); // Add dependency so it runs when content loads
 
   const handleSave = async () => {
     console.log('=== PACKAGE SAVE DEBUG ===');
