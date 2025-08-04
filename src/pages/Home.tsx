@@ -67,7 +67,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-heading font-bold text-4xl md:text-5xl text-foreground mb-4">
-              <span className="text-neon-lime">Empower</span> Your Financial
+              <span className="text-accent-green">Empower</span> Your Financial
               <br />
               Future with us
             </h2>
@@ -75,8 +75,8 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative">
               <img 
-                src="/lovable-uploads/100a1fe7-827d-47cd-8729-df1b9cb0b7ff.png" 
-                alt="Financial dashboard showing balance and chart" 
+                src="/lovable-uploads/44b36532-c7fa-41dd-8359-e4f1cb631d30.png" 
+                alt="Comprehensive Financial Analytics Dashboard" 
                 className="w-full h-auto rounded-3xl shadow-2xl"
               />
             </div>
@@ -84,76 +84,37 @@ const Home = () => {
               <h3 className="font-heading font-bold text-3xl text-foreground mb-6">
                 Comprehensive
                 <br />
-                Financial Analytics
+                Financial <span className="text-primary">Analytics</span>
                 <br />
                 Dashboard
               </h3>
               <p className="font-body text-lg text-muted-foreground mb-8">
-                Get real-time insights into your financial health with our comprehensive analytics dashboard that tracks all your accounts in one place.
+                Gain real-time visibility into your financial performance with intuitive dashboards.
               </p>
-              <ul className="space-y-4">
-                <li className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-neon-lime rounded-full flex items-center justify-center">
-                    <span className="text-xs">✓</span>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
+                    <span className="text-xs text-background">✓</span>
                   </div>
-                  <span className="font-body text-foreground">Real-time financial tracking</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-neon-lime rounded-full flex items-center justify-center">
-                    <span className="text-xs">✓</span>
-                  </div>
-                  <span className="font-body text-foreground">Advanced analytics and insights</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-neon-lime rounded-full flex items-center justify-center">
-                    <span className="text-xs">✓</span>
-                  </div>
-                  <span className="font-body text-foreground">Multi-account management</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Track Expenses Section */}
-      <section className="py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="font-heading font-bold text-4xl text-foreground mb-6">
-                <span className="text-neon-lime">Track</span> Your all the
-                <br />
-                Expense Easily
-              </h3>
-              <p className="font-body text-lg text-muted-foreground mb-8">
-                Monitor your spending patterns and identify opportunities to save with our intuitive expense tracking system.
-              </p>
-              <Button variant="default" size="lg" className="bg-primary text-white hover:bg-primary/90 rounded-full px-8">
-                Get Started
-              </Button>
-            </div>
-            <div className="relative">
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl p-8 shadow-2xl">
-                <div className="bg-white rounded-2xl p-6 mb-4">
-                  <div className="text-3xl font-bold text-charcoal mb-2">$50</div>
-                  <div className="text-sm text-muted-foreground">Today's Spending</div>
+                  <span className="font-body text-foreground">Keep tracking balance</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/20 rounded-xl p-3">
-                    <div className="w-8 h-8 bg-white rounded-full mb-2 flex items-center justify-center">
-                      <CreditCard className="w-4 h-4 text-purple-500" />
-                    </div>
-                    <div className="text-white text-sm">Shopping</div>
-                    <div className="text-white font-bold">$30</div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
+                    <span className="text-xs text-background">✓</span>
                   </div>
-                  <div className="bg-white/20 rounded-xl p-3">
-                    <div className="w-8 h-8 bg-white rounded-full mb-2 flex items-center justify-center">
-                      <DollarSign className="w-4 h-4 text-green-500" />
-                    </div>
-                    <div className="text-white text-sm">Food</div>
-                    <div className="text-white font-bold">$20</div>
+                  <span className="font-body text-foreground">Send money easily</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
+                    <span className="text-xs text-background">✓</span>
                   </div>
+                  <span className="font-body text-foreground">Receive money easily</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
+                    <span className="text-xs text-background">✓</span>
+                  </div>
+                  <span className="font-body text-foreground">Convert currency</span>
                 </div>
               </div>
             </div>
