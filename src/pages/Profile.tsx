@@ -9,6 +9,7 @@ import ProfileInfoCard from "@/components/profile/ProfileInfoCard";
 import SubscriptionCard from "@/components/profile/SubscriptionCard";
 import SecurityCard from "@/components/profile/SecurityCard";
 import DangerZoneCard from "@/components/profile/DangerZoneCard";
+import AdminManagementCard from "@/components/profile/AdminManagementCard";
 
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -100,6 +101,7 @@ const Profile = () => {
         {/* Profile Cards */}
         <div className="space-y-6">
           <ProfileInfoCard user={user} />
+          <AdminManagementCard user={user} />
           <SubscriptionCard />
           <SecurityCard user={user} />
           <DangerZoneCard user={user} />
