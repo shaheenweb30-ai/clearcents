@@ -45,26 +45,53 @@ export function useHomepageContent() {
 
   const updateContent = async (sectionId: string, updates: Partial<HomepageContent>) => {
     try {
-      const { data, error } = await supabase
+      // First check if the section exists
+      const { data: existingData } = await supabase
         .from('homepage_content')
-        .update(updates)
+        .select('id')
         .eq('section_id', sectionId)
-        .select()
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        console.error('Error updating content:', error);
-        throw error;
+      let result;
+      
+      if (existingData) {
+        // Update existing content
+        const { data, error } = await supabase
+          .from('homepage_content')
+          .update(updates)
+          .eq('section_id', sectionId)
+          .select()
+          .single();
+
+        if (error) throw error;
+        result = data;
+      } else {
+        // Create new content
+        const { data, error } = await supabase
+          .from('homepage_content')
+          .insert([{ section_id: sectionId, ...updates }])
+          .select()
+          .single();
+
+        if (error) throw error;
+        result = data;
       }
 
       // Update local state
-      setContent(prev => 
-        prev.map(item => 
-          item.section_id === sectionId ? { ...item, ...data } : item
-        )
-      );
+      setContent(prev => {
+        const existingIndex = prev.findIndex(item => item.section_id === sectionId);
+        if (existingIndex >= 0) {
+          // Update existing
+          return prev.map(item => 
+            item.section_id === sectionId ? { ...item, ...result } : item
+          );
+        } else {
+          // Add new
+          return [...prev, result];
+        }
+      });
 
-      return data;
+      return result;
     } catch (error) {
       console.error('Error updating content:', error);
       throw error;
