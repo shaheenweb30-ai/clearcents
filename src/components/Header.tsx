@@ -10,7 +10,11 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { user, loading } = useAuth();
-  const { settings: brandingSettings } = useBrandingSettings();
+  const { settings: brandingSettings, loading: brandingLoading } = useBrandingSettings();
+
+  // Debug branding settings
+  console.log('Branding Settings:', brandingSettings);
+  console.log('Branding Loading:', brandingLoading);
 
   const isActive = (path: string) => location.pathname === path;
 

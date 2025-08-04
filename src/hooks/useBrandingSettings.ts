@@ -65,14 +65,21 @@ export function useBrandingSettings() {
 
   const uploadLogo = async (file: File) => {
     try {
+      console.log('Starting logo upload:', file.name, file.size, file.type);
+      
       const fileExt = file.name.split('.').pop();
       const fileName = `logo-${Date.now()}.${fileExt}`;
+      
+      console.log('Upload filename:', fileName);
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('content-images')
         .upload(fileName, file);
 
+      console.log('Upload result:', { uploadData, uploadError });
+
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
@@ -80,7 +87,10 @@ export function useBrandingSettings() {
         .from('content-images')
         .getPublicUrl(fileName);
 
-      await updateSettings({ logo_url: publicUrl });
+      console.log('Generated public URL:', publicUrl);
+
+      const updateResult = await updateSettings({ logo_url: publicUrl });
+      console.log('Settings update result:', updateResult);
       
       return publicUrl;
     } catch (error) {
