@@ -23,15 +23,21 @@ export function AdminContentWrapper({
 }: AdminContentWrapperProps) {
   const { user } = useAuth();
   const { isAdmin } = useUserRole(user);
-  const { getContentBySection: getHomepageContent } = useHomepageContent();
-  const { getContentBySection: getFeaturesContent } = useFeaturesContent();
-  const { getContentBySection: getPricingContent } = usePricingContent();
+  const { getContentBySection: getHomepageContent, updateContent: updateHomepageContent } = useHomepageContent();
+  const { getContentBySection: getFeaturesContent, updateContent: updateFeaturesContent } = useFeaturesContent();
+  const { getContentBySection: getPricingContent, updateContent: updatePricingContent } = usePricingContent();
   
   const currentContent = contentType === 'features' 
     ? getFeaturesContent(sectionId) 
     : contentType === 'pricing'
     ? getPricingContent(sectionId)
     : getHomepageContent(sectionId);
+
+  const updateFunction = contentType === 'features' 
+    ? updateFeaturesContent 
+    : contentType === 'pricing'
+    ? updatePricingContent
+    : updateHomepageContent;
 
   return (
     <div className={`relative ${className}`} style={style}>
@@ -40,6 +46,7 @@ export function AdminContentWrapper({
           sectionId={sectionId} 
           currentContent={currentContent} 
           contentType={contentType}
+          updateContent={updateFunction}
         />
       )}
       {children}

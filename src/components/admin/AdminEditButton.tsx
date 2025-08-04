@@ -15,9 +15,10 @@ interface AdminEditButtonProps {
   sectionId: string;
   currentContent?: HomepageContent | FeaturesContent | PricingContent;
   contentType?: 'homepage' | 'features' | 'pricing';
+  updateContent: (sectionId: string, updates: any) => Promise<any>;
 }
 
-export function AdminEditButton({ sectionId, currentContent, contentType = 'homepage' }: AdminEditButtonProps) {
+export function AdminEditButton({ sectionId, currentContent, contentType = 'homepage', updateContent }: AdminEditButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -35,7 +36,6 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { updateContent: updateHomepageContent } = useHomepageContent();
 
   // Update form data when dialog opens or currentContent changes
   const handleDialogOpen = (open: boolean) => {
@@ -62,18 +62,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
     console.log('Form data:', formData);
     setSaving(true);
     try {
-      // Dynamically import the hooks to avoid circular dependency issues
-      let updateFunction = updateHomepageContent;
-      
-      if (contentType === 'features') {
-        const { useFeaturesContent } = await import('@/hooks/useFeaturesContent');
-        updateFunction = useFeaturesContent().updateContent;
-      } else if (contentType === 'pricing') {
-        const { usePricingContent } = await import('@/hooks/usePricingContent');
-        updateFunction = usePricingContent().updateContent;
-      }
-      
-      const result = await updateFunction(sectionId, formData);
+      const result = await updateContent(sectionId, formData);
       console.log('Save successful:', result);
       toast.success('Content updated successfully!');
       setIsOpen(false);
