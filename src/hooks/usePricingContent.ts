@@ -15,6 +15,7 @@ export interface PricingContent {
   description_color: string | null;
   background_color: string | null;
   image_url: string | null;
+  price: number | null;
 }
 
 export function usePricingContent() {

@@ -262,6 +262,7 @@ export type Database = {
           description_color: string | null
           id: string
           image_url: string | null
+          price: number | null
           section_id: string
           subtitle: string | null
           subtitle_color: string | null
@@ -279,6 +280,7 @@ export type Database = {
           description_color?: string | null
           id?: string
           image_url?: string | null
+          price?: number | null
           section_id: string
           subtitle?: string | null
           subtitle_color?: string | null
@@ -296,6 +298,7 @@ export type Database = {
           description_color?: string | null
           id?: string
           image_url?: string | null
+          price?: number | null
           section_id?: string
           subtitle?: string | null
           subtitle_color?: string | null

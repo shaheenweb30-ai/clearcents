@@ -106,7 +106,7 @@ const Pricing = () => {
                     className="font-heading font-bold text-6xl"
                     style={{ color: pricingContent?.title_color || '#000000' }}
                   >
-                    $9
+                    ${pricingContent?.price || '9'}
                   </span>
                   <span 
                     className="font-body text-2xl ml-2"
