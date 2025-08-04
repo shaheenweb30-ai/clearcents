@@ -3,15 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import SummaryCards from "@/components/dashboard/SummaryCards";
-import BudgetCategories from "@/components/dashboard/BudgetCategories";
-import TransactionsTable from "@/components/dashboard/TransactionsTable";
+import DateFilter, { DateRange } from "@/components/dashboard/DateFilter";
+import QuickViewButtons from "@/components/dashboard/QuickViewButtons";
+import ModernSummaryCards from "@/components/dashboard/ModernSummaryCards";
+import SpendingChart from "@/components/dashboard/SpendingChart";
+import TrendChart from "@/components/dashboard/TrendChart";
+import EnhancedTransactionsTable from "@/components/dashboard/EnhancedTransactionsTable";
+import QuickAddSidebar from "@/components/dashboard/QuickAddSidebar";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeView, setActiveView] = useState("budget");
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    to: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+  });
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -71,29 +81,53 @@ const Dashboard = () => {
     return null;
   }
 
+  const firstName = user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'there';
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       <DashboardHeader user={user} onLogout={handleLogout} />
       
-      <main className="container mx-auto px-4 py-6 space-y-8">
-        {/* Welcome Section */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">
-            Welcome back, {user.user_metadata?.full_name || user.email?.split('@')[0]}
-          </h1>
-          <p className="text-muted-foreground">
-            Here's your budget for {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
-          </p>
+      <main className="container mx-auto px-4 py-6">
+        <div className="grid lg:grid-cols-4 gap-6">
+          {/* Main Content - 3 columns */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Top Header Section */}
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                <div>
+                  <h1 className="text-3xl font-bold text-foreground">
+                    Good to see you, {firstName} 👋
+                  </h1>
+                  <p className="text-muted-foreground mt-1">
+                    Here's your financial overview
+                  </p>
+                </div>
+                <DateFilter onDateRangeChange={setDateRange} />
+              </div>
+              
+              <QuickViewButtons activeView={activeView} onViewChange={setActiveView} />
+            </div>
+
+            {/* Summary Cards */}
+            <ModernSummaryCards dateRange={dateRange} />
+
+            {/* Charts Section */}
+            <div className="grid lg:grid-cols-2 gap-6">
+              <SpendingChart dateRange={dateRange} />
+              <TrendChart dateRange={dateRange} />
+            </div>
+
+            {/* Enhanced Transactions Table */}
+            <EnhancedTransactionsTable dateRange={dateRange} />
+          </div>
+
+          {/* Right Sidebar - 1 column */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <QuickAddSidebar />
+            </div>
+          </div>
         </div>
-
-        {/* Summary Cards */}
-        <SummaryCards />
-
-        {/* Budget Categories */}
-        <BudgetCategories />
-
-        {/* Transactions */}
-        <TransactionsTable />
       </main>
     </div>
   );
