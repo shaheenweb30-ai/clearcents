@@ -55,16 +55,16 @@ const Features = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-navy via-navy-light to-navy text-white py-20">
+      <section className="bg-gradient-to-br from-charcoal to-charcoal-light text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-heading font-bold text-5xl md:text-6xl mb-6">
             Everything you need to manage your budget
           </h1>
-          <p className="font-body text-xl md:text-2xl text-blue-200 mb-8 max-w-3xl mx-auto">
+          <p className="font-body text-xl md:text-2xl text-white/80 mb-8 max-w-3xl mx-auto">
             — and nothing you don't.
           </p>
-          <p className="font-body text-lg text-blue-300 max-w-2xl mx-auto">
-            ClearCents focuses on the essentials of budgeting, giving you powerful tools without overwhelming complexity.
+          <p className="font-body text-lg text-white/70 max-w-2xl mx-auto">
+            FinSuite focuses on the essentials of budgeting, giving you powerful tools without overwhelming complexity.
           </p>
         </div>
       </section>
@@ -76,8 +76,8 @@ const Features = () => {
             {features.map((feature, index) => (
               <div key={index} className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
                 <div className={index % 2 === 1 ? 'lg:col-start-2' : ''}>
-                  <feature.icon className="w-16 h-16 text-navy mb-6" />
-                  <h2 className="font-heading font-bold text-3xl md:text-4xl text-navy mb-4">
+                  <feature.icon className="w-16 h-16 text-primary mb-6" />
+                  <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
                     {feature.title}
                   </h2>
                   <p className="font-body text-lg text-muted-foreground mb-6">
@@ -86,39 +86,39 @@ const Features = () => {
                   <ul className="space-y-3 mb-8">
                     {feature.benefits.map((benefit, benefitIndex) => (
                       <li key={benefitIndex} className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-mint rounded-full"></div>
-                        <span className="font-body text-navy">{benefit}</span>
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span className="font-body text-foreground">{benefit}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div className={index % 2 === 1 ? 'lg:col-start-1' : ''}>
-                  <Card className="border-2 border-mint-light shadow-xl">
+                  <Card className="border-2 border-primary/20 shadow-xl">
                     <CardContent className="p-8">
-                      <div className="bg-gradient-to-br from-mint-light to-mint rounded-xl p-6 mb-6">
+                      <div className="bg-gradient-to-br from-primary/10 to-primary/20 rounded-xl p-6 mb-6">
                         <div className="bg-white rounded-lg p-4">
                           <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-heading font-semibold text-lg text-navy">
+                            <h3 className="font-heading font-semibold text-lg text-foreground">
                               {feature.title === "Guided Budget Setup" && "Budget Categories"}
                               {feature.title === "Easy Expense Tracking" && "Recent Expenses"}
                               {feature.title === "Flexible Budget Adjustments" && "Budget Overview"}
                               {feature.title === "Simple Reports That Matter" && "Monthly Report"}
                             </h3>
-                            <feature.icon className="w-6 h-6 text-navy" />
+                            <feature.icon className="w-6 h-6 text-primary" />
                           </div>
                           {feature.title === "Guided Budget Setup" && (
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Housing</span>
-                                <span className="font-semibold text-navy">$1,200</span>
+                                <span className="font-semibold text-foreground">$1,200</span>
                               </div>
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Groceries</span>
-                                <span className="font-semibold text-navy">$400</span>
+                                <span className="font-semibold text-foreground">$400</span>
                               </div>
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Transportation</span>
-                                <span className="font-semibold text-navy">$300</span>
+                                <span className="font-semibold text-foreground">$300</span>
                               </div>
                             </div>
                           )}
@@ -126,15 +126,15 @@ const Features = () => {
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Coffee Shop</span>
-                                <span className="font-semibold text-navy">-$4.50</span>
+                                <span className="font-semibold text-foreground">-$4.50</span>
                               </div>
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Grocery Store</span>
-                                <span className="font-semibold text-navy">-$67.23</span>
+                                <span className="font-semibold text-foreground">-$67.23</span>
                               </div>
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Gas Station</span>
-                                <span className="font-semibold text-navy">-$45.00</span>
+                                <span className="font-semibold text-foreground">-$45.00</span>
                               </div>
                             </div>
                           )}
@@ -142,14 +142,14 @@ const Features = () => {
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Available</span>
-                                <span className="font-semibold text-mint">$127.50</span>
+                                <span className="font-semibold text-primary">$127.50</span>
                               </div>
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Allocated</span>
-                                <span className="font-semibold text-navy">$2,872.50</span>
+                                <span className="font-semibold text-foreground">$2,872.50</span>
                               </div>
-                              <div className="w-full bg-mint-light rounded-full h-2">
-                                <div className="bg-mint h-2 rounded-full" style={{ width: '85%' }}></div>
+                              <div className="w-full bg-primary/20 rounded-full h-2">
+                                <div className="bg-primary h-2 rounded-full" style={{ width: '85%' }}></div>
                               </div>
                             </div>
                           )}
@@ -157,14 +157,14 @@ const Features = () => {
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Total Spent</span>
-                                <span className="font-semibold text-navy">$2,456</span>
+                                <span className="font-semibold text-foreground">$2,456</span>
                               </div>
                               <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Budget Goal</span>
-                                <span className="font-semibold text-mint">$2,500</span>
+                                <span className="font-semibold text-primary">$2,500</span>
                               </div>
                               <div className="text-center mt-3">
-                                <span className="text-xs text-mint font-semibold">On Track!</span>
+                                <span className="text-xs text-primary font-semibold">On Track!</span>
                               </div>
                             </div>
                           )}
@@ -180,16 +180,20 @@ const Features = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-mint to-mint-light">
+      <section className="py-20 bg-gradient-to-br from-indigo-800 to-purple-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-heading font-bold text-4xl md:text-5xl text-navy mb-6">
+          <h2 className="font-heading font-bold text-4xl md:text-5xl text-white mb-6">
             Ready to take control of your finances?
           </h2>
-          <p className="font-body text-xl text-navy-light mb-8">
-            Join thousands of users who have simplified their budgeting with ClearCents.
+          <p className="font-body text-xl text-white/80 mb-8">
+            Join thousands of users who have simplified their budgeting with FinSuite.
           </p>
           <Link to="/signup">
-            <Button variant="hero" size="xl">
+            <Button 
+              variant="default" 
+              size="lg"
+              className="rounded-full px-8 py-3 bg-white text-indigo-800 hover:bg-white/90"
+            >
               Start Your Free Trial
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
