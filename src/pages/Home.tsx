@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Target, BarChart3, Settings, ArrowRight } from "lucide-react";
-import heroImage from "@/assets/hero-image.jpg";
+import heroArtwork from "@/assets/hero-artwork.jpg";
 import Layout from "@/components/Layout";
 
 const Home = () => {
@@ -73,8 +73,8 @@ const Home = () => {
             </div>
             <div className="relative">
               <img
-                src={heroImage}
-                alt="ClearCents budgeting app interface"
+                src={heroArtwork}
+                alt="Financial prosperity and budgeting artwork"
                 className="rounded-2xl shadow-2xl"
               />
             </div>
