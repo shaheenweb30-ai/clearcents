@@ -23,6 +23,8 @@ import {
   TrendingDown,
   Plus
 } from "lucide-react";
+
+// Dashboard component with modern design
 interface SummaryData {
   income: number;
   expenses: number;
