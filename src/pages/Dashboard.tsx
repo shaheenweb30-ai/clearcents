@@ -2,15 +2,17 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import ClearCentsNavigation from "@/components/ClearCentsNavigation";
 import DateFilter, { DateRange } from "@/components/dashboard/DateFilter";
-import QuickViewButtons from "@/components/dashboard/QuickViewButtons";
 import ModernSummaryCards from "@/components/dashboard/ModernSummaryCards";
 import SpendingChart from "@/components/dashboard/SpendingChart";
 import TrendChart from "@/components/dashboard/TrendChart";
 import EnhancedTransactionsTable from "@/components/dashboard/EnhancedTransactionsTable";
 import AddTransactionDialog from "@/components/dashboard/AddTransactionDialog";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus } from "lucide-react";
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -93,78 +95,57 @@ const Dashboard = () => {
   const firstName = user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'there';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <DashboardHeader user={user} onLogout={handleLogout} />
+    <div className="min-h-screen bg-background pb-16 md:pb-0">
+      <ClearCentsNavigation user={user} onLogout={handleLogout} />
       
       <main className="container mx-auto px-4 py-6">
-        {/* Main Content */}
-        <div className="space-y-8">
-          {/* Top Header Section */}
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">
-                  Good to see you, {firstName} 👋
-                </h1>
-                <p className="text-muted-foreground mt-1">
-                  Here's your financial overview
-                </p>
-              </div>
-              <DateFilter onDateRangeChange={setDateRange} />
+        {/* ClearCents Dashboard Header */}
+        <div className="space-y-6 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div>
+              <h1 className="text-3xl font-heading font-bold text-foreground">
+                Good to see you, {firstName}
+              </h1>
+              <p className="text-muted-foreground mt-1 font-body">
+                Here's your financial overview
+              </p>
             </div>
-            
-            <QuickViewButtons activeView={activeView} onViewChange={setActiveView} />
+            <DateFilter onDateRangeChange={setDateRange} />
           </div>
+        </div>
 
+        {/* Net Total & Overview Section */}
+        <div className="space-y-6">
           {/* Summary Cards */}
           <ModernSummaryCards dateRange={dateRange} key={`summary-${refreshKey}`} />
 
-          {/* Charts Section */}
+          {/* Mini Charts Section */}
           <div className="grid lg:grid-cols-2 gap-6">
             <SpendingChart dateRange={dateRange} key={`spending-${refreshKey}`} />
             <TrendChart dateRange={dateRange} key={`trend-${refreshKey}`} />
           </div>
 
-          {/* Enhanced Transactions Table */}
-          <EnhancedTransactionsTable dateRange={dateRange} key={`transactions-${refreshKey}`} />
+          {/* Transaction List */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-heading">Recent Transactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EnhancedTransactionsTable dateRange={dateRange} key={`transactions-${refreshKey}`} />
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Temporary test button */}
-        <div className="mb-4">
-          <button
-            onClick={() => {
-              console.log('Test button clicked, setting showAddDialog to true');
-              setShowAddDialog(true);
-            }}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Test Add Transaction
-          </button>
-        </div>
-
-        {/* Floating Action Button */}
+        {/* Desktop Floating Action Button */}
         <button
           onClick={() => {
             console.log('Add transaction button clicked');
             setShowAddDialog(true);
           }}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 flex items-center justify-center z-50"
+          className="hidden md:flex fixed bottom-6 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 items-center justify-center z-40"
           aria-label="Add transaction"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
+          <Plus className="w-6 h-6" />
         </button>
 
         {/* Add Transaction Dialog */}

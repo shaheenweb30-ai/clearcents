@@ -10,6 +10,9 @@ import About from "./pages/About";
 import SignUp from "./pages/SignUp";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
+import Insights from "./pages/Insights";
+import Budgets from "./pages/Budgets";
+import Settings from "./pages/Settings";
 import Reports from "./pages/Reports";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -31,6 +34,9 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/budgets" element={<Budgets />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/reports" element={<Reports />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
