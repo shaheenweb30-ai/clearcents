@@ -275,12 +275,22 @@ export function DynamicHomepage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative">
-                <div className="bg-gradient-to-br from-purple-500 to-blue-600 rounded-3xl p-8 shadow-2xl transform rotate-3">
-                  <div className="bg-white rounded-2xl p-6">
-                    <div className="text-2xl font-bold text-charcoal mb-2">Financial Excellence</div>
-                    <div className="text-sm text-muted-foreground">Your Success Story</div>
+                {achieveExcellenceContent?.image_url ? (
+                  <div className="rounded-3xl overflow-hidden shadow-2xl">
+                    <img 
+                      src={achieveExcellenceContent.image_url} 
+                      alt={achieveExcellenceContent.title || 'Achieve Financial Excellence'}
+                      className="w-full h-80 object-cover"
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="bg-gradient-to-br from-purple-500 to-blue-600 rounded-3xl p-8 shadow-2xl transform rotate-3">
+                    <div className="bg-white rounded-2xl p-6">
+                      <div className="text-2xl font-bold text-charcoal mb-2">Financial Excellence</div>
+                      <div className="text-sm text-muted-foreground">Your Success Story</div>
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <h3 className="font-heading font-bold text-4xl text-foreground mb-6">
