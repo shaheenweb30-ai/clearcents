@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,9 +14,18 @@ export function BrandingManager() {
   const { isAdmin } = useUserRole(user);
   const { settings, updateSettings, uploadLogo, loading } = useBrandingSettings();
   const [uploading, setUploading] = useState(false);
-  const [businessName, setBusinessName] = useState(settings?.business_name || '');
-  const [primaryColor, setPrimaryColor] = useState(settings?.primary_color || '#500CB0');
-  const [secondaryColor, setSecondaryColor] = useState(settings?.secondary_color || '#FFFFFF');
+  const [businessName, setBusinessName] = useState('');
+  const [primaryColor, setPrimaryColor] = useState('#500CB0');
+  const [secondaryColor, setSecondaryColor] = useState('#FFFFFF');
+
+  // Update form state when settings load
+  useEffect(() => {
+    if (settings) {
+      setBusinessName(settings.business_name || '');
+      setPrimaryColor(settings.primary_color || '#500CB0');
+      setSecondaryColor(settings.secondary_color || '#FFFFFF');
+    }
+  }, [settings]);
 
   if (!isAdmin) return null;
 

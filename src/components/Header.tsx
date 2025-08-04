@@ -12,10 +12,6 @@ const Header = () => {
   const { user, loading } = useAuth();
   const { settings: brandingSettings, loading: brandingLoading } = useBrandingSettings();
 
-  // Debug branding settings
-  console.log('Branding Settings:', brandingSettings);
-  console.log('Branding Loading:', brandingLoading);
-
   const isActive = (path: string) => location.pathname === path;
 
   const navigation = [
