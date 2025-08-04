@@ -46,8 +46,13 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* CTA Buttons */}
+          <div className="hidden md:flex space-x-3">
+            <Link to="/login">
+              <Button variant="outline" size="default">
+                Log In
+              </Button>
+            </Link>
             <Link to="/signup">
               <Button variant="hero" size="default">
                 Start Free Trial
@@ -84,6 +89,11 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
+              <Link to="/login" className="px-4">
+                <Button variant="outline" size="default" className="w-full">
+                  Log In
+                </Button>
+              </Link>
               <Link to="/signup" className="px-4">
                 <Button variant="hero" size="default" className="w-full">
                   Start Free Trial
