@@ -44,18 +44,29 @@ export function useHomepageContent() {
   }, []);
 
   const updateContent = async (sectionId: string, updates: Partial<HomepageContent>) => {
+    console.log('useHomepageContent - updateContent called with:', { sectionId, updates });
+    
     try {
       // First check if the section exists
-      const { data: existingData } = await supabase
+      console.log('Checking if section exists...');
+      const { data: existingData, error: checkError } = await supabase
         .from('homepage_content')
         .select('id')
         .eq('section_id', sectionId)
         .maybeSingle();
 
+      if (checkError) {
+        console.error('Error checking existing data:', checkError);
+        throw checkError;
+      }
+
+      console.log('Existing data check result:', existingData);
+
       let result;
       
       if (existingData) {
         // Update existing content
+        console.log('Updating existing content...');
         const { data, error } = await supabase
           .from('homepage_content')
           .update(updates)
@@ -63,17 +74,26 @@ export function useHomepageContent() {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
+        console.log('Update successful:', data);
         result = data;
       } else {
         // Create new content
+        console.log('Creating new content...');
         const { data, error } = await supabase
           .from('homepage_content')
           .insert([{ section_id: sectionId, ...updates }])
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
+        console.log('Insert successful:', data);
         result = data;
       }
 
@@ -82,18 +102,21 @@ export function useHomepageContent() {
         const existingIndex = prev.findIndex(item => item.section_id === sectionId);
         if (existingIndex >= 0) {
           // Update existing
+          console.log('Updating local state - existing item');
           return prev.map(item => 
             item.section_id === sectionId ? { ...item, ...result } : item
           );
         } else {
           // Add new
+          console.log('Updating local state - adding new item');
           return [...prev, result];
         }
       });
 
+      console.log('updateContent completed successfully');
       return result;
     } catch (error) {
-      console.error('Error updating content:', error);
+      console.error('Error in updateContent:', error);
       throw error;
     }
   };
