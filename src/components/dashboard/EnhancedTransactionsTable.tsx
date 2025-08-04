@@ -9,76 +9,76 @@ import { Search, Filter, Edit, Trash2, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DateRange } from "./DateFilter";
 import { format } from "date-fns";
-
 interface Transaction {
   id: string;
   description: string;
   amount: number;
   transaction_date: string;
-  budget_categories: { name: string } | null;
+  budget_categories: {
+    name: string;
+  } | null;
 }
-
 interface EnhancedTransactionsTableProps {
   dateRange: DateRange;
 }
-
-const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps) => {
+const EnhancedTransactionsTable = ({
+  dateRange
+}: EnhancedTransactionsTableProps) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [amountRange, setAmountRange] = useState([0, 1000]);
-  const [categories, setCategories] = useState<{ name: string }[]>([]);
-
+  const [categories, setCategories] = useState<{
+    name: string;
+  }[]>([]);
   useEffect(() => {
     fetchTransactions();
     fetchCategories();
   }, [dateRange]);
-
   useEffect(() => {
     applyFilters();
   }, [transactions, searchTerm, selectedCategory, selectedType, amountRange]);
-
   const fetchCategories = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) return;
-
-      const { data } = await supabase
-        .from('budget_categories')
-        .select('name')
-        .eq('user_id', user.id);
-
+      const {
+        data
+      } = await supabase.from('budget_categories').select('name').eq('user_id', user.id);
       setCategories(data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
   };
-
   const fetchTransactions = async () => {
     try {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) return;
-
-      const { data } = await supabase
-        .from('transactions')
-        .select(`
+      const {
+        data
+      } = await supabase.from('transactions').select(`
           id,
           description,
           amount,
           transaction_date,
           budget_categories(name)
-        `)
-        .eq('user_id', user.id)
-        .gte('transaction_date', dateRange.from.toISOString().split('T')[0])
-        .lte('transaction_date', dateRange.to.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
-
+        `).eq('user_id', user.id).gte('transaction_date', dateRange.from.toISOString().split('T')[0]).lte('transaction_date', dateRange.to.toISOString().split('T')[0]).order('transaction_date', {
+        ascending: false
+      });
       setTransactions(data || []);
     } catch (error) {
       console.error('Error fetching transactions:', error);
@@ -86,22 +86,17 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
       setLoading(false);
     }
   };
-
   const applyFilters = () => {
     let filtered = [...transactions];
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(t => 
-        t.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      filtered = filtered.filter(t => t.description.toLowerCase().includes(searchTerm.toLowerCase()));
     }
 
     // Category filter
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(t => 
-        t.budget_categories?.name === selectedCategory
-      );
+      filtered = filtered.filter(t => t.budget_categories?.name === selectedCategory);
     }
 
     // Type filter (Income/Expense)
@@ -118,37 +113,31 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
       const absAmount = Math.abs(t.amount);
       return absAmount >= amountRange[0] && absAmount <= amountRange[1];
     });
-
     setFilteredTransactions(filtered);
   };
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'USD'
     }).format(amount);
   };
-
   if (loading) {
-    return (
-      <Card>
+    return <Card>
         <CardHeader>
           <CardTitle>Recent Transactions</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center h-64">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center space-x-2">
             <span>Recent Transactions</span>
-            <span className="text-2xl">📊</span>
+            <span className="text-2xl">
+          </span>
           </span>
           <Button size="sm" className="flex items-center space-x-2">
             <Plus className="h-4 w-4" />
@@ -162,12 +151,7 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
         <div className="grid gap-4 md:grid-cols-4">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search transactions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+            <Input placeholder="Search transactions..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
           </div>
           
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -176,11 +160,9 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat.name} value={cat.name}>
+              {categories.map(cat => <SelectItem key={cat.name} value={cat.name}>
                   {cat.name}
-                </SelectItem>
-              ))}
+                </SelectItem>)}
             </SelectContent>
           </Select>
 
@@ -197,13 +179,7 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Amount Range</label>
-            <Slider
-              value={amountRange}
-              onValueChange={setAmountRange}
-              max={1000}
-              step={10}
-              className="w-full"
-            />
+            <Slider value={amountRange} onValueChange={setAmountRange} max={1000} step={10} className="w-full" />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>${amountRange[0]}</span>
               <span>${amountRange[1]}</span>
@@ -225,8 +201,7 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
                 </tr>
               </thead>
               <tbody>
-                {filteredTransactions.map((transaction) => (
-                  <tr key={transaction.id} className="border-t hover:bg-muted/30 transition-colors">
+                {filteredTransactions.map(transaction => <tr key={transaction.id} className="border-t hover:bg-muted/30 transition-colors">
                     <td className="p-4 text-sm">
                       {format(new Date(transaction.transaction_date), 'MMM dd, yyyy')}
                     </td>
@@ -234,17 +209,11 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
                       {transaction.description}
                     </td>
                     <td className="p-4">
-                      {transaction.budget_categories?.name ? (
-                        <Badge variant="secondary">
+                      {transaction.budget_categories?.name ? <Badge variant="secondary">
                           {transaction.budget_categories.name}
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Uncategorized</span>
-                      )}
+                        </Badge> : <span className="text-muted-foreground text-sm">Uncategorized</span>}
                     </td>
-                    <td className={`p-4 text-right font-medium ${
-                      transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
+                    <td className={`p-4 text-right font-medium ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {transaction.amount > 0 ? '+' : ''}{formatCurrency(transaction.amount)}
                     </td>
                     <td className="p-4">
@@ -257,21 +226,16 @@ const EnhancedTransactionsTable = ({ dateRange }: EnhancedTransactionsTableProps
                         </Button>
                       </div>
                     </td>
-                  </tr>
-                ))}
+                  </tr>)}
               </tbody>
             </table>
           </div>
           
-          {filteredTransactions.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
+          {filteredTransactions.length === 0 && <div className="text-center py-8 text-muted-foreground">
               No transactions found matching your filters
-            </div>
-          )}
+            </div>}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default EnhancedTransactionsTable;
