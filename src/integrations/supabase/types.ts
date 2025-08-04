@@ -41,6 +41,45 @@ export type Database = {
         }
         Relationships: []
       }
+      footer_links: {
+        Row: {
+          created_at: string
+          display_order: number
+          icon_name: string | null
+          id: string
+          is_active: boolean | null
+          link_type: string
+          section_group: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          link_type: string
+          section_group?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          icon_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          link_type?: string
+          section_group?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       homepage_content: {
         Row: {
           button_color: string | null
