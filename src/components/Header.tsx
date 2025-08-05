@@ -70,13 +70,13 @@ const Header = () => {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="outline" size="default">
+                  <Button variant="ghost" size="default" className="text-black hover:text-black">
                     Log In
                   </Button>
                 </Link>
                 <Link to="/signup">
                   <Button variant="hero" size="default">
-                    Start Free Trial
+                    Get Started
                   </Button>
                 </Link>
               </>
@@ -122,13 +122,13 @@ const Header = () => {
               ) : (
                 <>
                   <Link to="/login" className="px-4">
-                    <Button variant="outline" size="default" className="w-full">
+                    <Button variant="ghost" size="default" className="w-full text-black hover:text-black">
                       Log In
                     </Button>
                   </Link>
                   <Link to="/signup" className="px-4">
                     <Button variant="hero" size="default" className="w-full">
-                      Start Free Trial
+                      Get Started
                     </Button>
                   </Link>
                 </>
