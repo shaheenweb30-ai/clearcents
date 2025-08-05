@@ -5,20 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Users, CreditCard, DollarSign, BarChart3, PieChart, Globe } from "lucide-react";
 import Layout from "@/components/Layout";
-
 export function DynamicHomepage() {
-  const { content, loading, getContentBySection } = useHomepageContent();
-
+  const {
+    content,
+    loading,
+    getContentBySection
+  } = useHomepageContent();
   if (loading) {
-    return (
-      <Layout>
+    return <Layout>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-lg">Loading...</div>
         </div>
-      </Layout>
-    );
+      </Layout>;
   }
-
   const heroContent = getContentBySection('hero');
   const empowerContent = getContentBySection('empower');
   const trackExpensesContent = getContentBySection('track-expenses');
@@ -29,49 +28,32 @@ export function DynamicHomepage() {
   const mainCtaContent = getContentBySection('main-cta');
   const liveChatContent = getContentBySection('live-chat');
   const watchDemoContent = getContentBySection('watch-demo');
-
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero Section */}
       <AdminContentWrapper sectionId="hero" className="relative bg-background py-20 overflow-hidden">
         <section>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 
-                  className="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight"
-                  style={{ color: heroContent?.title_color || '#000000' }}
-                >
+                <h1 className="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight" style={{
+                color: heroContent?.title_color || '#000000'
+              }}>
                   {heroContent?.title || 'Maximize 💰 Your Financial Potential'}
                 </h1>
-                <p 
-                  className="font-body text-xl md:text-2xl mb-8"
-                  style={{ color: heroContent?.subtitle_color || '#666666' }}
-                >
+                <p className="font-body text-xl md:text-2xl mb-8" style={{
+                color: heroContent?.subtitle_color || '#666666'
+              }}>
                   {heroContent?.subtitle || 'All-in-one Financial Analytics Dashboard'}
                 </p>
-                {heroContent?.button_text && (
-                  <Button 
-                    variant="default" 
-                    size="lg" 
-                    className="rounded-full px-8"
-                    style={{
-                      backgroundColor: heroContent.button_color || '#500CB0',
-                      color: heroContent.button_text_color || '#FFFFFF'
-                    }}
-                  >
+                {heroContent?.button_text && <Button variant="default" size="lg" className="rounded-full px-8" style={{
+                backgroundColor: heroContent.button_color || '#500CB0',
+                color: heroContent.button_text_color || '#FFFFFF'
+              }}>
                     {heroContent.button_text}
-                  </Button>
-                )}
+                  </Button>}
               </div>
               <div className="relative">
-                {heroContent?.image_url && (
-                  <img 
-                    src={heroContent.image_url} 
-                    alt="Financial dashboard with subscription management" 
-                    className="w-full h-auto rounded-3xl shadow-2xl"
-                  />
-                )}
+                {heroContent?.image_url && <img src={heroContent.image_url} alt="Financial dashboard with subscription management" className="w-full h-auto rounded-3xl shadow-2xl" />}
               </div>
             </div>
           </div>
@@ -110,34 +92,25 @@ export function DynamicHomepage() {
         <section>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 
-              className="font-heading font-bold text-4xl md:text-5xl mb-4"
-              style={{ color: empowerContent?.title_color || '#000000' }}
-            >
+            <h2 className="font-heading font-bold text-4xl md:text-5xl mb-4" style={{
+              color: empowerContent?.title_color || '#000000'
+            }}>
               {empowerContent?.title || 'Empower Your Financial Future with us'}
             </h2>
           </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative">
-                {empowerContent?.image_url && (
-                  <img 
-                    src={empowerContent.image_url} 
-                    alt="Comprehensive Financial Analytics Dashboard" 
-                    className="w-full h-auto rounded-3xl shadow-2xl"
-                  />
-                )}
+                {empowerContent?.image_url && <img src={empowerContent.image_url} alt="Comprehensive Financial Analytics Dashboard" className="w-full h-auto rounded-3xl shadow-2xl" />}
               </div>
               <div>
-                <h3 
-                  className="font-heading font-bold text-3xl mb-6"
-                  style={{ color: empowerContent?.subtitle_color || '#000000' }}
-                >
+                <h3 className="font-heading font-bold text-3xl mb-6" style={{
+                color: empowerContent?.subtitle_color || '#000000'
+              }}>
                   {empowerContent?.subtitle || 'Comprehensive Financial Analytics Dashboard'}
                 </h3>
-                <p 
-                  className="font-body text-lg mb-8"
-                  style={{ color: empowerContent?.description_color || '#666666' }}
-                >
+                <p className="font-body text-lg mb-8" style={{
+                color: empowerContent?.description_color || '#666666'
+              }}>
                   {empowerContent?.description || 'Gain real-time visibility into your financial performance with intuitive dashboards.'}
                 </p>
                 <div className="grid grid-cols-2 gap-4">
@@ -184,28 +157,15 @@ export function DynamicHomepage() {
                 <p className="font-body text-lg text-muted-foreground mb-8">
                   {trackExpensesContent?.description || 'Effortlessly monitor and manage all your expenses with our intuitive tracking system.'}
                 </p>
-                {trackExpensesContent?.button_text && (
-                  <Button 
-                    variant="default" 
-                    size="lg" 
-                    className="rounded-full px-8"
-                    style={{
-                      backgroundColor: trackExpensesContent.button_color || '#500CB0',
-                      color: trackExpensesContent.button_text_color || '#FFFFFF'
-                    }}
-                  >
+                {trackExpensesContent?.button_text && <Button variant="default" size="lg" className="rounded-full px-8" style={{
+                backgroundColor: trackExpensesContent.button_color || '#500CB0',
+                color: trackExpensesContent.button_text_color || '#FFFFFF'
+              }}>
                     {trackExpensesContent.button_text}
-                  </Button>
-                )}
+                  </Button>}
               </div>
               <div className="relative">
-                {trackExpensesContent?.image_url && (
-                  <img 
-                    src={trackExpensesContent.image_url} 
-                    alt="Expense tracking dashboard with pie chart and subscription management" 
-                    className="w-full h-auto rounded-3xl shadow-2xl"
-                  />
-                )}
+                {trackExpensesContent?.image_url && <img src={trackExpensesContent.image_url} alt="Expense tracking dashboard with pie chart and subscription management" className="w-full h-auto rounded-3xl shadow-2xl" />}
               </div>
             </div>
           </div>
@@ -275,22 +235,14 @@ export function DynamicHomepage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative">
-                {achieveExcellenceContent?.image_url ? (
-                  <div className="rounded-3xl overflow-hidden shadow-2xl">
-                    <img 
-                      src={achieveExcellenceContent.image_url} 
-                      alt={achieveExcellenceContent.title || 'Achieve Financial Excellence'}
-                      className="w-full h-80 object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="bg-gradient-to-br from-purple-500 to-blue-600 rounded-3xl p-8 shadow-2xl transform rotate-3">
+                {achieveExcellenceContent?.image_url ? <div className="rounded-3xl overflow-hidden shadow-2xl">
+                    <img src={achieveExcellenceContent.image_url} alt={achieveExcellenceContent.title || 'Achieve Financial Excellence'} className="w-full h-80 object-cover" />
+                  </div> : <div className="bg-gradient-to-br from-purple-500 to-blue-600 rounded-3xl p-8 shadow-2xl transform rotate-3">
                     <div className="bg-white rounded-2xl p-6">
                       <div className="text-2xl font-bold text-charcoal mb-2">Financial Excellence</div>
                       <div className="text-sm text-muted-foreground">Your Success Story</div>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
               <div>
                 <h3 className="font-heading font-bold text-4xl text-foreground mb-6">
@@ -329,36 +281,7 @@ export function DynamicHomepage() {
       <AdminContentWrapper sectionId="integrations" className="py-20 bg-background">
         <section>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h3 className="font-heading font-bold text-4xl text-foreground mb-6">
-                  {integrationsContent?.title || 'Integrate With Your Favorite Tools'}
-                </h3>
-                <p className="font-body text-lg text-muted-foreground mb-8">
-                  {integrationsContent?.description || 'Connect with all your favorite financial tools and platforms for a seamless experience.'}
-                </p>
-                {integrationsContent?.button_text && (
-                  <Button 
-                    variant="default" 
-                    size="lg" 
-                    className="rounded-full px-8"
-                    style={{
-                      backgroundColor: integrationsContent.button_color || '#500CB0',
-                      color: integrationsContent.button_text_color || '#FFFFFF'
-                    }}
-                  >
-                    {integrationsContent.button_text}
-                  </Button>
-                )}
-              </div>
-              <div className="grid grid-cols-4 gap-4">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="w-16 h-16 bg-card border border-border rounded-2xl flex items-center justify-center">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            
           </div>
         </section>
       </AdminContentWrapper>
@@ -367,42 +290,7 @@ export function DynamicHomepage() {
       <AdminContentWrapper sectionId="final-cta" className="py-20 bg-gradient-to-br from-charcoal to-charcoal-light">
         <section>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="relative">
-                <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-8 shadow-2xl">
-                  <div className="bg-white rounded-2xl p-6 mb-4">
-                    <div className="text-3xl font-bold text-charcoal mb-2">$50</div>
-                    <div className="text-sm text-muted-foreground">Ready to start?</div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-heading font-bold text-4xl text-white mb-6">
-                  {finalCtaContent?.title || 'Ready to Run your Business Better with us'}
-                </h3>
-                <p className="font-body text-lg text-gray-300 mb-8">
-                  {finalCtaContent?.description || 'Join thousands of businesses that trust our platform for their financial management needs.'}
-                </p>
-                <div className="flex gap-4">
-                  {finalCtaContent?.button_text && (
-                    <Button 
-                      variant="default" 
-                      size="lg" 
-                      className="rounded-full px-8"
-                      style={{
-                        backgroundColor: finalCtaContent.button_color || '#500CB0',
-                        color: finalCtaContent.button_text_color || '#FFFFFF'
-                      }}
-                    >
-                      {finalCtaContent.button_text}
-                    </Button>
-                  )}
-                  <Button variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-charcoal rounded-full px-8">
-                    Watch a Demo
-                  </Button>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </section>
       </AdminContentWrapper>
@@ -450,31 +338,22 @@ export function DynamicHomepage() {
                   </div>
                   
                   <div className="relative z-10 ml-auto max-w-xl">
-                    <h2 
-                      className="font-heading font-bold text-4xl lg:text-5xl mb-4"
-                      style={{ color: mainCtaContent?.title_color || '#FFFFFF' }}
-                    >
+                    <h2 className="font-heading font-bold text-4xl lg:text-5xl mb-4" style={{
+                    color: mainCtaContent?.title_color || '#FFFFFF'
+                  }}>
                       {mainCtaContent?.title || 'Ready to Run your Business Better with us'}
                     </h2>
-                    <p 
-                      className="font-body text-lg mb-8"
-                      style={{ color: mainCtaContent?.description_color || '#E0E7FF' }}
-                    >
+                    <p className="font-body text-lg mb-8" style={{
+                    color: mainCtaContent?.description_color || '#E0E7FF'
+                  }}>
                       {mainCtaContent?.description || 'Welcome to FinSuite, where financial management meets simplicity and efficiency.'}
                     </p>
-                    {mainCtaContent?.button_text && (
-                      <Button 
-                        variant="default" 
-                        size="lg" 
-                        className="rounded-full px-8 py-3"
-                        style={{
-                          backgroundColor: mainCtaContent.button_color || '#3B82F6',
-                          color: mainCtaContent.button_text_color || '#FFFFFF'
-                        }}
-                      >
+                    {mainCtaContent?.button_text && <Button variant="default" size="lg" className="rounded-full px-8 py-3" style={{
+                    backgroundColor: mainCtaContent.button_color || '#3B82F6',
+                    color: mainCtaContent.button_text_color || '#FFFFFF'
+                  }}>
                         {mainCtaContent.button_text}
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
                 </div>
               </div>
@@ -497,19 +376,12 @@ export function DynamicHomepage() {
                       {liveChatContent?.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
                     </p>
                   </div>
-                  {liveChatContent?.button_text && (
-                    <Button 
-                      variant="outline" 
-                      size="lg" 
-                      className="rounded-full w-fit"
-                      style={{
-                        borderColor: liveChatContent.button_text_color || '#FFFFFF',
-                        color: liveChatContent.button_text_color || '#FFFFFF'
-                      }}
-                    >
+                  {liveChatContent?.button_text && <Button variant="outline" size="lg" className="rounded-full w-fit" style={{
+                  borderColor: liveChatContent.button_text_color || '#FFFFFF',
+                  color: liveChatContent.button_text_color || '#FFFFFF'
+                }}>
                       {liveChatContent.button_text}
-                    </Button>
-                  )}
+                    </Button>}
                 </div>
               </AdminContentWrapper>
               
@@ -529,19 +401,12 @@ export function DynamicHomepage() {
                       {watchDemoContent?.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
                     </p>
                   </div>
-                  {watchDemoContent?.button_text && (
-                    <Button 
-                      variant="outline" 
-                      size="lg" 
-                      className="rounded-full w-fit"
-                      style={{
-                        borderColor: watchDemoContent.button_text_color || '#000000',
-                        color: watchDemoContent.button_text_color || '#000000'
-                      }}
-                    >
+                  {watchDemoContent?.button_text && <Button variant="outline" size="lg" className="rounded-full w-fit" style={{
+                  borderColor: watchDemoContent.button_text_color || '#000000',
+                  color: watchDemoContent.button_text_color || '#000000'
+                }}>
                       {watchDemoContent.button_text}
-                    </Button>
-                  )}
+                    </Button>}
                 </div>
               </AdminContentWrapper>
             </div>
@@ -551,6 +416,5 @@ export function DynamicHomepage() {
       
       {/* Page Manager for Admins */}
       <PageManager />
-    </Layout>
-  );
+    </Layout>;
 }
