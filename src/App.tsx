@@ -20,6 +20,8 @@ import AdminPages from "./pages/admin/AdminPages";
 import AdminFAQ from "./pages/admin/AdminFAQ";
 import AdminPackages from "./pages/admin/AdminPackages";
 import AdminBranding from "./pages/admin/AdminBranding";
+import Dashboard from "./pages/Dashboard";
+import Insights from "./pages/Insights";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +41,8 @@ const App = () => (
           <Route path="/signup" element={<SignUp />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/insights" element={<Insights />} />
             <Route path="/settings" element={<Settings />} />
             {/* Admin routes */}
             <Route path="/admin/footer" element={<AdminFooter />} />
