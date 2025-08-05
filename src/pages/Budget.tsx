@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, Calendar, TrendingUp, TrendingDown, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import AddCategoryDialog from "@/components/dashboard/AddCategoryDialog";
 
 interface Category {
@@ -24,6 +27,7 @@ interface BudgetOverview {
 }
 
 const Budget = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [budgetOverview, setBudgetOverview] = useState<BudgetOverview>({
     totalBudget: 0,
@@ -34,16 +38,34 @@ const Budget = () => {
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [activeNavItem, setActiveNavItem] = useState("budgets");
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchBudgetData();
+    getUser();
   }, []);
 
-  const fetchBudgetData = async () => {
+  const getUser = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+      
+      setUser(user);
+      fetchBudgetData(user);
+    } catch (error) {
+      console.error("Error getting user:", error);
+      navigate("/login");
+    }
+  };
+
+  const fetchBudgetData = async (currentUser?: User) => {
+    try {
+      const userToUse = currentUser || user;
+      if (!userToUse) return;
 
       // Get current month date range
       const now = new Date();
@@ -59,7 +81,7 @@ const Budget = () => {
           budgeted_amount,
           transactions!transactions_category_id_fkey(amount, transaction_date)
         `)
-        .eq('user_id', user.id)
+        .eq('user_id', userToUse.id)
         .order('name');
 
       const categoriesWithSpent = categoriesData?.map(category => {
@@ -156,25 +178,16 @@ const Budget = () => {
     { id: "settings", icon: Settings, label: "Settings" },
   ];
 
-  if (loading) {
+  if (loading || !user) {
     return (
-      <div className="min-h-screen bg-background p-4 space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-32 mb-6"></div>
-          <div className="h-48 bg-muted rounded-xl mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-20 bg-muted rounded-xl"></div>
-            ))}
-          </div>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
+    <DashboardLayout>
       <div className="p-6 pb-4">
         <div className="flex items-center justify-between">
           <h1 className="text-h4 text-primary font-gilroy">Budgets</h1>
@@ -345,9 +358,9 @@ const Budget = () => {
       <AddCategoryDialog 
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onSuccess={fetchBudgetData}
+        onSuccess={() => fetchBudgetData()}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 

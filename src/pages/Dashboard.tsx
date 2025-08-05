@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,10 +63,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader user={user} onLogout={handleLogout} />
-      
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
+    <DashboardLayout>
+      <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-h1 font-heading font-book text-primary mb-2">
@@ -189,8 +187,8 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Lightbulb, TrendingDown } from "lucide-react";
-import Layout from "@/components/Layout";
+import { DashboardLayout } from "@/components/DashboardLayout";
 
 // Sample data for the expenditure chart
 const expenditureData = {
@@ -33,7 +36,44 @@ const expenditureData = {
 };
 
 const Insights = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [timeFilter, setTimeFilter] = useState<"daily" | "weekly" | "monthly">("daily");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const getUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+      
+      setUser(user);
+    } catch (error) {
+      console.error("Error getting user:", error);
+      navigate("/login");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   const formatCurrency = (value: number) => {
     return `$${value.toLocaleString()}`;
@@ -54,7 +94,7 @@ const Insights = () => {
   };
 
   return (
-    <Layout>
+    <DashboardLayout>
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           {/* Page Header */}
@@ -197,7 +237,7 @@ const Insights = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 };
 

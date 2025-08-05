@@ -23,6 +23,7 @@ import AdminBranding from "./pages/admin/AdminBranding";
 import Dashboard from "./pages/Dashboard";
 import Insights from "./pages/Insights";
 import Budget from "./pages/Budget";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/budget" element={<Budget />} />
+          <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             {/* Admin routes */}
             <Route path="/admin/footer" element={<AdminFooter />} />
