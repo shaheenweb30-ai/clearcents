@@ -4,7 +4,7 @@ import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
 import { useHomepageContent } from "@/hooks/useHomepageContent";
 import { useFooterLinks } from "@/hooks/useFooterLinks";
 import { FooterManager } from "@/components/admin/FooterManager";
-import { useBrandingSettings } from "@/hooks/useBrandingSettings";
+import { useBrandingSettings } from "@/contexts/BrandingContext";
 
 const Footer = () => {
   const { getContentBySection } = useHomepageContent();

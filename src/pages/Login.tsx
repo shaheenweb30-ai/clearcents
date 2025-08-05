@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
-import { useBrandingSettings } from "@/hooks/useBrandingSettings";
+import { useBrandingSettings } from "@/contexts/BrandingContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });

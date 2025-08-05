@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, DollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserProfileDropdown } from "./UserProfileDropdown";
-import { useBrandingSettings } from "@/hooks/useBrandingSettings";
+import { useBrandingSettings } from "@/contexts/BrandingContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

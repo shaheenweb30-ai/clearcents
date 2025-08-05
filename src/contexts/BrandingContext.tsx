@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface BrandingSettings {
@@ -12,7 +12,29 @@ export interface BrandingSettings {
   updated_at: string;
 }
 
-export function useBrandingSettings() {
+interface BrandingContextType {
+  settings: BrandingSettings | null;
+  loading: boolean;
+  updateSettings: (updates: Partial<BrandingSettings>) => Promise<BrandingSettings | undefined>;
+  uploadLogo: (file: File) => Promise<string>;
+  refetch: () => Promise<void>;
+}
+
+const BrandingContext = createContext<BrandingContextType | undefined>(undefined);
+
+export const useBrandingSettings = () => {
+  const context = useContext(BrandingContext);
+  if (!context) {
+    throw new Error('useBrandingSettings must be used within a BrandingProvider');
+  }
+  return context;
+};
+
+interface BrandingProviderProps {
+  children: ReactNode;
+}
+
+export function BrandingProvider({ children }: BrandingProviderProps) {
   const [settings, setSettings] = useState<BrandingSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -65,21 +87,14 @@ export function useBrandingSettings() {
 
   const uploadLogo = async (file: File) => {
     try {
-      console.log('Starting logo upload:', file.name, file.size, file.type);
-      
       const fileExt = file.name.split('.').pop();
       const fileName = `logo-${Date.now()}.${fileExt}`;
-      
-      console.log('Upload filename:', fileName);
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('content-images')
         .upload(fileName, file);
 
-      console.log('Upload result:', { uploadData, uploadError });
-
       if (uploadError) {
-        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
@@ -87,10 +102,7 @@ export function useBrandingSettings() {
         .from('content-images')
         .getPublicUrl(fileName);
 
-      console.log('Generated public URL:', publicUrl);
-
-      const updateResult = await updateSettings({ logo_url: publicUrl });
-      console.log('Settings update result:', updateResult);
+      await updateSettings({ logo_url: publicUrl });
       
       return publicUrl;
     } catch (error) {
@@ -99,11 +111,15 @@ export function useBrandingSettings() {
     }
   };
 
-  return {
-    settings,
-    loading,
-    updateSettings,
-    uploadLogo,
-    refetch: fetchSettings
-  };
+  return (
+    <BrandingContext.Provider value={{ 
+      settings, 
+      loading, 
+      updateSettings, 
+      uploadLogo, 
+      refetch: fetchSettings 
+    }}>
+      {children}
+    </BrandingContext.Provider>
+  );
 }
