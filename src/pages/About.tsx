@@ -9,7 +9,7 @@ const About = () => {
     {
       icon: Target,
       title: "Clarity",
-      description: "We believe financial management should be crystal clear. No jargon, no confusion—just simple tools that work."
+      description: "We sha financial management should be crystal clear. No jargon, no confusion—just simple tools that work."
     },
     {
       icon: Users,
