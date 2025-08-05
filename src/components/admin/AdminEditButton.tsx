@@ -8,17 +8,19 @@ import { Edit, Upload } from 'lucide-react';
 import { useHomepageContent, HomepageContent } from '@/hooks/useHomepageContent';
 import type { FeaturesContent } from '@/hooks/useFeaturesContent';
 import type { PricingContent } from '@/hooks/usePricingContent';
+import type { AboutContent } from '@/hooks/useAboutContent';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AdminEditButtonProps {
   sectionId: string;
-  currentContent?: HomepageContent | FeaturesContent | PricingContent;
-  contentType?: 'homepage' | 'features' | 'pricing';
-  updateContent: (sectionId: string, updates: any) => Promise<any>;
+  currentContent?: HomepageContent | FeaturesContent | PricingContent | AboutContent;
+  contentType?: 'homepage' | 'features' | 'pricing' | 'about';
+  updateContent: (sectionId: string, updates: Record<string, unknown>) => Promise<unknown>;
+  refetch?: () => Promise<void>;
 }
 
-export function AdminEditButton({ sectionId, currentContent, contentType = 'homepage', updateContent }: AdminEditButtonProps) {
+export function AdminEditButton({ sectionId, currentContent, contentType = 'homepage', updateContent, refetch }: AdminEditButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -50,7 +52,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
         title_color: currentContent.title_color || '#000000',
         subtitle_color: currentContent.subtitle_color || '#000000',
         description_color: currentContent.description_color || '#666666',
-        background_color: (currentContent as FeaturesContent | PricingContent).background_color || '#FFFFFF',
+        background_color: (currentContent as FeaturesContent | PricingContent | AboutContent).background_color || '#FFFFFF',
         image_url: currentContent.image_url || ''
       });
     }
@@ -78,10 +80,12 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
       console.log('Save successful:', result);
       toast.success('Content updated successfully!');
       setIsOpen(false);
-      // Give a small delay before reload to let the toast show
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // Refetch content instead of reloading the page
+      if (refetch) {
+        setTimeout(() => {
+          refetch();
+        }, 500);
+      }
     } catch (error) {
       console.error('Save failed:', error);
       console.error('Error details:', {
@@ -258,7 +262,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
             </div>
           </div>
           
-          {(contentType === 'features' || contentType === 'pricing') && (
+          {(contentType === 'features' || contentType === 'pricing' || contentType === 'about') && (
             <div>
               <Label htmlFor="background_color">Background Color</Label>
               <Input

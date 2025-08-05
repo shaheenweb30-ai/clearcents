@@ -20,9 +20,6 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Budget", url: "/budget", icon: PiggyBank },
-  { title: "Insights", url: "/insights", icon: TrendingUp },
 ];
 
 const bottomItems = [
