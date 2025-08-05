@@ -8,6 +8,8 @@ import { DollarSign, Mail, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import Layout from "@/components/Layout";
+import { useBrandingSettings } from "@/hooks/useBrandingSettings";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -15,6 +17,7 @@ const Login = () => {
   const [socialLoading, setSocialLoading] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { settings: brandingSettings } = useBrandingSettings();
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,18 +73,29 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
-        {/* Branding */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center space-x-3">
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-              <DollarSign className="w-7 h-7 text-primary-foreground" />
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-8">
+          {/* Branding */}
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center space-x-3">
+              {brandingSettings?.logo_url ? (
+                <img 
+                  src={brandingSettings.logo_url} 
+                  alt="Logo" 
+                  className="w-12 h-12 object-contain"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                  <DollarSign className="w-7 h-7 text-primary-foreground" />
+                </div>
+              )}
+              <h1 className="font-heading font-bold text-3xl text-foreground">
+                {brandingSettings?.business_name || "ClearCents"}
+              </h1>
             </div>
-            <h1 className="font-heading font-bold text-3xl text-foreground">ClearCents</h1>
+            <p className="text-muted-foreground font-body">Every cent with purpose.</p>
           </div>
-          <p className="text-muted-foreground font-body">Every cent with purpose.</p>
-        </div>
 
         {/* Login Card */}
         <Card className="border-border shadow-medium">
@@ -212,8 +226,9 @@ const Login = () => {
             <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
