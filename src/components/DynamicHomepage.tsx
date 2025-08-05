@@ -61,31 +61,7 @@ export function DynamicHomepage() {
       </AdminContentWrapper>
 
       {/* Trust Indicators */}
-      <section className="py-16 lg:py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 text-center">
-            <div className="space-y-3">
-              <div className="flex items-center justify-center mb-3">
-                <Star className="w-5 h-5 text-neon-yellow fill-current" />
-                <Star className="w-5 h-5 text-neon-yellow fill-current" />
-                <Star className="w-5 h-5 text-neon-yellow fill-current" />
-                <Star className="w-5 h-5 text-neon-yellow fill-current" />
-                <Star className="w-5 h-5 text-neon-yellow fill-current" />
-              </div>
-              <div className="text-2xl lg:text-3xl font-bold text-foreground">4.8</div>
-              <div className="text-sm lg:text-base text-muted-foreground">Customer Rating</div>
-            </div>
-            <div className="space-y-3">
-              <div className="text-2xl lg:text-3xl font-bold text-foreground">4.9</div>
-              <div className="text-sm lg:text-base text-muted-foreground">App Store</div>
-            </div>
-            <div className="space-y-3">
-              <div className="text-2xl lg:text-3xl font-bold text-foreground">4.8</div>
-              <div className="text-sm lg:text-base text-muted-foreground">Google Play</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       {/* Empower Section */}
       <AdminContentWrapper sectionId="empower" className="py-16 lg:py-24 bg-background">
