@@ -6,20 +6,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { UserProfileDropdown } from "./UserProfileDropdown";
 import { Logo } from "./Logo";
 import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
 
   const isActive = (path: string) => location.pathname === path;
 
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Features", href: "/features" },
-    { name: "Pricing", href: "/pricing" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: t('common.home'), href: "/" },
+    { name: t('common.features'), href: "/features" },
+    { name: t('common.pricing'), href: "/pricing" },
+    { name: t('common.about'), href: "/about" },
+    { name: t('common.contact'), href: "/contact" },
   ];
 
   return (
@@ -49,19 +51,19 @@ const Header = () => {
           {/* CTA Buttons or User Profile */}
           <div className="hidden md:flex items-center space-x-3">
             {loading ? (
-              <div className="text-sm text-muted-foreground">Loading...</div>
+              <div className="text-sm text-muted-foreground">{t('common.loading')}</div>
             ) : user ? (
               <UserProfileDropdown />
             ) : (
               <>
                 <Link to="/login">
                   <Button variant="ghost" size="default" className="text-black hover:text-black">
-                    Log In
+                    {t('common.login')}
                   </Button>
                 </Link>
                 <Link to="/signup">
                   <Button variant="hero" size="default">
-                    Get Started
+                    {t('common.getStarted')}
                   </Button>
                 </Link>
               </>
@@ -99,7 +101,7 @@ const Header = () => {
               ))}
               
               {loading ? (
-                <div className="px-4 text-sm text-muted-foreground">Loading...</div>
+                <div className="px-4 text-sm text-muted-foreground">{t('common.loading')}</div>
               ) : user ? (
                 <div className="px-4 border-t pt-4">
                   <UserProfileDropdown />
@@ -108,12 +110,12 @@ const Header = () => {
                 <>
                   <Link to="/login" className="px-4">
                     <Button variant="ghost" size="default" className="w-full text-black hover:text-black">
-                      Log In
+                      {t('common.login')}
                     </Button>
                   </Link>
                   <Link to="/signup" className="px-4">
                     <Button variant="hero" size="default" className="w-full">
-                      Get Started
+                      {t('common.getStarted')}
                     </Button>
                   </Link>
                 </>

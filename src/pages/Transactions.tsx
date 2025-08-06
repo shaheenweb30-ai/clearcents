@@ -451,34 +451,36 @@ const Transactions = () => {
 
   return (
     <SettingsLayout activeTab="transactions">
-      <div className="space-y-6">
+      <div className="container mx-auto px-6 py-8 max-w-6xl">
 
         
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-h1 font-heading font-book text-primary mb-2">
-              Transactions
-            </h1>
-            <p className="text-body text-muted-foreground">
-              Manage and track all your financial activities
-            </p>
-            {categories.length === 0 && (
-              <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                <p className="text-sm text-yellow-800">
-                  <strong>No categories available.</strong> Please create categories first to add transactions.
-                  <Button 
-                    variant="link" 
-                    size="sm" 
-                    className="p-0 h-auto text-yellow-800 underline"
-                    onClick={() => navigate('/categories')}
-                  >
-                    Go to Categories
-                  </Button>
-                </p>
-              </div>
-            )}
-          </div>
+        <div className="mb-8">
+          <h1 className="text-3xl font-heading font-bold text-foreground mb-2">
+            Transactions
+          </h1>
+          <p className="text-muted-foreground">
+            Manage and track all your financial activities
+          </p>
+          {categories.length === 0 && (
+            <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-sm text-yellow-800">
+                <strong>No categories available.</strong> Please create categories first to add transactions.
+                <Button 
+                  variant="link" 
+                  size="sm" 
+                  className="p-0 h-auto text-yellow-800 underline"
+                  onClick={() => navigate('/categories')}
+                >
+                  Go to Categories
+                </Button>
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Add Transaction Button */}
+        <div className="flex justify-end mb-6">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={() => resetForm()} disabled={categories.length === 0}>
@@ -575,7 +577,7 @@ const Transactions = () => {
         </div>
 
         {/* Filters */}
-        <Card>
+        <Card className="mt-6">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -727,7 +729,7 @@ const Transactions = () => {
         </Card>
 
         {/* Transactions Table */}
-        <Card>
+        <Card className="mt-6">
           <CardHeader>
             <CardTitle>
               Transactions ({filteredTransactions.length})

@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { SettingsLayout } from "@/components/SettingsLayout";
 import { useCategories, Category } from "@/hooks/useCategories";
+import { useOnboarding } from "@/hooks/useOnboarding";
 
 const Categories = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -39,6 +40,7 @@ const Categories = () => {
 
   const { toast } = useToast();
   const { categories, loading, addCategory, updateCategory, deleteCategory } = useCategories(user?.id);
+  const { currentStep, completeStepAndNavigate } = useOnboarding();
 
   // Predefined icons for the icon picker
   const availableIcons = [
@@ -81,6 +83,18 @@ const Categories = () => {
 
       setFormData({ name: '', icon: '🏷️', color: '#3B82F6' });
       setIsAddDialogOpen(false);
+
+      // Show success message and advance onboarding
+      toast({
+        title: "Great! Category Created ✅",
+        description: "Now let's set a budget for this category. This will help you track your spending and stay on target.",
+        duration: 4000,
+      });
+
+      // Complete the current onboarding step if we're on the create-category step
+      if (currentStep?.id === 'create-category') {
+        completeStepAndNavigate('create-category');
+      }
     } catch (error) {
       console.error('Error adding category:', error);
     }

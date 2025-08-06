@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 import { ContentUpdateIndicator } from "@/components/ContentUpdateIndicator";
+import './i18n';
 import Home from "./pages/Home";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
@@ -128,11 +129,11 @@ const AppContent = () => {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/profile" element={<Profile />} />
                 {/* Admin Routes */}
-                <Route path="/admin/pages" element={<AdminPages />} />
-                <Route path="/admin/branding" element={<AdminBranding />} />
-                <Route path="/admin/footer" element={<AdminFooter />} />
-                <Route path="/admin/faq" element={<AdminFAQ />} />
-                <Route path="/admin/packages" element={<AdminPackages />} />
+                         <Route path="/admin/pages" element={<AdminPages />} />
+         <Route path="/admin/branding" element={<AdminBranding />} />
+         <Route path="/admin/footer" element={<AdminFooter />} />
+         <Route path="/admin/faq" element={<AdminFAQ />} />
+         <Route path="/admin/packages" element={<AdminPackages />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

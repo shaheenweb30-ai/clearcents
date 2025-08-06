@@ -1,11 +1,14 @@
 import { useOptimizedHomepageContent } from "@/hooks/useOptimizedHomepageContent";
+import { useDynamicTranslations } from "@/hooks/useDynamicTranslations";
 import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
 import { PageManager } from "@/components/admin/PageManager";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Users, CreditCard, DollarSign, BarChart3, PieChart, Globe } from "lucide-react";
 import Layout from "@/components/Layout";
+import { useTranslation } from "react-i18next";
 export function DynamicHomepage() {
+  const { t } = useTranslation();
   const {
     content,
     loading,
@@ -13,10 +16,14 @@ export function DynamicHomepage() {
     getContentBySection
   } = useOptimizedHomepageContent();
   
+  const {
+    getContentWithFallback
+  } = useDynamicTranslations();
+  
   if (loading) {
     return <Layout>
         <div className="flex items-center justify-center min-h-screen">
-          <div className="text-lg">Loading...</div>
+          <div className="text-lg">{t('common.loading')}</div>
         </div>
       </Layout>;
   }
@@ -29,7 +36,7 @@ export function DynamicHomepage() {
               ClearCents
             </h1>
             <p className="text-lg text-muted-foreground mb-4">
-              Welcome to your financial analytics dashboard
+              {t('home.hero.subtitle')}
             </p>
             <div className="text-sm text-muted-foreground">
               Data loading error - showing default content
@@ -58,18 +65,18 @@ export function DynamicHomepage() {
                 <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight" style={{
                 color: heroContent?.title_color || '#000000'
               }}>
-                  {heroContent?.title || 'Maximize 💰 Your Financial Potential'}
+                  {heroContent?.title || getContentWithFallback('hero', 'title')}
                 </h1>
                 <p className="font-body text-lg md:text-xl lg:text-2xl" style={{
                 color: heroContent?.subtitle_color || '#666666'
               }}>
-                  {heroContent?.subtitle || 'All-in-one Financial Analytics Dashboard'}
+                  {heroContent?.subtitle || getContentWithFallback('hero', 'subtitle')}
                 </p>
                 {heroContent?.button_text && <Button variant="default" size="lg" className="rounded-full px-8" style={{
                 backgroundColor: heroContent.button_color || '#500CB0',
                 color: heroContent.button_text_color || '#FFFFFF'
               }}>
-                    {heroContent.button_text}
+                    {heroContent.button_text || getContentWithFallback('hero', 'button_text')}
                   </Button>}
               </div>
               <div className="relative">
@@ -91,7 +98,7 @@ export function DynamicHomepage() {
             <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl" style={{
               color: empowerContent?.title_color || '#000000'
             }}>
-              {empowerContent?.title || 'Empower Your Financial Future with us'}
+              {empowerContent?.title || t('home.empower.title')}
             </h2>
           </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">

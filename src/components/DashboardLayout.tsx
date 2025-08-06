@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { UserProfileDropdown } from "./UserProfileDropdown";
 import { Logo } from "./Logo";
+import { OnboardingProvider } from "./OnboardingProvider";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -26,7 +27,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
           </header>
           <main className="flex-1 overflow-auto">
-            {children}
+            <OnboardingProvider>
+              {children}
+            </OnboardingProvider>
           </main>
         </div>
       </div>

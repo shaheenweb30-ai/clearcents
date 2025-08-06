@@ -13,21 +13,21 @@ import { Separator } from "@/components/ui/separator";
 import { 
   Moon, 
   Sun, 
-  Bell, 
   DollarSign, 
-  Keyboard, 
-  Shield, 
-  Globe, 
   Database,
   Upload,
   Download,
   RotateCcw,
-  Palette
+  Palette,
+  Lightbulb
 } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
 import { SettingsLayout } from "@/components/SettingsLayout";
 import { AdminSetup } from "@/components/AdminSetup";
+import { OnboardingReset } from "@/components/OnboardingReset";
+import { OnboardingTip } from "@/components/OnboardingTip";
+import { OnboardingProvider } from "@/components/OnboardingProvider";
 
 const Settings = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -465,6 +465,19 @@ const Settings = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Onboarding Reset Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-heading flex items-center space-x-2">
+                <Lightbulb className="w-5 h-5" />
+                <span>Onboarding</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <OnboardingReset />
+            </CardContent>
+          </Card>
 
           {/* Admin Setup Section */}
           <Card>

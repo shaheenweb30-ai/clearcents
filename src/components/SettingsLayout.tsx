@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -9,56 +9,65 @@ import {
   ChevronRight,
   Receipt,
   Tag,
-  PiggyBank
+  PiggyBank,
+  Lightbulb
 } from "lucide-react";
 import { Logo } from "./Logo";
 import { UserProfileDropdown } from "./UserProfileDropdown";
+import { OnboardingProvider } from "./OnboardingProvider";
+import { useTranslation } from "react-i18next";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import { useToast } from "@/hooks/use-toast";
 
 interface SettingsLayoutProps {
   children: ReactNode;
   activeTab?: string;
 }
 
-const navigationItems = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-    description: "Overview of your finances"
-  },
-  {
-    name: "Transactions",
-    href: "/transactions",
-    icon: Receipt,
-    description: "Manage your transactions"
-  },
-  {
-    name: "Categories",
-    href: "/categories",
-    icon: Tag,
-    description: "Manage your spending categories"
-  },
-  {
-    name: "Budget",
-    href: "/budget",
-    icon: PiggyBank,
-    description: "Manage your budgets"
-  },
-  {
-    name: "Profile",
-    href: "/settings?tab=profile",
-    icon: User,
-    description: "Manage your account"
-  },
-  {
-    name: "Settings",
-    href: "/settings?tab=settings",
-    icon: Settings,
-    description: "Configure your preferences"
-  }
-];
-
 export function SettingsLayout({ children, activeTab }: SettingsLayoutProps) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { resetOnboarding } = useOnboarding();
+  const { toast } = useToast();
+  
+  const navigationItems = [
+    {
+      name: t('navigation.dashboard'),
+      href: "/dashboard",
+      icon: LayoutDashboard,
+      description: t('dashboard.description')
+    },
+    {
+      name: t('navigation.transactions'),
+      href: "/transactions",
+      icon: Receipt,
+      description: t('transactions.description')
+    },
+    {
+      name: t('navigation.categories'),
+      href: "/categories",
+      icon: Tag,
+      description: t('categories.description')
+    },
+    {
+      name: t('navigation.budget'),
+      href: "/budget",
+      icon: PiggyBank,
+      description: t('budget.description')
+    },
+    {
+      name: t('common.profile'),
+      href: "/settings?tab=profile",
+      icon: User,
+      description: t('settings.description')
+    },
+    {
+      name: t('common.settings'),
+      href: "/settings?tab=settings",
+      icon: Settings,
+      description: t('settings.description')
+    }
+  ];
   const location = useLocation();
   const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
@@ -70,6 +79,20 @@ export function SettingsLayout({ children, activeTab }: SettingsLayoutProps) {
       return currentTab === tabParam;
     }
     return currentPath === path;
+  };
+
+  const handleNeedHelp = () => {
+    // Reset onboarding to start fresh
+    resetOnboarding();
+    
+    // Navigate to dashboard to start the journey
+    navigate('/dashboard');
+    
+    // Show toast notification
+    toast({
+      title: "Onboarding Restarted! 🎉",
+      description: "The guided tour has been restarted. Follow the tips to learn how to use ClearCents.",
+    });
   };
 
   return (
@@ -86,43 +109,64 @@ export function SettingsLayout({ children, activeTab }: SettingsLayoutProps) {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 border-r border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 min-h-[calc(100vh-4rem)]">
-          <div className="p-6">
-            <h2 className="font-heading font-semibold text-lg mb-4">Navigation</h2>
-            <nav className="space-y-2">
+        <aside className="w-64 border-r border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 min-h-[calc(100vh-4rem)] rtl:border-l rtl:border-r-0 overflow-hidden">
+          <div className="p-4">
+            <h2 className="font-heading font-semibold text-lg mb-4 px-2">Navigation</h2>
+            <nav className="space-y-1">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link key={item.name} to={item.href}>
                     <Button
                       variant={isActive(item.href) ? "default" : "ghost"}
-                      className={`w-full justify-start h-auto p-4 ${
+                      className={`w-full justify-start h-auto p-3 ${
                         isActive(item.href)
                           ? "bg-primary text-primary-foreground"
                           : "hover:bg-muted/50"
                       }`}
                     >
-                      <div className="flex items-center w-full">
-                        <Icon className="w-5 h-5 mr-3" />
-                        <div className="flex-1 text-left">
-                          <div className="font-medium">{item.name}</div>
-                          <div className="text-xs opacity-70">{item.description}</div>
+                      <div className="flex items-center w-full min-w-0">
+                        <Icon className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <div className="flex-1 text-left min-w-0">
+                          <div className="font-medium truncate">{item.name}</div>
+                          <div className="text-xs opacity-70 truncate">{item.description}</div>
                         </div>
-                        <ChevronRight className="w-4 h-4 ml-2" />
+                        <ChevronRight className="w-4 h-4 ml-2 flex-shrink-0" />
                       </div>
                     </Button>
                   </Link>
                 );
               })}
+              
+              {/* Help Section */}
+              <div className="mt-6 pt-4 border-t border-border">
+                <h3 className="font-heading font-semibold text-sm mb-3 px-2 text-muted-foreground">Help & Support</h3>
+                <Button
+                  variant="ghost"
+                  onClick={handleNeedHelp}
+                  className="w-full justify-start h-auto p-3 hover:bg-blue-50 text-blue-700 hover:text-blue-800"
+                >
+                  <div className="flex items-center w-full min-w-0">
+                    <Lightbulb className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <div className="flex-1 text-left min-w-0">
+                      <div className="font-medium truncate">Need help?</div>
+                      <div className="text-xs opacity-70 truncate">Restart guided tour</div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 ml-2 flex-shrink-0" />
+                  </div>
+                </Button>
+              </div>
             </nav>
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1">
-          <div className="p-6">
-            {children}
-          </div>
+        <main className="flex-1 overflow-auto">
+          <OnboardingProvider>
+            <div className="p-6">
+              {children}
+            </div>
+          </OnboardingProvider>
         </main>
       </div>
     </div>
