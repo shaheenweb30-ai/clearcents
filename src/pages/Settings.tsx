@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
-import ClearCentsNavigation from "@/components/ClearCentsNavigation";
+
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,9 @@ import {
   Palette
 } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
+import { SettingsLayout } from "@/components/SettingsLayout";
+import { AdminSetup } from "@/components/AdminSetup";
 
 const Settings = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -41,6 +44,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAdmin } = useUserRole(user);
+  const { settings: brandingSettings } = useOptimizedBrandingSettings();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -83,12 +87,14 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading settings...</p>
+      <SettingsLayout>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading settings...</p>
+          </div>
         </div>
-      </div>
+      </SettingsLayout>
     );
   }
 
@@ -97,9 +103,8 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-16 md:pb-0">
-      <ClearCentsNavigation user={user} onLogout={handleLogout} />
-      
+    <SettingsLayout>
+      <div className="space-y-6">
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Header */}
         <div className="space-y-6 mb-8">
@@ -461,6 +466,19 @@ const Settings = () => {
             </Card>
           )}
 
+          {/* Admin Setup Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-heading flex items-center space-x-2">
+                <Database className="w-5 h-5" />
+                <span>Admin Setup</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AdminSetup />
+            </CardContent>
+          </Card>
+
           {/* Reset Section */}
           <Card className="border-destructive/20">
             <CardHeader>
@@ -486,6 +504,7 @@ const Settings = () => {
         </div>
       </main>
     </div>
+    </SettingsLayout>
   );
 };
 

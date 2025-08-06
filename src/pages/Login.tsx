@@ -9,7 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
-import { useBrandingSettings } from "@/contexts/BrandingContext";
+import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
+import { Logo } from "@/components/Logo";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -17,7 +18,7 @@ const Login = () => {
   const [socialLoading, setSocialLoading] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { settings: brandingSettings } = useBrandingSettings();
+  const { settings: brandingSettings } = useOptimizedBrandingSettings();
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +34,7 @@ const Login = () => {
 
       if (data.user) {
         toast({ title: "Welcome back!", description: "Successfully signed in." });
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -80,21 +81,8 @@ const Login = () => {
         <div className="w-full max-w-md space-y-8">
           {/* Branding */}
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center space-x-3">
-              {brandingSettings?.logo_url ? (
-                <img 
-                  src={brandingSettings.logo_url} 
-                  alt="Logo" 
-                  className="w-12 h-12 object-contain"
-                />
-              ) : (
-                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                  <DollarSign className="w-7 h-7 text-primary-foreground" />
-                </div>
-              )}
-              <h1 className="font-heading font-bold text-3xl text-foreground">
-                {brandingSettings?.business_name || "ClearCents"}
-              </h1>
+            <div className="flex items-center justify-center">
+              <Logo size="lg" showText={true} />
             </div>
             <p className="text-muted-foreground font-body">Every cent with purpose.</p>
           </div>

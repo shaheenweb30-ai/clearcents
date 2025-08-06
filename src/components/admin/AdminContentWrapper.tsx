@@ -2,10 +2,10 @@ import { ReactNode, CSSProperties } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import { AdminEditButton } from './AdminEditButton';
-import { useHomepageContent } from '@/hooks/useHomepageContent';
+import { useOptimizedHomepageContent } from '@/hooks/useOptimizedHomepageContent';
 import { useFeaturesContent } from '@/hooks/useFeaturesContent';
-import { usePricingContent } from '@/hooks/usePricingContent';
-import { useAboutContent } from '@/hooks/useAboutContent';
+import { useOptimizedPricingContent } from '@/hooks/useOptimizedPricingContent';
+import { useOptimizedAboutContent } from '@/hooks/useOptimizedAboutContent';
 
 interface AdminContentWrapperProps {
   sectionId: string;
@@ -32,10 +32,10 @@ export function AdminContentWrapper({
     isAdmin,
     userId: user?.id
   });
-  const { getContentBySection: getHomepageContent, updateContent: updateHomepageContent, refetch: refetchHomepage } = useHomepageContent();
+  const { getContentBySection: getHomepageContent, updateContent: updateHomepageContent, refetch: refetchHomepage } = useOptimizedHomepageContent();
   const { getContentBySection: getFeaturesContent, updateContent: updateFeaturesContent, refetch: refetchFeatures } = useFeaturesContent();
-  const { getContentBySection: getPricingContent, updateContent: updatePricingContent, refetch: refetchPricing } = usePricingContent();
-  const { getContentBySection: getAboutContent, updateContent: updateAboutContent, refetch: refetchAbout } = useAboutContent();
+  const { getContentBySection: getPricingContent, updateContent: updatePricingContent, refetch: refetchPricing } = useOptimizedPricingContent();
+  const { getContentBySection: getAboutContent, updateContent: updateAboutContent, refetch: refetchAbout } = useOptimizedAboutContent();
   
   const currentContent = contentType === 'features' 
     ? getFeaturesContent(sectionId) 

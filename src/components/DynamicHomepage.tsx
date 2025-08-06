@@ -1,4 +1,4 @@
-import { useHomepageContent } from "@/hooks/useHomepageContent";
+import { useOptimizedHomepageContent } from "@/hooks/useOptimizedHomepageContent";
 import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
 import { PageManager } from "@/components/admin/PageManager";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,32 @@ export function DynamicHomepage() {
   const {
     content,
     loading,
+    error,
     getContentBySection
-  } = useHomepageContent();
+  } = useOptimizedHomepageContent();
+  
   if (loading) {
     return <Layout>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-lg">Loading...</div>
+        </div>
+      </Layout>;
+  }
+  
+  if (error) {
+    return <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-foreground mb-4">
+              ClearCents
+            </h1>
+            <p className="text-lg text-muted-foreground mb-4">
+              Welcome to your financial analytics dashboard
+            </p>
+            <div className="text-sm text-muted-foreground">
+              Data loading error - showing default content
+            </div>
+          </div>
         </div>
       </Layout>;
   }

@@ -11,13 +11,13 @@ import Layout from '@/components/Layout';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
-import { usePricingContent } from '@/hooks/usePricingContent';
+import { useOptimizedPricingContent } from '@/hooks/useOptimizedPricingContent';
 import { toast } from 'sonner';
 
 export default function AdminPackages() {
   const { user } = useAuth();
   const { isAdmin } = useUserRole(user);
-  const { getContentBySection, updateContent, loading } = usePricingContent();
+  const { getContentBySection, updateContent, loading } = useOptimizedPricingContent();
 
   const [pricingData, setPricingData] = useState({
     title: '',

@@ -5,11 +5,11 @@ import { CheckCircle, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Link } from "react-router-dom";
 import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
-import { usePricingContent } from "@/hooks/usePricingContent";
+import { useOptimizedPricingContent } from "@/hooks/useOptimizedPricingContent";
 import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
-  const { getContentBySection } = usePricingContent();
+  const { getContentBySection, loading, error } = useOptimizedPricingContent();
   const [faqs, setFaqs] = useState([]);
   
   const heroContent = getContentBySection('hero');
@@ -50,6 +50,34 @@ const Pricing = () => {
     "Email support",
     "Cancel anytime"
   ];
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading pricing content...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Error loading pricing content: {error.message}</p>
+            <button onClick={() => window.location.reload()} className="text-primary hover:underline">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

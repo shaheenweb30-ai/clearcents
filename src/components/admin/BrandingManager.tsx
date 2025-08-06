@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, Image, Save } from 'lucide-react';
-import { useBrandingSettings } from '@/contexts/BrandingContext';
+import { useOptimizedBrandingSettings } from '@/hooks/useOptimizedBrandingSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import { toast } from 'sonner';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 export function BrandingManager() {
   const { user } = useAuth();
   const { isAdmin } = useUserRole(user);
-  const { settings, updateSettings, uploadLogo, loading } = useBrandingSettings();
+  const { settings, updateSettings, uploadLogo, loading, isUpdating, isUploading } = useOptimizedBrandingSettings();
   const [uploading, setUploading] = useState(false);
   const [businessName, setBusinessName] = useState('');
   const [primaryColor, setPrimaryColor] = useState('#500CB0');

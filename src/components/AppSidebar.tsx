@@ -3,9 +3,11 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
   TrendingUp, 
-  PiggyBank, 
   Settings, 
-  User 
+  User,
+  Tag,
+  BarChart3,
+  PiggyBank
 } from "lucide-react";
 import {
   Sidebar,
@@ -20,6 +22,11 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Transactions", url: "/transactions", icon: TrendingUp },
+  { title: "Categories", url: "/categories", icon: Tag },
+  { title: "Budget", url: "/budget", icon: PiggyBank },
+  { title: "Insights", url: "/insights", icon: BarChart3 },
 ];
 
 const bottomItems = [
@@ -30,12 +37,10 @@ const bottomItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
-  const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
 
-  const isActive = (path: string) => currentPath === path;
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-primary/10 text-primary font-medium border-r-2 border-primary" : "hover:bg-muted/50 text-foreground";
+    isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted/50 text-foreground";
 
   return (
     <Sidebar

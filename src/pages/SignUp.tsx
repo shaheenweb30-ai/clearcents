@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { DollarSign, User, Mail, Lock, ArrowRight } from "lucide-react";
+import { User as UserIcon, Mail, Lock, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Logo } from "@/components/Logo";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ const SignUp = () => {
           title: "Account created successfully!",
           description: "Please check your email to verify your account.",
         });
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -75,11 +76,8 @@ const SignUp = () => {
             <div className="order-2 lg:order-1">
               <Card className="border-2 border-mint shadow-2xl">
                 <CardHeader className="text-center pb-6">
-                  <div className="flex items-center justify-center space-x-2 mb-4">
-                    <div className="w-10 h-10 bg-navy rounded-full flex items-center justify-center">
-                      <DollarSign className="w-6 h-6 text-white" />
-                    </div>
-                    <span className="font-heading font-bold text-2xl text-navy">ClearCents</span>
+                  <div className="flex items-center justify-center mb-4">
+                    <Logo size="lg" showText={true} />
                   </div>
                   <h1 className="font-heading font-bold text-3xl text-navy mb-2">
                     Start your free trial today
@@ -95,7 +93,7 @@ const SignUp = () => {
                         Full Name
                       </Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                        <UserIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                         <Input
                           id="name"
                           name="name"

@@ -5,7 +5,7 @@ import { Heart, Target, Users, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Link } from "react-router-dom";
 import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
-import { useAboutContent } from "@/hooks/useAboutContent";
+import { useOptimizedAboutContent } from "@/hooks/useOptimizedAboutContent";
 
 interface AboutStat {
   id: string;
@@ -16,7 +16,7 @@ interface AboutStat {
 }
 
 const About = () => {
-  const { getContentBySection } = useAboutContent();
+  const { getContentBySection, loading, error } = useOptimizedAboutContent();
   const [stats, setStats] = useState<AboutStat[]>([]);
   
   const heroContent = getContentBySection('hero');
@@ -82,6 +82,34 @@ const About = () => {
       description: "Budgeting doesn't have to be complicated. We focus on what matters most, keeping everything simple and effective."
     }
   ];
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading about content...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Error loading about content: {error.message}</p>
+            <button onClick={() => window.location.reload()} className="text-primary hover:underline">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

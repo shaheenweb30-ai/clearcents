@@ -5,10 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Edit, Upload } from 'lucide-react';
-import { useHomepageContent, HomepageContent } from '@/hooks/useHomepageContent';
+import { useOptimizedHomepageContent, HomepageContent } from '@/hooks/useOptimizedHomepageContent';
 import type { FeaturesContent } from '@/hooks/useFeaturesContent';
-import type { PricingContent } from '@/hooks/usePricingContent';
-import type { AboutContent } from '@/hooks/useAboutContent';
+import type { PricingContent } from '@/hooks/useOptimizedPricingContent';
+import type { AboutContent } from '@/hooks/useOptimizedAboutContent';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 

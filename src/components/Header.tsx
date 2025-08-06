@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, DollarSign } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserProfileDropdown } from "./UserProfileDropdown";
-import { useBrandingSettings } from "@/contexts/BrandingContext";
+import { Logo } from "./Logo";
+import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { user, loading } = useAuth();
-  const { settings: brandingSettings, loading: brandingLoading } = useBrandingSettings();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -27,22 +27,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            {brandingSettings?.logo_url ? (
-              <img 
-                src={brandingSettings.logo_url} 
-                alt={brandingSettings.business_name || "Logo"} 
-                className="h-8 w-auto object-contain"
-              />
-            ) : (
-              <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-white" />
-              </div>
-            )}
-            <span className="font-heading font-bold text-xl text-navy">
-              {brandingSettings?.business_name || 'ClearCents'}
-            </span>
-          </Link>
+          <Logo size="md" />
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
