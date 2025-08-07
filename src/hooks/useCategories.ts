@@ -117,7 +117,12 @@ export const useCategories = (userId: string | undefined) => {
   };
 
   const deleteCategory = async (id: string) => {
-    if (!userId) return;
+    if (!userId) {
+      console.log('No userId provided for deleteCategory');
+      return;
+    }
+
+    console.log('Attempting to delete category:', { id, userId });
 
     try {
       const { error } = await supabase
@@ -126,8 +131,12 @@ export const useCategories = (userId: string | undefined) => {
         .eq('id', id)
         .eq('user_id', userId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
+      console.log('Category deleted from database, updating local state');
       setCategories(categories.filter(cat => cat.id !== id));
       
       toast({

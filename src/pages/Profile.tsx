@@ -159,15 +159,16 @@ const Profile = () => {
 
   return (
     <SettingsLayout>
-      <div className="container mx-auto px-6 py-8 max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-heading font-bold text-foreground mb-2">
-            Profile Settings
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your account information and security settings.
-          </p>
-        </div>
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-3xl font-heading font-bold text-foreground mb-2">
+              Profile Settings
+            </h1>
+            <p className="text-muted-foreground">
+              Manage your account information and security settings.
+            </p>
+          </div>
 
         <div className="space-y-6">
           {/* Personal Information */}
@@ -362,6 +363,7 @@ const Profile = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
         </div>
       </div>
     </SettingsLayout>

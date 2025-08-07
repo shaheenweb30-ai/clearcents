@@ -1,40 +1,40 @@
-import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, NavLink, Link } from "react-router-dom";
 import { 
-  LayoutDashboard, 
-  TrendingUp, 
+  Sidebar, 
+  SidebarContent, 
+  SidebarGroup, 
+  SidebarGroupContent, 
+  SidebarGroupLabel, 
+  SidebarMenu, 
+  SidebarMenuButton, 
+  SidebarMenuItem 
+} from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Home, 
+  Receipt, 
+  FolderOpen, 
+  BarChart3, 
   Settings, 
   User,
-  Tag,
-  BarChart3,
-  PiggyBank,
-  Lightbulb
+  Sparkles,
+  DollarSign,
+  Crown
 } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import { useOnboarding } from "@/hooks/useOnboarding";
-import { useToast } from "@/hooks/use-toast";
+import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
 
 const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Transactions", url: "/transactions", icon: TrendingUp },
-  { title: "Categories", url: "/categories", icon: Tag },
-  { title: "Budget", url: "/budget", icon: PiggyBank },
+  { title: "Dashboard", url: "/dashboard", icon: Home },
+  { title: "Transactions", url: "/transactions", icon: Receipt },
+  { title: "Categories", url: "/categories", icon: FolderOpen },
   { title: "Insights", url: "/insights", icon: BarChart3 },
 ];
 
 const bottomItems = [
-  { title: "Settings", url: "/settings", icon: Settings },
   { title: "Profile", url: "/profile", icon: User },
+  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Subscription", url: "/subscription", icon: Crown },
 ];
 
 export function AppSidebar() {
@@ -42,93 +42,95 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const isCollapsed = state === "collapsed";
-  const { resetOnboarding } = useOnboarding();
   const { toast } = useToast();
+  const { settings: brandingSettings } = useOptimizedBrandingSettings();
 
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted/50 text-foreground";
-
-  const handleNeedHelp = () => {
-    // Reset onboarding to start fresh
-    resetOnboarding();
-    
-    // Navigate to dashboard to start the journey
-    navigate('/dashboard');
-    
-    // Show toast notification
-    toast({
-      title: "Onboarding Restarted! 🎉",
-      description: "The guided tour has been restarted. Follow the tips to learn how to use ClearCents.",
-    });
-  };
+    isActive 
+      ? "bg-primary/10 text-primary border-l-4 border-primary shadow-lg" 
+      : "hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-gray-100/50 text-gray-700 hover:text-gray-900";
 
   return (
-    <Sidebar
-      collapsible="icon"
-    >
-      <SidebarContent className="flex flex-col h-full">
+    <Sidebar collapsible="icon" className="backdrop-blur-xl bg-white/80 border-r border-gray-200/50">
+      <SidebarContent className="flex flex-col h-full p-4">
+
+        {/* Logo/Brand Section */}
+        <div className="mb-8 p-4 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl border border-gray-200/50">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            {brandingSettings?.logo_url ? (
+              <img 
+                src={brandingSettings.logo_url} 
+                alt={brandingSettings.business_name || "Logo"} 
+                className="w-10 h-10 w-auto object-contain"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+            )}
+            {!isCollapsed && (
+              <div>
+                <h2 className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {brandingSettings?.business_name || 'ClearCents'}
+                </h2>
+                <p className="text-xs text-gray-500">Financial Freedom</p>
+              </div>
+            )}
+          </Link>
+        </div>
+
         {/* Main Navigation */}
         <SidebarGroup className="flex-1">
-          <SidebarGroupLabel className="text-sm font-heading font-book text-muted-foreground px-4 py-2">
-            Financial Tracking
+          <SidebarGroupLabel className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-2 mb-2">
+            {!isCollapsed && "Financial Tracking"}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink 
                       to={item.url} 
-                      className={({ isActive }) => `flex items-center px-4 py-3 rounded-lg mx-2 transition-all duration-200 ${getNavClass({ isActive })}`}
+                      className={({ isActive }) => `group flex items-center px-4 py-3 rounded-xl mx-1 transition-all duration-300 ease-out ${getNavClass({ isActive })}`}
                     >
-                      <item.icon className="h-5 w-5 mr-3 flex-shrink-0" />
+                      <div className="relative">
+                        <item.icon className="h-5 w-5 mr-3 flex-shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                        {location.pathname === item.url && (
+                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />
+                        )}
+                      </div>
                       {!isCollapsed && (
-                        <span className="text-sm font-body">{item.title}</span>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium block">{item.title}</span>
+                        </div>
                       )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Help Section */}
-        <SidebarGroup className="border-t border-border pt-4">
-          <SidebarGroupLabel className="text-sm font-heading font-book text-muted-foreground px-4 py-2">
-            Help & Support
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  onClick={handleNeedHelp}
-                  className="flex items-center px-4 py-3 rounded-lg mx-2 transition-all duration-200 hover:bg-blue-50 text-blue-700 hover:text-blue-800"
-                >
-                  <Lightbulb className="h-5 w-5 mr-3 flex-shrink-0" />
-                  {!isCollapsed && (
-                    <span className="text-sm font-body">Need help?</span>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Bottom Navigation */}
-        <SidebarGroup className="mt-auto border-t border-border pt-4">
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupLabel className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-2 mb-2">
+            {!isCollapsed && "Account"}
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {bottomItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink 
                       to={item.url} 
-                      className={({ isActive }) => `flex items-center px-4 py-3 rounded-lg mx-2 transition-all duration-200 ${getNavClass({ isActive })}`}
+                      className={({ isActive }) => `group flex items-center px-4 py-3 rounded-xl mx-1 transition-all duration-300 ease-out ${getNavClass({ isActive })}`}
                     >
-                      <item.icon className="h-5 w-5 mr-3 flex-shrink-0" />
+                      <item.icon className="h-5 w-5 mr-3 flex-shrink-0 transition-transform duration-200 group-hover:scale-110" />
                       {!isCollapsed && (
-                        <span className="text-sm font-body">{item.title}</span>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium block">{item.title}</span>
+                        </div>
                       )}
                     </NavLink>
                   </SidebarMenuButton>
@@ -137,6 +139,8 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        
+
       </SidebarContent>
     </Sidebar>
   );

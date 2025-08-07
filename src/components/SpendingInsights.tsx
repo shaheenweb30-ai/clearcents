@@ -259,8 +259,8 @@ export const SpendingInsights = ({ userId, transactions }: SpendingInsightsProps
 
   const handleInsightAction = (insight: SpendingInsight) => {
     if (insight.action.includes('Set a monthly budget for') && insight.category) {
-      // Navigate to budget page with category info
-      navigate('/budget', { 
+      // Navigate to categories page for budget management
+      navigate('/categories', { 
         state: { 
           selectedCategory: insight.category,
           action: 'set-budget'

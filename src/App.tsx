@@ -19,9 +19,11 @@ import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Categories from "./pages/Categories";
 import Insights from "./pages/Insights";
-import Budget from "./pages/Budget";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
+import Subscription from "./pages/Subscription";
+import Reports from "./pages/Reports";
+import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminBranding from "./pages/admin/AdminBranding";
@@ -125,9 +127,11 @@ const AppContent = () => {
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/insights" element={<Insights />} />
-                <Route path="/budget" element={<Budget />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/subscription" element={<Subscription />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/help" element={<Help />} />
                 {/* Admin Routes */}
                          <Route path="/admin/pages" element={<AdminPages />} />
          <Route path="/admin/branding" element={<AdminBranding />} />

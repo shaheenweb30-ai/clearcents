@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { SpendingInsights } from "@/components/SpendingInsights";
-import { SettingsLayout } from "@/components/SettingsLayout";
+import { DashboardLayout } from "@/components/DashboardLayout";
 
 const Insights = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -77,20 +77,22 @@ const Insights = () => {
   }
 
   return (
-    <SettingsLayout>
-      <div className="container mx-auto px-6 py-8 max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-heading font-bold text-foreground mb-2">
-            Spending Insights
-          </h1>
-          <p className="text-muted-foreground">
-            Get personalized tips and analysis to help you save money and meet your financial goals.
-          </p>
-        </div>
+    <DashboardLayout>
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-3xl font-heading font-bold text-foreground mb-2">
+              Spending Insights
+            </h1>
+            <p className="text-muted-foreground">
+              Get personalized tips and analysis to help you save money and meet your financial goals.
+            </p>
+          </div>
 
-        <SpendingInsights userId={user.id} transactions={transactions} />
+          <SpendingInsights userId={user.id} transactions={transactions} />
+        </div>
       </div>
-    </SettingsLayout>
+    </DashboardLayout>
   );
 };
 
