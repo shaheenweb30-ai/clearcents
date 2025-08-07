@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
+import { useSettings } from "@/contexts/SettingsContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +26,7 @@ import {
   RefreshCw,
   TrendingUp
 } from "lucide-react";
-import { DashboardLayout } from "@/components/DashboardLayout";
+import DashboardLayout from "@/components/DashboardLayout";
 
 interface SubscriptionPlan {
   id: string;
@@ -58,6 +59,7 @@ const Subscription = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { formatCurrency } = useSettings();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -188,12 +190,7 @@ const Subscription = () => {
     });
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
+
 
   if (loading) {
     return (
@@ -214,7 +211,7 @@ const Subscription = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8">
         <main className="container mx-auto px-4 py-6 max-w-6xl">
           {/* Header */}
           <div className="space-y-6 mb-8">

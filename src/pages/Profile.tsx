@@ -22,7 +22,7 @@ import {
   Globe
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { SettingsLayout } from "@/components/SettingsLayout";
+import DashboardLayout from "@/components/DashboardLayout";
 
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -158,7 +158,7 @@ const Profile = () => {
   }
 
   return (
-    <SettingsLayout>
+    <DashboardLayout>
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
           <div className="mb-6 sm:mb-8">
@@ -366,7 +366,7 @@ const Profile = () => {
         </div>
         </div>
       </div>
-    </SettingsLayout>
+    </DashboardLayout>
   );
 };
 

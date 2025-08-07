@@ -13,7 +13,7 @@ import {
   DropdownMenuSubTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User as UserIcon, Settings, LogOut, ChevronDown, Shield, Globe, FileText, Package, MessageSquare, LayoutDashboard, Receipt } from 'lucide-react';
+import { User as UserIcon, Settings, LogOut, ChevronDown, Shield, Globe, FileText, Package, MessageSquare, LayoutDashboard, Receipt, FolderOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import { supabase } from '@/integrations/supabase/client';
@@ -80,6 +80,13 @@ export function UserProfileDropdown() {
           <Link to="/transactions" className="flex items-center">
             <Receipt className="w-4 h-4 mr-2" />
             Transactions
+          </Link>
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link to="/categories" className="flex items-center">
+            <FolderOpen className="w-4 h-4 mr-2" />
+            Categories
           </Link>
         </DropdownMenuItem>
         

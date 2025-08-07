@@ -157,7 +157,7 @@ const About = () => {
               <div>
                 <h2 
                   className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-6"
-                  style={{ color: storyContent?.title_color || '#000000' }}
+                  style={{ color: storyContent?.title_color || '#1F2937' }}
                 >
                   {storyContent?.title || 'Our Story'}
                 </h2>
@@ -200,7 +200,7 @@ const About = () => {
             <div className="text-center mb-16">
               <h2 
                 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4"
-                style={{ color: valuesContent?.title_color || '#000000' }}
+                style={{ color: valuesContent?.title_color || '#1F2937' }}
               >
                 {valuesContent?.title || 'Our Values'}
               </h2>
@@ -241,7 +241,7 @@ const About = () => {
               <div className="text-center mb-12">
                 <h2 
                   className="font-heading font-bold text-3xl md:text-4xl mb-4"
-                  style={{ color: statsContent?.title_color || '#000000' }}
+                  style={{ color: statsContent?.title_color || '#1F2937' }}
                 >
                   {statsContent.title}
                 </h2>
@@ -305,7 +305,7 @@ const About = () => {
             <div className="text-center mb-12">
               <h2 
                 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4"
-                style={{ color: teamContent?.title_color || '#000000' }}
+                style={{ color: teamContent?.title_color || '#1F2937' }}
               >
                 {teamContent?.title || 'Built by a small, passionate team'}
               </h2>

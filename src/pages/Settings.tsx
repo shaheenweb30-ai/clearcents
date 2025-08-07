@@ -13,16 +13,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { 
   User as UserIcon, 
-  Shield, 
   Bell, 
   Palette, 
   Globe, 
   CreditCard,
   Download,
   Trash2,
-  Eye,
-  EyeOff,
-  Key,
   Mail,
   Phone,
   MapPin,
@@ -35,8 +31,9 @@ import {
   CheckCircle,
   Info
 } from "lucide-react";
-import { DashboardLayout } from "@/components/DashboardLayout";
+import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useTranslation } from "react-i18next";
 
 interface SettingsSection {
@@ -52,13 +49,18 @@ export default function Settings() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingPreferences, setSavingPreferences] = useState(false);
+  const [savedStates, setSavedStates] = useState({
+    profile: false,
+    preferences: false
+  });
   
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
   const { user: authUser } = useAuth();
+  const { preferences, updatePreferences } = useSettings();
 
   // Form states
   const [profileForm, setProfileForm] = useState({
@@ -71,26 +73,14 @@ export default function Settings() {
     language: "en"
   });
 
-  const [securityForm, setSecurityForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-    twoFactorEnabled: false,
-    emailNotifications: true,
-    smsNotifications: false
-  });
+
 
   const [preferencesForm, setPreferencesForm] = useState({
-    theme: "system",
-    currency: "USD",
-    dateFormat: "MM/DD/YYYY",
-    timeFormat: "12h",
-    notifications: {
-      transactions: true,
-      budgets: true,
-      reports: true,
-      security: true
-    }
+    theme: preferences.theme as 'light' | 'dark' | 'system',
+    currency: preferences.currency,
+    dateFormat: preferences.dateFormat,
+    timeFormat: preferences.timeFormat as '12h' | '24h',
+    notifications: preferences.notifications
   });
 
   useEffect(() => {
@@ -144,6 +134,7 @@ export default function Settings() {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSavingProfile(true);
     
     try {
       // Update user metadata
@@ -159,10 +150,16 @@ export default function Settings() {
 
       if (error) throw error;
 
+      setSavedStates(prev => ({ ...prev, profile: true }));
       toast({
         title: "Profile Updated! ✨",
         description: "Your profile information has been saved successfully.",
       });
+
+      // Reset saved state after 3 seconds
+      setTimeout(() => {
+        setSavedStates(prev => ({ ...prev, profile: false }));
+      }, 3000);
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -170,60 +167,37 @@ export default function Settings() {
         description: "Failed to update profile. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setSavingProfile(false);
     }
   };
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (securityForm.newPassword !== securityForm.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "New passwords don't match.",
-        variant: "destructive",
-      });
-      return;
-    }
 
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: securityForm.newPassword
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Password Updated! 🔒",
-        description: "Your password has been changed successfully.",
-      });
-
-      setSecurityForm({
-        ...securityForm,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: ""
-      });
-    } catch (error) {
-      console.error('Error updating password:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update password. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handlePreferencesUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSavingPreferences(true);
     
     try {
-      // Save preferences to localStorage or your database
-      localStorage.setItem('userPreferences', JSON.stringify(preferencesForm));
+      // Update preferences through the context
+      updatePreferences({
+        theme: preferencesForm.theme,
+        currency: preferencesForm.currency,
+        dateFormat: preferencesForm.dateFormat,
+        timeFormat: preferencesForm.timeFormat,
+        notifications: preferencesForm.notifications
+      });
       
+      setSavedStates(prev => ({ ...prev, preferences: true }));
       toast({
         title: "Preferences Saved! ⚙️",
         description: "Your preferences have been updated successfully.",
       });
+
+      // Reset saved state after 3 seconds
+      setTimeout(() => {
+        setSavedStates(prev => ({ ...prev, preferences: false }));
+      }, 3000);
     } catch (error) {
       console.error('Error saving preferences:', error);
       toast({
@@ -231,6 +205,8 @@ export default function Settings() {
         description: "Failed to save preferences. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setSavingPreferences(false);
     }
   };
 
@@ -261,9 +237,9 @@ export default function Settings() {
   };
 
   if (loading) {
-    return (
-      <DashboardLayout>
-        <div className="space-y-6">
+      return (
+    <DashboardLayout>
+      <div className="p-4 sm:p-6 lg:p-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
@@ -310,14 +286,10 @@ export default function Settings() {
 
         {/* Settings Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <UserIcon className="h-4 w-4" />
               Profile
-            </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Security
             </TabsTrigger>
             <TabsTrigger value="preferences" className="flex items-center gap-2">
               <SettingsIcon className="h-4 w-4" />
@@ -428,136 +400,33 @@ export default function Settings() {
                     </div>
                   </div>
 
-                  <Button type="submit" className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
+                    <Button type="submit" className="flex items-center gap-2" disabled={savingProfile}>
+                      {savingProfile ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
                     <Save className="h-4 w-4" />
                     Save Changes
+                        </>
+                      )}
                   </Button>
+                    {savedStates.profile && (
+                      <div className="flex items-center gap-2 text-green-600">
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="text-sm font-medium">Saved!</span>
+                      </div>
+                    )}
+                  </div>
                 </form>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Security Tab */}
-          <TabsContent value="security" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  Password & Security
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handlePasswordChange} className="space-y-4">
-                  <div>
-                    <Label htmlFor="currentPassword">Current Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="currentPassword"
-                        type={showPassword ? "text" : "password"}
-                        value={securityForm.currentPassword}
-                        onChange={(e) => setSecurityForm({ ...securityForm, currentPassword: e.target.value })}
-                        placeholder="Enter your current password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
 
-                  <div>
-                    <Label htmlFor="newPassword">New Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="newPassword"
-                        type={showPassword ? "text" : "password"}
-                        value={securityForm.newPassword}
-                        onChange={(e) => setSecurityForm({ ...securityForm, newPassword: e.target.value })}
-                        placeholder="Enter your new password"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        value={securityForm.confirmPassword}
-                        onChange={(e) => setSecurityForm({ ...securityForm, confirmPassword: e.target.value })}
-                        placeholder="Confirm your new password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <Button type="submit" className="flex items-center gap-2">
-                    <Key className="h-4 w-4" />
-                    Update Password
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
-                  Security Settings
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">Two-Factor Authentication</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Add an extra layer of security to your account
-                    </p>
-                  </div>
-                  <Switch
-                    checked={securityForm.twoFactorEnabled}
-                    onCheckedChange={(checked) => setSecurityForm({ ...securityForm, twoFactorEnabled: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">Email Notifications</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Receive security alerts via email
-                    </p>
-                  </div>
-                  <Switch
-                    checked={securityForm.emailNotifications}
-                    onCheckedChange={(checked) => setSecurityForm({ ...securityForm, emailNotifications: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">SMS Notifications</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Receive security alerts via SMS
-                    </p>
-                  </div>
-                  <Switch
-                    checked={securityForm.smsNotifications}
-                    onCheckedChange={(checked) => setSecurityForm({ ...securityForm, smsNotifications: checked })}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           {/* Preferences Tab */}
           <TabsContent value="preferences" className="space-y-6">
@@ -573,16 +442,88 @@ export default function Settings() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="theme">Theme</Label>
-                      <select
-                        id="theme"
-                        value={preferencesForm.theme}
-                        onChange={(e) => setPreferencesForm({ ...preferencesForm, theme: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="system">System</option>
-                      </select>
+                      <div className="grid grid-cols-3 gap-3 mt-2">
+                        <button
+                          type="button"
+                          onClick={() => setPreferencesForm({ ...preferencesForm, theme: 'light' })}
+                          className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
+                            preferencesForm.theme === 'light'
+                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                              : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
+                          }`}
+                        >
+                          <div className="flex items-center justify-center space-x-2 mb-2">
+                            <div className="w-4 h-4 bg-yellow-400 rounded-full"></div>
+                            <span className="text-sm font-medium">Light</span>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="w-full h-2 bg-gray-200 rounded"></div>
+                            <div className="w-3/4 h-2 bg-gray-200 rounded"></div>
+                            <div className="w-1/2 h-2 bg-gray-200 rounded"></div>
+                          </div>
+                          {preferencesForm.theme === 'light' && (
+                            <div className="absolute top-2 right-2">
+                              <CheckCircle className="h-4 w-4 text-blue-500" />
+                            </div>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setPreferencesForm({ ...preferencesForm, theme: 'dark' })}
+                          className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
+                            preferencesForm.theme === 'dark'
+                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                              : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
+                          }`}
+                        >
+                          <div className="flex items-center justify-center space-x-2 mb-2">
+                            <div className="w-4 h-4 bg-gray-800 rounded-full"></div>
+                            <span className="text-sm font-medium">Dark</span>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="w-full h-2 bg-gray-700 rounded"></div>
+                            <div className="w-3/4 h-2 bg-gray-700 rounded"></div>
+                            <div className="w-1/2 h-2 bg-gray-700 rounded"></div>
+                          </div>
+                          {preferencesForm.theme === 'dark' && (
+                            <div className="absolute top-2 right-2">
+                              <CheckCircle className="h-4 w-4 text-blue-500" />
+                            </div>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setPreferencesForm({ ...preferencesForm, theme: 'system' })}
+                          className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
+                            preferencesForm.theme === 'system'
+                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                              : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
+                          }`}
+                        >
+                          <div className="flex items-center justify-center space-x-2 mb-2">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                              <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
+                            </div>
+                            <span className="text-sm font-medium">System</span>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="w-full h-2 bg-gradient-to-r from-gray-200 to-gray-700 rounded"></div>
+                            <div className="w-3/4 h-2 bg-gradient-to-r from-gray-200 to-gray-700 rounded"></div>
+                            <div className="w-1/2 h-2 bg-gradient-to-r from-gray-200 to-gray-700 rounded"></div>
+                          </div>
+                          {preferencesForm.theme === 'system' && (
+                            <div className="absolute top-2 right-2">
+                              <CheckCircle className="h-4 w-4 text-blue-500" />
+                            </div>
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Choose your preferred theme. System will automatically match your device settings.
+                      </p>
                     </div>
                     <div>
                       <Label htmlFor="currency">Currency</Label>
@@ -592,10 +533,152 @@ export default function Settings() {
                         onChange={(e) => setPreferencesForm({ ...preferencesForm, currency: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="GBP">GBP (£)</option>
-                        <option value="JPY">JPY (¥)</option>
+                        <option value="USD">USD - US Dollar ($)</option>
+                        <option value="EUR">EUR - Euro (€)</option>
+                        <option value="GBP">GBP - British Pound (£)</option>
+                        <option value="JPY">JPY - Japanese Yen (¥)</option>
+                        <option value="CAD">CAD - Canadian Dollar (C$)</option>
+                        <option value="AUD">AUD - Australian Dollar (A$)</option>
+                        <option value="CHF">CHF - Swiss Franc (CHF)</option>
+                        <option value="CNY">CNY - Chinese Yuan (¥)</option>
+                        <option value="INR">INR - Indian Rupee (₹)</option>
+                        <option value="BRL">BRL - Brazilian Real (R$)</option>
+                        <option value="MXN">MXN - Mexican Peso ($)</option>
+                        <option value="KRW">KRW - South Korean Won (₩)</option>
+                        <option value="SGD">SGD - Singapore Dollar (S$)</option>
+                        <option value="HKD">HKD - Hong Kong Dollar (HK$)</option>
+                        <option value="NZD">NZD - New Zealand Dollar (NZ$)</option>
+                        <option value="SEK">SEK - Swedish Krona (kr)</option>
+                        <option value="NOK">NOK - Norwegian Krone (kr)</option>
+                        <option value="DKK">DKK - Danish Krone (kr)</option>
+                        <option value="PLN">PLN - Polish Złoty (zł)</option>
+                        <option value="CZK">CZK - Czech Koruna (Kč)</option>
+                        <option value="HUF">HUF - Hungarian Forint (Ft)</option>
+                        <option value="RUB">RUB - Russian Ruble (₽)</option>
+                        <option value="TRY">TRY - Turkish Lira (₺)</option>
+                        <option value="ZAR">ZAR - South African Rand (R)</option>
+                        <option value="ILS">ILS - Israeli Shekel (₪)</option>
+                        <option value="AED">AED - UAE Dirham (د.إ)</option>
+                        <option value="SAR">SAR - Saudi Riyal (ر.س)</option>
+                        <option value="QAR">QAR - Qatari Riyal (ر.ق)</option>
+                        <option value="KWD">KWD - Kuwaiti Dinar (د.ك)</option>
+                        <option value="BHD">BHD - Bahraini Dinar (ب.د)</option>
+                        <option value="OMR">OMR - Omani Rial (ر.ع)</option>
+                        <option value="JOD">JOD - Jordanian Dinar (د.ا)</option>
+                        <option value="LBP">LBP - Lebanese Pound (ل.ل)</option>
+                        <option value="EGP">EGP - Egyptian Pound (ج.م)</option>
+                        <option value="NGN">NGN - Nigerian Naira (₦)</option>
+                        <option value="GHS">GHS - Ghanaian Cedi (₵)</option>
+                        <option value="KES">KES - Kenyan Shilling (KSh)</option>
+                        <option value="UGX">UGX - Ugandan Shilling (USh)</option>
+                        <option value="TZS">TZS - Tanzanian Shilling (TSh)</option>
+                        <option value="ZMW">ZMW - Zambian Kwacha (ZK)</option>
+                        <option value="BWP">BWP - Botswana Pula (P)</option>
+                        <option value="NAD">NAD - Namibian Dollar (N$)</option>
+                        <option value="MUR">MUR - Mauritian Rupee (₨)</option>
+                        <option value="SCR">SCR - Seychellois Rupee (₨)</option>
+                        <option value="MAD">MAD - Moroccan Dirham (د.م)</option>
+                        <option value="TND">TND - Tunisian Dinar (د.ت)</option>
+                        <option value="DZD">DZD - Algerian Dinar (د.ج)</option>
+                        <option value="LYD">LYD - Libyan Dinar (ل.د)</option>
+                        <option value="SDG">SDG - Sudanese Pound (ج.س)</option>
+                        <option value="ETB">ETB - Ethiopian Birr (Br)</option>
+                        <option value="SOS">SOS - Somali Shilling (S)</option>
+                        <option value="DJF">DJF - Djiboutian Franc (Fdj)</option>
+                        <option value="KMF">KMF - Comorian Franc (CF)</option>
+                        <option value="MGA">MGA - Malagasy Ariary (Ar)</option>
+                        <option value="XOF">XOF - West African CFA Franc (CFA)</option>
+                        <option value="XAF">XAF - Central African CFA Franc (FCFA)</option>
+                        <option value="XPF">XPF - CFP Franc (₣)</option>
+                        <option value="CLP">CLP - Chilean Peso ($)</option>
+                        <option value="COP">COP - Colombian Peso ($)</option>
+                        <option value="PEN">PEN - Peruvian Sol (S/)</option>
+                        <option value="ARS">ARS - Argentine Peso ($)</option>
+                        <option value="UYU">UYU - Uruguayan Peso ($)</option>
+                        <option value="PYG">PYG - Paraguayan Guaraní (₲)</option>
+                        <option value="BOB">BOB - Bolivian Boliviano (Bs)</option>
+                        <option value="VEF">VEF - Venezuelan Bolívar (Bs)</option>
+                        <option value="GTQ">GTQ - Guatemalan Quetzal (Q)</option>
+                        <option value="HNL">HNL - Honduran Lempira (L)</option>
+                        <option value="NIO">NIO - Nicaraguan Córdoba (C$)</option>
+                        <option value="CRC">CRC - Costa Rican Colón (₡)</option>
+                        <option value="PAB">PAB - Panamanian Balboa (B/)</option>
+                        <option value="DOP">DOP - Dominican Peso (RD$)</option>
+                        <option value="JMD">JMD - Jamaican Dollar (J$)</option>
+                        <option value="TTD">TTD - Trinidad and Tobago Dollar (TT$)</option>
+                        <option value="BBD">BBD - Barbadian Dollar (Bds$)</option>
+                        <option value="XCD">XCD - East Caribbean Dollar (EC$)</option>
+                        <option value="ANG">ANG - Netherlands Antillean Guilder (ƒ)</option>
+                        <option value="AWG">AWG - Aruban Florin (ƒ)</option>
+                        <option value="KYD">KYD - Cayman Islands Dollar (CI$)</option>
+                        <option value="BMD">BMD - Bermudian Dollar (BD$)</option>
+                        <option value="BZD">BZD - Belize Dollar (BZ$)</option>
+                        <option value="GYD">GYD - Guyanese Dollar (G$)</option>
+                        <option value="SRD">SRD - Surinamese Dollar ($)</option>
+                        <option value="FJD">FJD - Fijian Dollar (FJ$)</option>
+                        <option value="WST">WST - Samoan Tālā (T)</option>
+                        <option value="TOP">TOP - Tongan Paʻanga (T$)</option>
+                        <option value="VUV">VUV - Vanuatu Vatu (VT)</option>
+                        <option value="SBD">SBD - Solomon Islands Dollar (SI$)</option>
+                        <option value="PGK">PGK - Papua New Guinean Kina (K)</option>
+                        <option value="NIO">NIO - Nicaraguan Córdoba (C$)</option>
+                        <option value="HTG">HTG - Haitian Gourde (G)</option>
+                        <option value="CUP">CUP - Cuban Peso ($)</option>
+                        <option value="CUC">CUC - Cuban Convertible Peso (CUC$)</option>
+                        <option value="BSD">BSD - Bahamian Dollar (B$)</option>
+                        <option value="KHR">KHR - Cambodian Riel (៛)</option>
+                        <option value="LAK">LAK - Lao Kip (₭)</option>
+                        <option value="MMK">MMK - Myanmar Kyat (K)</option>
+                        <option value="THB">THB - Thai Baht (฿)</option>
+                        <option value="VND">VND - Vietnamese Dong (₫)</option>
+                        <option value="PHP">PHP - Philippine Peso (₱)</option>
+                        <option value="MYR">MYR - Malaysian Ringgit (RM)</option>
+                        <option value="IDR">IDR - Indonesian Rupiah (Rp)</option>
+                        <option value="BDT">BDT - Bangladeshi Taka (৳)</option>
+                        <option value="LKR">LKR - Sri Lankan Rupee (Rs)</option>
+                        <option value="NPR">NPR - Nepalese Rupee (₨)</option>
+                        <option value="PKR">PKR - Pakistani Rupee (₨)</option>
+                        <option value="AFN">AFN - Afghan Afghani (؋)</option>
+                        <option value="IRR">IRR - Iranian Rial (﷼)</option>
+                        <option value="IQD">IQD - Iraqi Dinar (ع.د)</option>
+                        <option value="KZT">KZT - Kazakhstani Tenge (₸)</option>
+                        <option value="UZS">UZS - Uzbekistani Som (so'm)</option>
+                        <option value="TJS">TJS - Tajikistani Somoni (ЅМ)</option>
+                        <option value="TMT">TMT - Turkmenistan Manat (T)</option>
+                        <option value="GEL">GEL - Georgian Lari (₾)</option>
+                        <option value="AMD">AMD - Armenian Dram (֏)</option>
+                        <option value="AZN">AZN - Azerbaijani Manat (₼)</option>
+                        <option value="BYN">BYN - Belarusian Ruble (Br)</option>
+                        <option value="MDL">MDL - Moldovan Leu (L)</option>
+                        <option value="UAH">UAH - Ukrainian Hryvnia (₴)</option>
+                        <option value="RSD">RSD - Serbian Dinar (дин)</option>
+                        <option value="BAM">BAM - Bosnia-Herzegovina Convertible Mark (KM)</option>
+                        <option value="HRK">HRK - Croatian Kuna (kn)</option>
+                        <option value="BGN">BGN - Bulgarian Lev (лв)</option>
+                        <option value="RON">RON - Romanian Leu (lei)</option>
+                        <option value="ALL">ALL - Albanian Lek (L)</option>
+                        <option value="MKD">MKD - Macedonian Denar (ден)</option>
+                        <option value="MNT">MNT - Mongolian Tögrög (₮)</option>
+                        <option value="KGS">KGS - Kyrgyzstani Som (с)</option>
+                        <option value="TJS">TJS - Tajikistani Somoni (ЅМ)</option>
+                        <option value="TMT">TMT - Turkmenistan Manat (T)</option>
+                        <option value="UZS">UZS - Uzbekistani Som (so'm)</option>
+                        <option value="KZT">KZT - Kazakhstani Tenge (₸)</option>
+                        <option value="GEL">GEL - Georgian Lari (₾)</option>
+                        <option value="AMD">AMD - Armenian Dram (֏)</option>
+                        <option value="AZN">AZN - Azerbaijani Manat (₼)</option>
+                        <option value="BYN">BYN - Belarusian Ruble (Br)</option>
+                        <option value="MDL">MDL - Moldovan Leu (L)</option>
+                        <option value="UAH">UAH - Ukrainian Hryvnia (₴)</option>
+                        <option value="RSD">RSD - Serbian Dinar (дин)</option>
+                        <option value="BAM">BAM - Bosnia-Herzegovina Convertible Mark (KM)</option>
+                        <option value="HRK">HRK - Croatian Kuna (kn)</option>
+                        <option value="BGN">BGN - Bulgarian Lev (лв)</option>
+                        <option value="RON">RON - Romanian Leu (lei)</option>
+                        <option value="ALL">ALL - Albanian Lek (L)</option>
+                        <option value="MKD">MKD - Macedonian Denar (ден)</option>
+                        <option value="MNT">MNT - Mongolian Tögrög (₮)</option>
+                        <option value="KGS">KGS - Kyrgyzstani Som (с)</option>
                       </select>
                     </div>
                   </div>
@@ -619,7 +702,7 @@ export default function Settings() {
                       <select
                         id="timeFormat"
                         value={preferencesForm.timeFormat}
-                        onChange={(e) => setPreferencesForm({ ...preferencesForm, timeFormat: e.target.value })}
+                        onChange={(e) => setPreferencesForm({ ...preferencesForm, timeFormat: e.target.value as '12h' | '24h' })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="12h">12-hour</option>
@@ -628,10 +711,27 @@ export default function Settings() {
                     </div>
                   </div>
 
-                  <Button type="submit" className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
+                    <Button type="submit" className="flex items-center gap-2" disabled={savingPreferences}>
+                      {savingPreferences ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
                     <Save className="h-4 w-4" />
                     Save Preferences
+                        </>
+                      )}
                   </Button>
+                    {savedStates.preferences && (
+                      <div className="flex items-center gap-2 text-green-600">
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="text-sm font-medium">Preferences Saved!</span>
+                      </div>
+                    )}
+                  </div>
                 </form>
               </CardContent>
             </Card>

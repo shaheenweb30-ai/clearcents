@@ -8,6 +8,10 @@ export interface BrandingSettings {
   favicon_url: string | null;
   primary_color: string | null;
   secondary_color: string | null;
+  accent_color: string | null;
+  font_family: string | null;
+  font_weights: string | null;
+  typography_settings: any | null;
   created_at: string;
   updated_at: string;
 }

@@ -29,8 +29,8 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
     button_text: '',
     button_color: '#500CB0',
     button_text_color: '#FFFFFF',
-    title_color: '#000000',
-    subtitle_color: '#000000',
+    title_color: '#1F2937',
+    subtitle_color: '#6B7280',
     description_color: '#666666',
     background_color: '#FFFFFF',
     image_url: ''
@@ -49,8 +49,8 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
         button_text: currentContent.button_text || '',
         button_color: currentContent.button_color || '#500CB0',
         button_text_color: currentContent.button_text_color || '#FFFFFF',
-        title_color: currentContent.title_color || '#000000',
-        subtitle_color: currentContent.subtitle_color || '#000000',
+        title_color: currentContent.title_color || '#1F2937',
+        subtitle_color: currentContent.subtitle_color || '#6B7280',
         description_color: currentContent.description_color || '#666666',
         background_color: (currentContent as FeaturesContent | PricingContent | AboutContent).background_color || '#FFFFFF',
         image_url: currentContent.image_url || ''

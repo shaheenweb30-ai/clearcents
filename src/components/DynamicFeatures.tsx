@@ -98,7 +98,7 @@ export function DynamicFeatures() {
                 </div>
                 <h2 
                   className="font-heading font-bold text-4xl mb-6"
-                  style={{ color: smartBudgetingContent?.title_color || '#000000' }}
+                  style={{ color: smartBudgetingContent?.title_color || '#1F2937' }}
                 >
                   {smartBudgetingContent?.title || 'Smart Budgeting'}
                 </h2>
@@ -175,7 +175,7 @@ export function DynamicFeatures() {
                 </div>
                 <h2 
                   className="font-heading font-bold text-4xl mb-6"
-                  style={{ color: expenseTrackingContent?.title_color || '#000000' }}
+                  style={{ color: expenseTrackingContent?.title_color || '#1F2937' }}
                 >
                   {expenseTrackingContent?.title || 'Advanced Expense Tracking'}
                 </h2>
@@ -226,7 +226,7 @@ export function DynamicFeatures() {
                 </div>
                 <h2 
                   className="font-heading font-bold text-4xl mb-6"
-                  style={{ color: analyticsContent?.title_color || '#000000' }}
+                  style={{ color: analyticsContent?.title_color || '#1F2937' }}
                 >
                   {analyticsContent?.title || 'Financial Analytics'}
                 </h2>
@@ -310,7 +310,7 @@ export function DynamicFeatures() {
                   </div>
                   <h3 
                     className="font-heading font-bold text-3xl mb-4"
-                    style={{ color: securityContent?.title_color || '#000000' }}
+                    style={{ color: securityContent?.title_color || '#1F2937' }}
                   >
                     {securityContent?.title || 'Bank-Grade Security'}
                   </h3>
@@ -365,7 +365,7 @@ export function DynamicFeatures() {
                   </div>
                   <h3 
                     className="font-heading font-bold text-3xl mb-4"
-                    style={{ color: integrationsContent?.title_color || '#000000' }}
+                    style={{ color: integrationsContent?.title_color || '#1F2937' }}
                   >
                     {integrationsContent?.title || 'Seamless Integrations'}
                   </h3>

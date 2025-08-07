@@ -25,7 +25,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-border sticky top-0 z-50">
+    <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-background/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -39,8 +39,8 @@ const Header = () => {
                 to={item.href}
                 className={`font-body font-medium transition-colors ${
                   isActive(item.href)
-                    ? "text-navy border-b-2 border-navy pb-1"
-                    : "text-muted-foreground hover:text-navy"
+                    ? "text-primary border-b-2 border-primary pb-1"
+                    : "text-muted-foreground hover:text-primary"
                 }`}
               >
                 {item.name}
@@ -57,7 +57,7 @@ const Header = () => {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" size="default" className="text-black hover:text-black">
+                  <Button variant="ghost" size="default" className="text-foreground hover:text-primary">
                     {t('common.login')}
                   </Button>
                 </Link>
@@ -74,7 +74,7 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-navy hover:text-navy-light"
+              className="text-foreground hover:text-primary"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -91,8 +91,8 @@ const Header = () => {
                   to={item.href}
                   className={`font-body font-medium px-4 py-2 rounded-lg transition-colors ${
                     isActive(item.href)
-                      ? "text-navy bg-mint-light"
-                      : "text-muted-foreground hover:text-navy hover:bg-gray-50"
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-primary hover:bg-muted"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -109,7 +109,7 @@ const Header = () => {
               ) : (
                 <>
                   <Link to="/login" className="px-4">
-                    <Button variant="ghost" size="default" className="w-full text-black hover:text-black">
+                    <Button variant="ghost" size="default" className="w-full text-foreground hover:text-primary">
                       {t('common.login')}
                     </Button>
                   </Link>

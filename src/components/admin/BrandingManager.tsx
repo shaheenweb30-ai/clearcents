@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, Image, Save } from 'lucide-react';
+import { Upload, Image, Save, Type, Palette } from 'lucide-react';
 import { useOptimizedBrandingSettings } from '@/hooks/useOptimizedBrandingSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -15,15 +15,19 @@ export function BrandingManager() {
   const { settings, updateSettings, uploadLogo, loading, isUpdating, isUploading } = useOptimizedBrandingSettings();
   const [uploading, setUploading] = useState(false);
   const [businessName, setBusinessName] = useState('');
-  const [primaryColor, setPrimaryColor] = useState('#500CB0');
-  const [secondaryColor, setSecondaryColor] = useState('#FFFFFF');
+  const [primaryColor, setPrimaryColor] = useState('#1752F3');
+  const [secondaryColor, setSecondaryColor] = useState('#F0F0F0');
+  const [accentColor, setAccentColor] = useState('#4A90E2');
+  const [fontFamily, setFontFamily] = useState('GT Walsheim Pro');
 
   // Update form state when settings load
   useEffect(() => {
     if (settings) {
       setBusinessName(settings.business_name || '');
-      setPrimaryColor(settings.primary_color || '#500CB0');
-      setSecondaryColor(settings.secondary_color || '#FFFFFF');
+      setPrimaryColor(settings.primary_color || '#1752F3');
+      setSecondaryColor(settings.secondary_color || '#F0F0F0');
+      setAccentColor(settings.accent_color || '#4A90E2');
+      setFontFamily(settings.font_family || 'GT Walsheim Pro');
     }
   }, [settings]);
 
@@ -62,7 +66,9 @@ export function BrandingManager() {
       await updateSettings({
         business_name: businessName || null,
         primary_color: primaryColor,
-        secondary_color: secondaryColor
+        secondary_color: secondaryColor,
+        accent_color: accentColor,
+        font_family: fontFamily
       });
       toast.success('Branding settings updated successfully!');
     } catch (error) {
@@ -155,10 +161,13 @@ export function BrandingManager() {
       {/* Brand Colors */}
       <Card>
         <CardHeader>
-          <CardTitle>Brand Colors</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="h-5 w-5" />
+            Brand Colors
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="primary-color">Primary Color</Label>
               <div className="flex items-center gap-2 mt-1">
@@ -172,9 +181,10 @@ export function BrandingManager() {
                 <Input
                   value={primaryColor}
                   onChange={(e) => setPrimaryColor(e.target.value)}
-                  placeholder="#500CB0"
+                  placeholder="#1752F3"
                 />
               </div>
+              <p className="text-xs text-muted-foreground mt-1">Bright Blue</p>
             </div>
             
             <div>
@@ -190,8 +200,67 @@ export function BrandingManager() {
                 <Input
                   value={secondaryColor}
                   onChange={(e) => setSecondaryColor(e.target.value)}
-                  placeholder="#FFFFFF"
+                  placeholder="#F0F0F0"
                 />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Light Gray</p>
+            </div>
+
+            <div>
+              <Label htmlFor="accent-color">Accent Color</Label>
+              <div className="flex items-center gap-2 mt-1">
+                <input
+                  id="accent-color"
+                  type="color"
+                  value={accentColor}
+                  onChange={(e) => setAccentColor(e.target.value)}
+                  className="w-12 h-10 border rounded cursor-pointer"
+                />
+                <Input
+                  value={accentColor}
+                  onChange={(e) => setAccentColor(e.target.value)}
+                  placeholder="#1A1A1A"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Dark Navy</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Typography Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Type className="h-5 w-5" />
+            Typography
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="font-family">Font Family</Label>
+            <Input
+              id="font-family"
+              value={fontFamily}
+              onChange={(e) => setFontFamily(e.target.value)}
+              placeholder="GT Walsheim Pro"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Primary font family for the application
+            </p>
+          </div>
+          
+          <div className="bg-muted p-4 rounded-lg">
+            <h4 className="font-medium mb-2">Typography Preview</h4>
+            <div className="space-y-2">
+              <div className="text-h1 font-light" style={{ letterSpacing: '-0.02em' }}>
+                Heading 1 - GT Walsheim Pro
+              </div>
+              <div className="text-h2 font-light" style={{ letterSpacing: '-0.05em' }}>
+                Heading 2 - GT Walsheim Pro
+              </div>
+              <div className="text-h5 font-normal">
+                Body Text - GT Walsheim Pro
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   HelpCircle, 
   Search, 
@@ -26,7 +27,7 @@ import {
   Play,
   Download
 } from "lucide-react";
-import { DashboardLayout } from "@/components/DashboardLayout";
+import DashboardLayout from "@/components/DashboardLayout";
 
 interface FAQItem {
   question: string;
@@ -213,7 +214,7 @@ const Help = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8">
         <main className="container mx-auto px-4 py-6 max-w-6xl">
           {/* Header */}
           <div className="space-y-6 mb-8">
@@ -240,13 +241,13 @@ const Help = () => {
 
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="faq">FAQ</TabsTrigger>
-              <TabsTrigger value="guides">Guides</TabsTrigger>
-              <TabsTrigger value="contact">Contact</TabsTrigger>
+              <TabsTrigger value="overview">Getting Started</TabsTrigger>
+              <TabsTrigger value="faq">Help & FAQ</TabsTrigger>
+              <TabsTrigger value="guides">Tutorials</TabsTrigger>
+              <TabsTrigger value="contact">Support</TabsTrigger>
             </TabsList>
 
-            {/* Overview Tab */}
+            {/* Getting Started Tab */}
             <TabsContent value="overview" className="space-y-6">
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -378,7 +379,7 @@ const Help = () => {
               </Card>
             </TabsContent>
 
-            {/* FAQ Tab */}
+            {/* Help & FAQ Tab */}
             <TabsContent value="faq" className="space-y-6">
               <Card>
                 <CardHeader>
@@ -430,7 +431,7 @@ const Help = () => {
               </Card>
             </TabsContent>
 
-            {/* Guides Tab */}
+            {/* Tutorials Tab */}
             <TabsContent value="guides" className="space-y-6">
               <Card>
                 <CardHeader>
@@ -493,7 +494,7 @@ const Help = () => {
               </Card>
             </TabsContent>
 
-            {/* Contact Tab */}
+            {/* Support Tab */}
             <TabsContent value="contact" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Contact Information */}

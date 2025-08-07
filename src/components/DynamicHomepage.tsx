@@ -63,7 +63,7 @@ export function DynamicHomepage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="space-y-6 lg:space-y-8">
                 <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight" style={{
-                color: heroContent?.title_color || '#000000'
+                color: heroContent?.title_color || '#1F2937'
               }}>
                   {heroContent?.title || getContentWithFallback('hero', 'title')}
                 </h1>
@@ -95,11 +95,16 @@ export function DynamicHomepage() {
         <section>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 lg:mb-16">
-            <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl" style={{
-              color: empowerContent?.title_color || '#000000'
-            }}>
-              {empowerContent?.title || t('home.empower.title')}
-            </h2>
+            <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl leading-tight" style={{
+                color: empowerContent?.title_color || '#1F2937'
+              }}>
+                  {empowerContent?.title || getContentWithFallback('empower', 'title')}
+                </h2>
+                <p className="font-body text-lg md:text-xl" style={{
+                color: empowerContent?.subtitle_color || '#6B7280'
+              }}>
+                  {empowerContent?.subtitle || getContentWithFallback('empower', 'subtitle')}
+                </p>
           </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="relative">
@@ -118,27 +123,19 @@ export function DynamicHomepage() {
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
-                      <span className="text-xs text-background">✓</span>
-                    </div>
+                    <div className="w-6 h-6 bg-primary rounded-full"></div>
                     <span className="font-body text-foreground">Keep tracking balance</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
-                      <span className="text-xs text-background">✓</span>
-                    </div>
+                    <div className="w-6 h-6 bg-primary rounded-full"></div>
                     <span className="font-body text-foreground">Send money easily</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
-                      <span className="text-xs text-background">✓</span>
-                    </div>
+                    <div className="w-6 h-6 bg-primary rounded-full"></div>
                     <span className="font-body text-foreground">Receive money easily</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-foreground rounded-full flex items-center justify-center">
-                      <span className="text-xs text-background">✓</span>
-                    </div>
+                    <div className="w-6 h-6 bg-primary rounded-full"></div>
                     <span className="font-body text-foreground">Convert currency</span>
                   </div>
                 </div>
@@ -373,7 +370,18 @@ export function DynamicHomepage() {
               
               {/* Watch Demo Card */}
               <AdminContentWrapper sectionId="watch-demo" className="lg:col-span-1">
-                <div className="bg-gradient-to-br from-lime-400 to-green-500 rounded-3xl p-8 text-black h-80 flex flex-col justify-between">
+                <div className="bg-gradient-to-br from-lime-400 to-green-500 rounded-3xl p-8 text-white h-80 flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold">$</span>
+                    </div>
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold">€</span>
+                    </div>
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold">£</span>
+                    </div>
+                  </div>
                   <div>
                     <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6">
                       <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
@@ -388,8 +396,8 @@ export function DynamicHomepage() {
                     </p>
                   </div>
                   {watchDemoContent?.button_text && <Button variant="outline" size="lg" className="rounded-full w-fit" style={{
-                  borderColor: watchDemoContent.button_text_color || '#000000',
-                  color: watchDemoContent.button_text_color || '#000000'
+                  borderColor: watchDemoContent.button_text_color || '#FFFFFF',
+                  color: watchDemoContent.button_text_color || '#FFFFFF'
                 }}>
                       {watchDemoContent.button_text}
                     </Button>}

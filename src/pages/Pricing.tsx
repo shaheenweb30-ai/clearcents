@@ -125,7 +125,7 @@ const Pricing = () => {
                 </div>
                 <h2 
                   className="font-heading font-bold text-3xl mb-2"
-                  style={{ color: pricingContent?.title_color || '#000000' }}
+                  style={{ color: pricingContent?.title_color || '#1F2937' }}
                 >
                   {pricingContent?.title || 'FinSuite Monthly'}
                 </h2>
@@ -192,7 +192,7 @@ const Pricing = () => {
             <div className="text-center mb-12">
               <h2 
                 className="font-heading font-bold text-3xl md:text-4xl mb-4"
-                style={{ color: faqContent?.title_color || '#000000' }}
+                style={{ color: faqContent?.title_color || '#1F2937' }}
               >
                 {faqContent?.title || 'Frequently Asked Questions'}
               </h2>

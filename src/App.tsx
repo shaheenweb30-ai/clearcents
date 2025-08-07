@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BrandingProvider } from "@/contexts/BrandingContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
@@ -15,18 +16,19 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Dashboard from "./pages/Dashboard";
-import Transactions from "./pages/Transactions";
-import Categories from "./pages/Categories";
-import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Subscription from "./pages/Subscription";
-import Reports from "./pages/Reports";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
+import Transactions from "./pages/Transactions";
+import Categories from "./pages/Categories";
+import ClearScore from "./pages/Insights";
+
 import AdminPages from "./pages/admin/AdminPages";
 import AdminBranding from "./pages/admin/AdminBranding";
+import AdminImages from "./pages/admin/AdminImages";
 import AdminFooter from "./pages/admin/AdminFooter";
 import AdminFAQ from "./pages/admin/AdminFAQ";
 import AdminPackages from "./pages/admin/AdminPackages";
@@ -112,36 +114,39 @@ const AppContent = () => {
     <>
       <AuthProvider>
         <BrandingProvider>
-          <TooltipProvider>
-            <Toaster />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/features" element={<Features />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/transactions" element={<Transactions />} />
-                <Route path="/categories" element={<Categories />} />
-                <Route path="/insights" element={<Insights />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/subscription" element={<Subscription />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/help" element={<Help />} />
-                {/* Admin Routes */}
-                         <Route path="/admin/pages" element={<AdminPages />} />
-         <Route path="/admin/branding" element={<AdminBranding />} />
-         <Route path="/admin/footer" element={<AdminFooter />} />
-         <Route path="/admin/faq" element={<AdminFAQ />} />
-         <Route path="/admin/packages" element={<AdminPackages />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+          <SettingsProvider>
+            <TooltipProvider>
+              <Toaster />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/categories" element={<Categories />} />
+                  <Route path="/insights" element={<ClearScore />} />
+
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/subscription" element={<Subscription />} />
+                  <Route path="/help" element={<Help />} />
+                  {/* Admin Routes */}
+                           <Route path="/admin/pages" element={<AdminPages />} />
+           <Route path="/admin/branding" element={<AdminBranding />} />
+           <Route path="/admin/images" element={<AdminImages />} />
+           <Route path="/admin/footer" element={<AdminFooter />} />
+           <Route path="/admin/faq" element={<AdminFAQ />} />
+           <Route path="/admin/packages" element={<AdminPackages />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </SettingsProvider>
         </BrandingProvider>
       </AuthProvider>
       <ContentUpdateIndicator isUpdating={false} />

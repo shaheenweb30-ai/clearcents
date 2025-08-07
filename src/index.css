@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+/* GT Walsheim Pro font - you'll need to add the actual font files or use a CDN */
+@import url('https://fonts.cdnfonts.com/css/gt-walsheim-pro');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -90,53 +92,51 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Light theme with vibrant accents */
-    --background: 240 20% 98%; /* Light background */
-    --foreground: 222 84% 7%; /* Deep Black #121212 */
+    /* Light theme with GT Walsheim Pro branding - Blue Only */
+    --background: 0 0% 100%; /* Pure white background */
+    --foreground: 0 0% 15%; /* Medium gray */
 
     --card: 0 0% 100%; /* White cards */
-    --card-foreground: 222 84% 7%; /* Deep black text */
+    --card-foreground: 0 0% 15%; /* Medium gray text */
 
     --popover: 0 0% 100%; /* White popover */
-    --popover-foreground: 222 84% 7%; /* Deep black text */
+    --popover-foreground: 0 0% 15%; /* Medium gray text */
 
-    --primary: 263 72% 38%; /* Primary Blue #500CB0 */
+    --primary: 217 100% 55%; /* Bright Blue #1752F3 */
     --primary-foreground: 0 0% 100%; /* White text on primary */
 
-    --secondary: 74 78% 60%; /* Accent Green #B2E64F */
-    --secondary-foreground: 222 84% 7%; /* Deep black text */
+    --secondary: 0 0% 94%; /* Light Gray #F0F0F0 */
+    --secondary-foreground: 0 0% 15%; /* Medium gray text */
 
-    --muted: 240 10% 92%; /* Light Grey #EBEBF8 */
-    --muted-foreground: 215 16% 47%; /* Muted text */
+    --muted: 0 0% 94%; /* Light Gray #F0F0F0 */
+    --muted-foreground: 0 0% 40%; /* Muted text */
 
-    --accent: 261 100% 70%; /* Vibrant Purple #B264FF */
+    --accent: 217 100% 65%; /* Lighter Blue #4A90E2 instead of green */
     --accent-foreground: 0 0% 100%; /* White text on accent */
 
     --destructive: 0 72% 51%; /* Red for destructive actions */
     --destructive-foreground: 0 0% 100%; /* White text on red */
 
-    --border: 240 6% 90%; /* Light border */
+    --border: 0 0% 90%; /* Light border */
     --input: 0 0% 100%; /* White input background */
-    --ring: 263 72% 38%; /* Primary blue focus ring */
+    --ring: 217 100% 55%; /* Bright blue focus ring */
     
-    /* Brand color tokens */
-    --primary-blue: 263 72% 38%; /* #500CB0 */
-    --accent-green: 74 78% 60%; /* #B2E64F */
-    --vibrant-purple: 261 100% 70%; /* #B264FF */
-    --deep-black: 222 84% 7%; /* #121212 */
-    --light-grey: 240 10% 92%; /* #EBEBF8 */
+    /* Brand color tokens - Blue Only */
+    --brand-primary: 217 100% 55%; /* #1752F3 - Bright Blue */
+    --brand-secondary: 0 0% 94%; /* #F0F0F0 - Light Gray */
+    --brand-accent: 217 100% 65%; /* #4A90E2 - Lighter Blue */
     
-    /* Gradients - minimalist with bold accents */
-    --gradient-primary: linear-gradient(135deg, hsl(263 72% 38%), hsl(261 100% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(74 78% 60%), hsl(84 78% 70%));
-    --gradient-light: linear-gradient(135deg, hsl(240 20% 98%), hsl(240 10% 92%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(240 10% 96%));
+    /* Gradients - Blue focused */
+    --gradient-primary: linear-gradient(135deg, hsl(217 100% 55%), hsl(217 100% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 94%), hsl(0 0% 98%));
+    --gradient-light: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 94%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 96%));
     
-    /* Shadows - clean and minimal */
-    --shadow-soft: 0 2px 8px -2px hsl(222 84% 7% / 0.08);
-    --shadow-medium: 0 4px 16px -4px hsl(222 84% 7% / 0.12);
-    --shadow-strong: 0 8px 32px -8px hsl(222 84% 7% / 0.16);
-    --shadow-accent: 0 4px 20px hsl(263 72% 38% / 0.15);
+    /* Shadows - Blue tinted */
+    --shadow-soft: 0 2px 8px -2px hsl(217 100% 55% / 0.08);
+    --shadow-medium: 0 4px 16px -4px hsl(217 100% 55% / 0.12);
+    --shadow-strong: 0 8px 32px -8px hsl(217 100% 55% / 0.16);
+    --shadow-accent: 0 4px 20px hsl(217 100% 55% / 0.15);
     
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -161,43 +161,43 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode - inverted with same vibrant accents */
-    --background: 222 84% 7%; /* Deep black */
-    --foreground: 240 20% 98%; /* Light text */
+    /* Enhanced Dark mode - Modern & Visually Appealing */
+    --background: 220 13% 9%; /* Slightly warmer deep dark */
+    --foreground: 210 20% 98%; /* Softer light text */
 
-    --card: 220 13% 18%; /* Dark card */
-    --card-foreground: 240 20% 98%; /* Light card text */
+    --card: 220 13% 13%; /* Warmer dark card */
+    --card-foreground: 210 20% 98%; /* Soft light card text */
 
-    --popover: 220 13% 15%; /* Dark popover */
-    --popover-foreground: 240 20% 98%; /* Light popover text */
+    --popover: 220 13% 11%; /* Warmer dark popover */
+    --popover-foreground: 210 20% 98%; /* Soft light popover text */
 
-    --primary: 263 72% 45%; /* Primary Blue (slightly brighter) */
+    --primary: 217 91% 60%; /* Vibrant blue */
     --primary-foreground: 0 0% 100%; /* White text */
 
-    --secondary: 74 78% 65%; /* Accent Green (brighter) */
-    --secondary-foreground: 222 84% 7%; /* Deep black text */
+    --secondary: 217 91% 70%; /* Lighter blue */
+    --secondary-foreground: 220 13% 9%; /* Dark text */
 
-    --muted: 215 15% 25%; /* Dark muted */
-    --muted-foreground: 217 10% 64%; /* Light muted text */
+    --muted: 220 13% 20%; /* Softer muted */
+    --muted-foreground: 215 16% 65%; /* Better contrast muted text */
 
-    --accent: 261 100% 75%; /* Vibrant Purple (brighter) */
+    --accent: 217 91% 80%; /* Very light blue */
     --accent-foreground: 0 0% 100%; /* White text */
 
-    --destructive: 0 72% 51%; /* Red for destructive actions */
+    --destructive: 0 84% 60%; /* Brighter red */
     --destructive-foreground: 0 0% 100%; /* White text on red */
 
-    --border: 215 15% 25%; /* Dark border */
-    --input: 215 15% 18%; /* Dark input */
-    --ring: 263 72% 45%; /* Primary blue ring */
+    --border: 220 13% 20%; /* Softer border */
+    --input: 220 13% 13%; /* Warmer input */
+    --ring: 217 91% 60%; /* Vibrant blue ring */
     
-    --sidebar-background: 222 84% 7%;
-    --sidebar-foreground: 240 20% 98%;
-    --sidebar-primary: 263 72% 45%;
+    --sidebar-background: 220 13% 9%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 13% 18%;
-    --sidebar-accent-foreground: 240 20% 98%;
-    --sidebar-border: 215 15% 25%;
-    --sidebar-ring: 263 72% 45%;
+    --sidebar-accent: 220 13% 13%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 220 13% 20%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -208,57 +208,65 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'GT Walsheim Pro', 'Inter', system-ui, sans-serif;
     font-weight: 400;
   }
   
-  /* Typography styles matching specifications */
+  /* Typography styles matching GT Walsheim Pro specifications */
   .text-h1 {
     font-size: 80px;
     line-height: 92px;
     font-weight: 300; /* Book */
+    letter-spacing: -0.02em;
   }
   
   .text-h2 {
     font-size: 64px;
     line-height: 72px;
     font-weight: 300; /* Book */
+    letter-spacing: -0.05em;
   }
   
   .text-h3 {
     font-size: 50px;
     line-height: 56px;
     font-weight: 300; /* Book */
+    letter-spacing: -0.02em;
   }
   
   .text-h4 {
     font-size: 32px;
     line-height: 40px;
     font-weight: 300; /* Book */
+    letter-spacing: -0.01em;
   }
   
   .text-h5 {
     font-size: 24px;
     line-height: 28px;
     font-weight: 400; /* Regular */
+    letter-spacing: 0em;
   }
   
   .text-body1 {
-    font-size: 16px;
+    font-size: 18px;
     line-height: 24px;
     font-weight: 400; /* Regular */
+    letter-spacing: -0.02em;
   }
   
   .text-body2 {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 22px;
     font-weight: 400; /* Regular */
+    letter-spacing: 0.01em;
   }
   
   .text-caption {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 18px;
     font-weight: 300; /* Book */
+    letter-spacing: 0em;
   }
   
   /* Responsive typography adjustments */
@@ -310,5 +318,137 @@ All colors MUST be HSL.
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Enhanced Dark Theme Effects */
+  .dark .card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .dark .card:hover {
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .dark .button {
+    transition: all 0.2s ease-in-out;
+  }
+
+  .dark .button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  }
+
+  .dark .input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+
+  /* Smooth theme transitions */
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Dark theme gradient backgrounds */
+  .dark .bg-gradient-to-br {
+    background: linear-gradient(135deg, hsl(220 13% 9%) 0%, hsl(220 13% 11%) 100%);
+  }
+
+  /* Enhanced dark theme text shadows */
+  .dark .text-foreground {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Dark theme glow effects */
+  .dark .glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .dark .glow-green {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+
+  .dark .glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+
+  .dark .glow-purple {
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+  }
+
+  /* Enhanced dark theme form elements */
+  .dark input,
+  .dark textarea,
+  .dark select {
+    background-color: hsl(var(--input));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+
+  .dark input:focus,
+  .dark textarea:focus,
+  .dark select:focus {
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+  }
+
+  /* Dark theme table improvements */
+  .dark table {
+    border-color: hsl(var(--border));
+  }
+
+  .dark th {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+  }
+
+  .dark td {
+    border-color: hsl(var(--border));
+  }
+
+  /* Dark theme badge improvements */
+  .dark .badge {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Dark theme progress bar */
+  .dark .progress {
+    background-color: hsl(var(--muted));
+  }
+
+  .dark .progress-indicator {
+    background-color: hsl(var(--primary));
+  }
+
+  /* Dark theme scrollbar */
+  .dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  /* Dark theme focus improvements */
+  .dark *:focus-visible {
+    outline-color: hsl(var(--ring));
+  }
+
+  /* Dark theme selection */
+  .dark ::selection {
+    background-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary-foreground));
   }
 }
