@@ -12,7 +12,8 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  BarChart3
+  BarChart3,
+  Zap
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -403,33 +404,47 @@ const Dashboard = () => {
           {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-primary" />
+                Quick Actions
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Common tasks to help you manage your finances
+              </p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Button 
-                  variant="outline" 
-                  className="h-16 flex-col space-y-2"
+                  className="h-20 flex-col space-y-3 bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 border-2 border-green-200 hover:border-green-300 text-green-700 hover:text-green-800 shadow-sm hover:shadow-md transition-all duration-300 group"
                   onClick={() => navigate('/transactions')}
                 >
-                  <Plus className="w-6 h-6" />
-                  <span>Add Transaction</span>
+                  <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center group-hover:bg-green-500/30 transition-colors">
+                    <Plus className="w-6 h-6 text-green-600" />
+                  </div>
+                  <span className="font-semibold">Add Transaction</span>
+                  <span className="text-xs text-green-600/70">Record income or expense</span>
                 </Button>
+                
                 <Button 
-                  variant="outline" 
-                  className="h-16 flex-col space-y-2"
-                  onClick={() => navigate('/settings')}
+                  className="h-20 flex-col space-y-3 bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 border-2 border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800 shadow-sm hover:shadow-md transition-all duration-300 group"
+                  onClick={() => navigate('/categories')}
                 >
-                  <PiggyBank className="w-6 h-6" />
-                  <span>Manage Budgets</span>
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
+                    <PiggyBank className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <span className="font-semibold">Categories & Budgets</span>
+                  <span className="text-xs text-blue-600/70">Set spending limits</span>
                 </Button>
+                
                 <Button 
-                  variant="outline" 
-                  className="h-16 flex-col space-y-2"
+                  className="h-20 flex-col space-y-3 bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 border-2 border-purple-200 hover:border-purple-300 text-purple-700 hover:text-purple-800 shadow-sm hover:shadow-md transition-all duration-300 group"
                   onClick={() => navigate('/profile')}
                 >
-                  <DollarSign className="w-6 h-6" />
-                  <span>View Profile</span>
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
+                    <DollarSign className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <span className="font-semibold">View Profile</span>
+                  <span className="text-xs text-purple-600/70">Account settings</span>
                 </Button>
               </div>
             </CardContent>

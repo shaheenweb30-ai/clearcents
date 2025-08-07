@@ -332,8 +332,8 @@ const About = () => {
                   size="lg" 
                   className="border-primary text-primary hover:bg-primary hover:text-white"
                   style={{ 
-                    borderColor: teamContent?.button_color || '#500CB0',
-                    color: teamContent?.button_color || '#500CB0'
+                    borderColor: teamContent?.button_color || 'hsl(var(--primary))',
+                    color: teamContent?.button_color || 'hsl(var(--primary))'
                   }}
                 >
                   {teamContent?.button_text || 'View Open Positions'}

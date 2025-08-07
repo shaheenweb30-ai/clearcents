@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Categories from "./pages/Categories";
+import Reports from "./pages/Reports";
 import ClearScore from "./pages/Insights";
 
 import AdminPages from "./pages/admin/AdminPages";
@@ -129,6 +130,7 @@ const AppContent = () => {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/transactions" element={<Transactions />} />
                   <Route path="/categories" element={<Categories />} />
+                  <Route path="/reports" element={<Reports />} />
                   <Route path="/insights" element={<ClearScore />} />
 
                   <Route path="/settings" element={<Settings />} />

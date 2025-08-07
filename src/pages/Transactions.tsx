@@ -759,110 +759,75 @@ const Transactions = () => {
 
         {/* Add/Edit Transaction Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[480px] max-h-[85vh] overflow-hidden p-0 border-0 shadow-2xl">
-            {/* Modern Header */}
-            <div className="relative bg-gradient-to-br from-primary via-primary/95 to-primary/90 p-6 text-white">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <DialogTitle className="text-xl font-semibold text-white">
+          <DialogContent className="sm:max-w-[420px] p-0 border-0 shadow-xl">
+            {/* Minimalist Header */}
+            <div className="border-b p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <DialogTitle className="text-lg font-semibold text-foreground">
                     {editingTransaction ? 'Edit Transaction' : 'New Transaction'}
                   </DialogTitle>
-                  <p className="text-white/80 text-sm mt-1">
+                  <p className="text-muted-foreground text-sm mt-1">
                     {editingTransaction ? 'Update your transaction details' : 'Record your income or expense'}
                   </p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setIsDialogOpen(false);
+                    resetForm();
+                  }}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              {/* Floating close button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setIsDialogOpen(false);
-                  resetForm();
-                }}
-                className="absolute top-4 right-4 h-8 w-8 p-0 bg-white/10 hover:bg-white/20 text-white border-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
             
-            <div className="flex flex-col h-[calc(85vh-120px)]">
-              <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
-                {/* Modern Type Selection */}
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+                {/* Minimalist Type Selection */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium text-foreground">Transaction Type</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
+                  <Label className="text-sm font-medium text-foreground">Type</Label>
+                  <div className="flex gap-2">
+                    <Button
                       type="button"
+                      variant={formData.type === 'income' ? 'default' : 'outline'}
                       onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
-                      className={`group relative p-4 rounded-xl border-2 transition-all duration-200 ${
-                        formData.type === 'income'
-                          ? 'border-green-500 bg-green-50 text-green-700 shadow-lg'
-                          : 'border-border hover:border-green-300 hover:bg-green-50/50'
-                      }`}
+                      className="flex-1"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                          formData.type === 'income' 
-                            ? 'bg-green-500 text-white shadow-md' 
-                            : 'bg-green-100 text-green-600 group-hover:bg-green-500 group-hover:text-white'
-                        }`}>
-                          <TrendingUp className="h-4 w-4" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold text-sm">Income</div>
-                          <div className="text-xs text-muted-foreground">Money received</div>
-                        </div>
-                      </div>
-                    </button>
-                    
-                    <button
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      Income
+                    </Button>
+                    <Button
                       type="button"
+                      variant={formData.type === 'expense' ? 'default' : 'outline'}
                       onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
-                      className={`group relative p-4 rounded-xl border-2 transition-all duration-200 ${
-                        formData.type === 'expense'
-                          ? 'border-red-500 bg-red-50 text-red-700 shadow-lg'
-                          : 'border-border hover:border-red-300 hover:bg-red-50/50'
-                      }`}
+                      className="flex-1"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                          formData.type === 'expense' 
-                            ? 'bg-red-500 text-white shadow-md' 
-                            : 'bg-red-100 text-red-600 group-hover:bg-red-500 group-hover:text-white'
-                        }`}>
-                          <TrendingDown className="h-4 w-4" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold text-sm">Expense</div>
-                          <div className="text-xs text-muted-foreground">Money spent</div>
-                        </div>
-                      </div>
-                    </button>
+                      <TrendingDown className="w-4 h-4 mr-2" />
+                      Expense
+                    </Button>
                   </div>
                 </div>
 
-                {/* Modern Transaction Name Input */}
-                <div className="space-y-3">
+                {/* Transaction Name Input */}
+                <div className="space-y-2">
                   <Label className="text-sm font-medium text-foreground">
-                    Transaction Name <span className="text-muted-foreground font-normal">(Optional)</span>
+                    Name <span className="text-muted-foreground font-normal">(Optional)</span>
                   </Label>
                   <Input
                     placeholder="e.g., Grocery shopping, Salary, Coffee"
                     value={formData.transaction_name}
                     onChange={(e) => setFormData(prev => ({ ...prev, transaction_name: e.target.value }))}
-                    className="h-12 border-2 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </div>
 
-                {/* Modern Amount Input */}
-                <div className="space-y-3">
+                {/* Amount Input */}
+                <div className="space-y-2">
                   <Label className="text-sm font-medium text-foreground">Amount</Label>
-                  <div className="relative group">
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-xl font-bold text-muted-foreground group-focus-within:text-primary transition-all">
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
                       {preferences.currency_symbol}
                     </div>
                     <Input
@@ -871,14 +836,14 @@ const Transactions = () => {
                       placeholder="0.00"
                       value={formData.amount}
                       onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-                      className="pl-10 pr-4 h-14 text-xl font-bold border-2 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      className="pl-8"
                       required
                     />
                   </div>
                 </div>
 
                 {/* Modern Category Selection - For Both Income and Expenses */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-sm font-medium text-foreground">Category</Label>
                   <Select value={formData.category_id} onValueChange={(value) => {
                     if (value === 'create-new') {
@@ -887,7 +852,7 @@ const Transactions = () => {
                       setFormData(prev => ({ ...prev, category_id: value }));
                     }
                   }}>
-                    <SelectTrigger className="h-14 border-2 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                    <SelectTrigger>
                       <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>
                     <SelectContent className="w-[320px] max-h-[240px]">
@@ -948,43 +913,19 @@ const Transactions = () => {
                   </Select>
                 </div>
 
-                {/* Modern Date Selection */}
-                <div className="space-y-3">
+                {/* Date Selection */}
+                <div className="space-y-2">
                   <Label className="text-sm font-medium text-foreground">Date</Label>
-                  <div className="flex gap-2 mb-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setFormData(prev => ({ ...prev, transaction_date: new Date() }))}
-                      className="text-xs px-3 py-2 h-8"
-                    >
-                      Today
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const yesterday = new Date();
-                        yesterday.setDate(yesterday.getDate() - 1);
-                        setFormData(prev => ({ ...prev, transaction_date: yesterday }));
-                      }}
-                      className="text-xs px-3 py-2 h-8"
-                    >
-                      Yesterday
-                    </Button>
-                  </div>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start text-left font-normal h-12 border-2 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all",
+                          "w-full justify-start text-left font-normal",
                           !formData.transaction_date && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-3 h-4 w-4" />
+                        <CalendarIcon className="mr-2 h-4 w-4" />
                         {formData.transaction_date ? format(formData.transaction_date, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
@@ -994,7 +935,6 @@ const Transactions = () => {
                         selected={formData.transaction_date}
                         onSelect={(date) => date && setFormData(prev => ({ ...prev, transaction_date: date }))}
                         initialFocus
-                        className="rounded-lg border shadow-lg"
                       />
                     </PopoverContent>
                   </Popover>
@@ -1002,9 +942,9 @@ const Transactions = () => {
 
 
               </form>
-
-              {/* Modern Form Actions */}
-              <div className="border-t bg-muted/20 p-6">
+              
+              {/* Minimalist Form Actions */}
+              <div className="border-t p-6">
                 <div className="flex justify-end gap-3">
                   <Button
                     type="button"
@@ -1013,21 +953,17 @@ const Transactions = () => {
                       setIsDialogOpen(false);
                       resetForm();
                     }}
-                    className="px-6 py-2"
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit"
-                    onClick={handleSubmit}
-                    className="px-6 py-2 bg-primary hover:bg-primary/90 shadow-lg"
                     disabled={!formData.amount}
                   >
                     {editingTransaction ? 'Update' : 'Add'} Transaction
                   </Button>
                 </div>
               </div>
-            </div>
           </DialogContent>
         </Dialog>
 

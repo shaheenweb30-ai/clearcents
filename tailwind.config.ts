@@ -19,8 +19,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'gt-walsheim': ['GT Walsheim Pro', 'Inter', 'ui-sans-serif', 'system-ui'],
-				sans: ['GT Walsheim Pro', 'Inter', 'ui-sans-serif', 'system-ui'],
+				'nunito': ['Nunito', 'ui-sans-serif', 'system-ui'],
+				sans: ['Nunito', 'ui-sans-serif', 'system-ui'],
 			},
 			fontSize: {
 				// Custom typography scale based on GT Walsheim Pro specifications

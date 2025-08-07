@@ -15,12 +15,14 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { User as UserIcon, Settings, LogOut, ChevronDown, Shield, Globe, FileText, Package, MessageSquare, LayoutDashboard, Receipt, FolderOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export function UserProfileDropdown() {
   const { user } = useAuth();
+  const { userProfile } = useSettings();
   const { isAdmin } = useUserRole(user);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -44,8 +46,10 @@ export function UserProfileDropdown() {
 
   if (!user) return null;
 
-  const userInitials = user.email?.charAt(0).toUpperCase() || 'U';
-  const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+  const userInitials = userProfile.firstName?.charAt(0).toUpperCase() || userProfile.lastName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U';
+  const displayName = userProfile.firstName && userProfile.lastName 
+    ? `${userProfile.firstName} ${userProfile.lastName}`.trim()
+    : userProfile.firstName || userProfile.lastName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
 
   return (
     <DropdownMenu>

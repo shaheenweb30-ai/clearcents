@@ -60,17 +60,17 @@ export default function Settings() {
   const { toast } = useToast();
   const { t } = useTranslation();
   const { user: authUser } = useAuth();
-  const { preferences, updatePreferences } = useSettings();
+  const { preferences, userProfile, updatePreferences, updateUserProfile } = useSettings();
 
   // Form states
   const [profileForm, setProfileForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-    timezone: "UTC",
-    language: "en"
+    firstName: userProfile.firstName,
+    lastName: userProfile.lastName,
+    email: userProfile.email,
+    phone: userProfile.phone,
+    address: userProfile.address,
+    timezone: userProfile.timezone,
+    language: userProfile.language
   });
 
 
@@ -149,6 +149,15 @@ export default function Settings() {
       });
 
       if (error) throw error;
+
+      // Update the context with new profile data
+      updateUserProfile({
+        firstName: profileForm.firstName,
+        lastName: profileForm.lastName,
+        address: profileForm.address,
+        timezone: profileForm.timezone,
+        language: profileForm.language
+      });
 
       setSavedStates(prev => ({ ...prev, profile: true }));
       toast({

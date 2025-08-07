@@ -17,9 +17,21 @@ interface UserPreferences {
   };
 }
 
+interface UserProfile {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  timezone: string;
+  language: string;
+}
+
 interface SettingsContextType {
   preferences: UserPreferences;
+  userProfile: UserProfile;
   updatePreferences: (newPreferences: Partial<UserPreferences>) => void;
+  updateUserProfile: (newProfile: Partial<UserProfile>) => void;
   formatCurrency: (amount: number) => string;
   formatDate: (date: Date | string) => string;
   formatTime: (date: Date | string) => string;
@@ -173,6 +185,16 @@ const defaultPreferences: UserPreferences = {
   },
 };
 
+const defaultUserProfile: UserProfile = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: '',
+  timezone: 'UTC',
+  language: 'en',
+};
+
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export const useSettings = () => {
@@ -190,6 +212,7 @@ interface SettingsProviderProps {
 export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
   const { user } = useAuth();
   const [preferences, setPreferences] = useState<UserPreferences>(defaultPreferences);
+  const [userProfile, setUserProfile] = useState<UserProfile>(defaultUserProfile);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Load preferences from localStorage on mount
@@ -204,6 +227,22 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
       }
     }
   }, []);
+
+  // Load user profile from auth user metadata
+  useEffect(() => {
+    if (user) {
+      const profile: UserProfile = {
+        firstName: user.user_metadata?.first_name || '',
+        lastName: user.user_metadata?.last_name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.user_metadata?.address || '',
+        timezone: user.user_metadata?.timezone || 'UTC',
+        language: user.user_metadata?.language || 'en',
+      };
+      setUserProfile(profile);
+    }
+  }, [user]);
 
   // Apply theme when preferences change
   useEffect(() => {
@@ -244,6 +283,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     const updatedPreferences = { ...preferences, ...newPreferences };
     setPreferences(updatedPreferences);
     localStorage.setItem('userPreferences', JSON.stringify(updatedPreferences));
+  };
+
+  const updateUserProfile = (newProfile: Partial<UserProfile>) => {
+    const updatedProfile = { ...userProfile, ...newProfile };
+    setUserProfile(updatedProfile);
   };
 
   const formatCurrency = (amount: number): string => {
@@ -307,7 +351,9 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
 
   const value: SettingsContextType = {
     preferences,
+    userProfile,
     updatePreferences,
+    updateUserProfile,
     formatCurrency,
     formatDate,
     formatTime,

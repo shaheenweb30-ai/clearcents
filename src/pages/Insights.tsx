@@ -40,10 +40,10 @@ const ClearScore = () => {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-2">Financial Insights</h1>
-            <p className="text-muted-foreground text-lg">Track your financial health with ClearScore™</p>
-          </div>
+                  <div className="mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">Financial Insights</h1>
+          <p className="text-muted-foreground text-lg">Track your financial health with ClearScore™</p>
+        </div>
 
           {/* ClearScore™ Card */}
           <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm">

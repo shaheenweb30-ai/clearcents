@@ -47,14 +47,24 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navigation = [
+  const mainNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
+  ];
+
+  const financialNavigation = [
     { name: "Transactions", href: "/transactions", icon: CreditCard },
     { name: "Categories", href: "/categories", icon: FileText },
+    { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Insights", href: "/insights", icon: TrendingUp },
+  ];
+
+  const accountNavigation = [
     { name: "My Profile", href: "/profile", icon: User },
     { name: "Settings", href: "/settings", icon: Settings },
     { name: "Subscription", href: "/subscription", icon: Package },
+  ];
+
+  const supportNavigation = [
     { name: "Help & Support", href: "/help", icon: HelpCircle },
   ];
 
@@ -79,11 +89,78 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
         </SidebarHeader>
         <SidebarContent>
+          {/* Main Navigation */}
           <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel>Main</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navigation.map((item) => {
+                {mainNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                        <Link to={item.href}>
+                          <Icon className="h-4 w-4" />
+                          <span>{item.name}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          {/* Financial Management */}
+          <SidebarGroup>
+            <SidebarGroupLabel>Financial</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {financialNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                        <Link to={item.href}>
+                          <Icon className="h-4 w-4" />
+                          <span>{item.name}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          {/* Account Management */}
+          <SidebarGroup>
+            <SidebarGroupLabel>Account</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {accountNavigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                        <Link to={item.href}>
+                          <Icon className="h-4 w-4" />
+                          <span>{item.name}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          {/* Support */}
+          <SidebarGroup>
+            <SidebarGroupLabel>Support</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {supportNavigation.map((item) => {
                   const Icon = item.icon;
                   return (
                     <SidebarMenuItem key={item.name}>

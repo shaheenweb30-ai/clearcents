@@ -1,6 +1,15 @@
--- Create a storage bucket for content images
+-- Create a storage bucket for content images (with upsert to handle existing bucket)
 INSERT INTO storage.buckets (id, name, public) 
-VALUES ('content-images', 'content-images', true);
+VALUES ('content-images', 'content-images', true)
+ON CONFLICT (id) DO UPDATE SET 
+  name = EXCLUDED.name,
+  public = EXCLUDED.public;
+
+-- Drop existing policies if they exist to avoid conflicts
+DROP POLICY IF EXISTS "Anyone can view content images" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can upload content images" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can update content images" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can delete content images" ON storage.objects;
 
 -- Create policies for content images bucket
 CREATE POLICY "Anyone can view content images" 

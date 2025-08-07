@@ -35,6 +35,29 @@ BEFORE UPDATE ON public.branding_settings
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
+-- Ensure storage bucket exists
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('content-images', 'content-images', true)
+ON CONFLICT (id) DO UPDATE SET 
+  name = EXCLUDED.name,
+  public = EXCLUDED.public;
+
+-- Add fallback storage policy for authenticated users (in case admin role check fails)
+CREATE POLICY "Authenticated users can upload content images" 
+ON storage.objects 
+FOR INSERT 
+WITH CHECK (bucket_id = 'content-images' AND auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authenticated users can update content images" 
+ON storage.objects 
+FOR UPDATE 
+USING (bucket_id = 'content-images' AND auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authenticated users can delete content images" 
+ON storage.objects 
+FOR DELETE 
+USING (bucket_id = 'content-images' AND auth.uid() IS NOT NULL);
+
 -- Insert default branding settings
 INSERT INTO public.branding_settings (business_name, logo_url, primary_color, secondary_color, accent_color, font_family)
 VALUES ('ClearCents', NULL, '#1752F3', '#F0F0F0', '#4A90E2', 'GT Walsheim Pro');

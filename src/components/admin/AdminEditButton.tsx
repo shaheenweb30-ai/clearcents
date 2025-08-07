@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Edit, Upload } from 'lucide-react';
-import { useOptimizedHomepageContent, HomepageContent } from '@/hooks/useOptimizedHomepageContent';
-import type { FeaturesContent } from '@/hooks/useFeaturesContent';
-import type { PricingContent } from '@/hooks/useOptimizedPricingContent';
-import type { AboutContent } from '@/hooks/useOptimizedAboutContent';
-import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { Database } from '@/integrations/supabase/types';
+
+type HomepageContent = Database['public']['Tables']['homepage_content']['Row'];
+type FeaturesContent = Database['public']['Tables']['features_content']['Row'];
+type PricingContent = Database['public']['Tables']['pricing_content']['Row'];
+type AboutContent = Database['public']['Tables']['about_content']['Row'];
 
 interface AdminEditButtonProps {
   sectionId: string;
@@ -104,6 +106,55 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Check if user has admin access
+  const checkAdminAccess = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Check if user has admin role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .single();
+
+      if (roleError && roleError.code !== 'PGRST116') {
+        console.error('Error checking admin role:', roleError);
+        return false;
+      }
+
+      return !!roleData;
+    } catch (error) {
+      console.error('Error checking admin access:', error);
+      return false;
+    }
+  };
+
+  // Test storage bucket access
+  const testStorageAccess = async () => {
+    try {
+      // Try to list files in the bucket to test access
+      const { data, error } = await supabase.storage
+        .from('content-images')
+        .list('', { limit: 1 });
+
+      if (error) {
+        console.error('Storage access test failed:', error);
+        return false;
+      }
+
+      console.log('Storage access test successful');
+      return true;
+    } catch (error) {
+      console.error('Storage access test error:', error);
+      return false;
+    }
+  };
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -126,26 +177,72 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
       const fileExt = file.name.split('.').pop();
       const fileName = `${sectionId}-${Date.now()}.${fileExt}`;
 
+      console.log('=== IMAGE UPLOAD DEBUG ===');
+      console.log('File:', file);
+      console.log('FileName:', fileName);
+      console.log('File size:', file.size);
+      console.log('File type:', file.type);
+
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Current user:', user);
+
+      // Check admin access
+      const isAdmin = await checkAdminAccess();
+      console.log('Is admin:', isAdmin);
+
+      // Test storage access
+      const storageAccess = await testStorageAccess();
+      console.log('Storage access:', storageAccess);
+
       // Upload to Supabase storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('content-images')
         .upload(fileName, file);
 
       if (uploadError) {
+        console.error('Upload error details:', {
+          message: uploadError.message,
+          name: uploadError.name
+        });
         throw uploadError;
       }
+
+      console.log('Upload successful:', uploadData);
 
       // Get public URL
       const { data: urlData } = supabase.storage
         .from('content-images')
         .getPublicUrl(fileName);
 
+      console.log('Public URL:', urlData.publicUrl);
+
       // Update form data with the uploaded image URL
       handleInputChange('image_url', urlData.publicUrl);
       toast.success('Image uploaded successfully!');
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('Failed to upload image. Please try again.');
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to upload image. Please try again.';
+      
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorObj = error as any;
+        
+        if (errorObj.message?.includes('JWT')) {
+          errorMessage = 'Authentication error. Please log in again.';
+        } else if (errorObj.message?.includes('policy')) {
+          errorMessage = 'Permission denied. You may not have admin access.';
+        } else if (errorObj.message?.includes('bucket')) {
+          errorMessage = 'Storage bucket not found. Please contact support.';
+        } else if (errorObj.message?.includes('file')) {
+          errorMessage = 'Invalid file format. Please try a different image.';
+        } else {
+          errorMessage = `Upload failed: ${errorObj.message}`;
+        }
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setUploading(false);
     }
@@ -294,6 +391,27 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
                 >
                   <Upload className="w-4 h-4" />
                   {uploading ? 'Uploading...' : 'Upload Image'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    console.log('=== STORAGE DEBUG ===');
+                    const { data: { user } } = await supabase.auth.getUser();
+                    console.log('User:', user);
+                    
+                    const isAdmin = await checkAdminAccess();
+                    console.log('Is admin:', isAdmin);
+                    
+                    const storageAccess = await testStorageAccess();
+                    console.log('Storage access:', storageAccess);
+                    
+                    toast.info('Check console for debug info');
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  Debug
                 </Button>
                 {formData.image_url && (
                   <Button
