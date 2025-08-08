@@ -37,9 +37,8 @@ CREATE TRIGGER update_footer_links_updated_at
 INSERT INTO public.footer_links (link_type, title, url, section_group, display_order) VALUES
 -- Company section
 ('navigation', 'Home', '/', 'Company', 1),
-('navigation', 'About us', '/about', 'Company', 2),
-('navigation', 'Affiliate Program', '#', 'Company', 3),
-('navigation', 'Careers', '#', 'Company', 4),
+('navigation', 'Affiliate Program', '#', 'Company', 2),
+('navigation', 'Careers', '#', 'Company', 3),
 
 -- Product section
 ('navigation', 'Overview', '#', 'Product', 1),

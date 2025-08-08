@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 import { ContentUpdateIndicator } from "@/components/ContentUpdateIndicator";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import './i18n';
 import Homepage1 from "./pages/Homepage1";
 import Features from "./pages/Features";
@@ -126,6 +127,7 @@ const AppContent = () => {
           <TooltipProvider>
             <Toaster />
             <BrowserRouter>
+              <ScrollToTop />
               <SettingsProvider>
                 <Routes>
                   <Route path="/" element={<Homepage1 />} />

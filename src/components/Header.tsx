@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sparkles, Globe, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,20 +7,51 @@ import { UserProfileDropdown } from "./UserProfileDropdown";
 import { Logo } from "./Logo";
 import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
 import { useTranslation } from "react-i18next";
+import { smoothScrollTo, isHomePage } from "@/lib/utils";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { t } = useTranslation();
 
   const isActive = (path: string) => location.pathname === path;
 
+  const handleNavigation = (href: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (href === "/") {
+      // For home page, scroll to top
+      if (location.pathname === "/") {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        navigate("/");
+      }
+    } else if (href === "#contact") {
+      // For contact, scroll to contact section
+      if (isHomePage()) {
+        smoothScrollTo('contact-section');
+      } else {
+        navigate('/');
+        setTimeout(() => {
+          smoothScrollTo('contact-section');
+        }, 100);
+      }
+    } else {
+      // For other pages, navigate (ScrollToTop component will handle scrolling)
+      navigate(href);
+    }
+    
+    // Close mobile menu if open
+    setIsMenuOpen(false);
+  };
+
   const navigation = [
     { name: t('common.home'), href: "/" },
     { name: t('common.features'), href: "/features" },
     { name: t('common.pricing'), href: "/pricing" },
-    { name: t('common.contact'), href: "/contact" },
+    { name: t('common.contact'), href: "#contact" },
   ];
 
   return (
@@ -43,20 +74,20 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {navigation.map((item) => (
-              <Link
+              <button
                 key={item.name}
-                to={item.href}
+                onClick={(e) => handleNavigation(item.href, e)}
                 className={`font-semibold transition-all duration-300 relative group px-3 py-2 rounded-lg ${
-                  isActive(item.href)
+                  isActive(item.href === "#contact" ? "/" : item.href)
                     ? "text-blue-600 bg-blue-50 border border-blue-200"
                     : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
                 }`}
               >
                 {item.name}
-                {!isActive(item.href) && (
+                {!isActive(item.href === "#contact" ? "/" : item.href) && (
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
                 )}
-              </Link>
+              </button>
             ))}
           </nav>
 
@@ -99,18 +130,20 @@ const Header = () => {
           <div className="md:hidden py-8 border-t border-gray-200/50 bg-white/95 backdrop-blur-sm">
             <div className="flex flex-col space-y-4">
               {navigation.map((item) => (
-                <Link
+                <button
                   key={item.name}
-                  to={item.href}
-                  className={`font-semibold px-4 py-4 rounded-xl transition-all duration-300 ${
-                    isActive(item.href)
+                  onClick={(e) => {
+                    handleNavigation(item.href, e);
+                    setIsMenuOpen(false);
+                  }}
+                  className={`font-semibold px-4 py-4 rounded-xl transition-all duration-300 text-left ${
+                    isActive(item.href === "#contact" ? "/" : item.href)
                       ? "text-blue-600 bg-blue-50 border border-blue-200"
                       : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </Link>
+                </button>
               ))}
               
               {loading ? (

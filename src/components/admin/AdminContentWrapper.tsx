@@ -34,30 +34,23 @@ export function AdminContentWrapper({
   const { getContentBySection: getHomepageContent, updateContent: updateHomepageContent, refetch: refetchHomepage } = useOptimizedHomepageContent();
   const { getContentBySection: getFeaturesContent, updateContent: updateFeaturesContent, refetch: refetchFeatures } = useFeaturesContent();
   const { getContentBySection: getPricingContent, updateContent: updatePricingContent, refetch: refetchPricing } = useOptimizedPricingContent();
-  const { getContentBySection: getAboutContent, updateContent: updateAboutContent, refetch: refetchAbout } = useOptimizedAboutContent();
   
   const currentContent = contentType === 'features' 
     ? getFeaturesContent(sectionId) 
     : contentType === 'pricing'
     ? getPricingContent(sectionId)
-    : contentType === 'about'
-    ? getAboutContent(sectionId)
     : getHomepageContent(sectionId);
 
   const updateFunction = contentType === 'features' 
     ? updateFeaturesContent 
     : contentType === 'pricing'
     ? updatePricingContent
-    : contentType === 'about'
-    ? updateAboutContent
     : updateHomepageContent;
 
   const refetchFunction = contentType === 'features' 
     ? refetchFeatures 
     : contentType === 'pricing'
     ? refetchPricing
-    : contentType === 'about'
-    ? refetchAbout
     : refetchHomepage;
 
   return (

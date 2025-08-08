@@ -1126,7 +1126,7 @@ export default function Homepage1() {
       </section>
 
       {/* Contact Us Section */}
-      <section className="py-12 lg:py-16 bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 relative overflow-hidden">
+      <section id="contact-section" className="py-12 lg:py-16 bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0">
           <div className="absolute top-10 right-10 w-20 h-20 bg-purple-400 rounded-full opacity-20 animate-pulse"></div>
