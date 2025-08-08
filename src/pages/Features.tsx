@@ -2,10 +2,6 @@ import { useEffect } from "react";
 import Layout from "@/components/Layout";
 import { FeaturesHero } from "@/components/FeaturesHero";
 import { FeaturePillars } from "@/components/FeaturePillars";
-import { InteractiveShowcase } from "@/components/InteractiveShowcase";
-import { AIInsightSpotlight } from "@/components/AIInsightSpotlight";
-import { UseCases } from "@/components/UseCases";
-import { IntegrationsGrid } from "@/components/IntegrationsGrid";
 import { ComparisonTable } from "@/components/ComparisonTable";
 import { SecurityStrip } from "@/components/SecurityStrip";
 import { FAQCompact } from "@/components/FAQCompact";
@@ -26,10 +22,6 @@ export default function Features() {
       <div className="min-h-screen bg-background">
         <FeaturesHero />
         <FeaturePillars />
-        <InteractiveShowcase />
-        <AIInsightSpotlight />
-        <UseCases />
-        <IntegrationsGrid />
         <ComparisonTable />
         <SecurityStrip />
         <FAQCompact />

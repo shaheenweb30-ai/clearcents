@@ -56,7 +56,7 @@ export function ComparisonTable() {
   };
 
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-br from-white via-gray-50 to-blue-50/30 relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-br from-white via-gray-50 to-blue-50/30 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 right-20 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
@@ -212,32 +212,7 @@ export function ComparisonTable() {
           </div>
         </div>
         
-        {/* Feature Highlights */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-blue-600" />
-            </div>
-            <h4 className="font-semibold text-lg text-gray-900 mb-2">Real-time Updates</h4>
-            <p className="text-gray-600 text-sm">Instant calculations vs. manual spreadsheet updates</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8 text-green-600" />
-            </div>
-            <h4 className="font-semibold text-lg text-gray-900 mb-2">AI-Powered</h4>
-            <p className="text-gray-600 text-sm">Smart insights that spreadsheets can't provide</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-purple-600" />
-            </div>
-            <h4 className="font-semibold text-lg text-gray-900 mb-2">Secure & Private</h4>
-            <p className="text-gray-600 text-sm">Bank-level security vs. vulnerable spreadsheet files</p>
-          </div>
-        </div>
+        
       </div>
     </section>
   );

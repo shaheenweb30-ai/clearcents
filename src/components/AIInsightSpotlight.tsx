@@ -8,7 +8,7 @@ const AI_INSIGHTS = [
     id: 1,
     type: 'warning',
     icon: AlertTriangle,
-    message: "You're trending 18% over 'Dining Out'. Set a soft cap at £220?",
+    message: "You're trending 18% over 'Dining Out'. Set a soft cap at $220?",
     actions: [
       { label: "Set cap", variant: "default" as const },
       { label: "Snooze", variant: "outline" as const }
@@ -19,7 +19,7 @@ const AI_INSIGHTS = [
     id: 2,
     type: 'savings',
     icon: TrendingUp,
-    message: "Cancel 'Pro Suite'—unused for 45 days. Save £14.99/mo.",
+    message: "Cancel 'Pro Suite'—unused for 45 days. Save $14.99/mo.",
     actions: [
       { label: "Review", variant: "default" as const },
       { label: "Dismiss", variant: "outline" as const }
@@ -30,7 +30,7 @@ const AI_INSIGHTS = [
     id: 3,
     type: 'suggestion',
     icon: Brain,
-    message: "Move £120 from 'Leisure' to 'Groceries' to stay on budget.",
+    message: "Move $120 from 'Leisure' to 'Groceries' to stay on budget.",
     actions: [
       { label: "Move now", variant: "default" as const },
       { label: "Later", variant: "outline" as const }
@@ -58,7 +58,7 @@ export function AIInsightSpotlight() {
   const IconComponent = currentInsight.icon;
 
   return (
-    <section id="insights" className="py-20 lg:py-32 bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30 relative overflow-hidden">
+    <section id="insights" className="py-24 bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 right-20 w-32 h-32 bg-purple-200 rounded-full opacity-10 animate-pulse"></div>

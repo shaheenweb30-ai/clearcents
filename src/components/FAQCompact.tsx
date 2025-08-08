@@ -43,7 +43,7 @@ export function FAQCompact() {
   };
 
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-br from-white via-gray-50 to-blue-50/30 relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-blue-50/30 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 right-20 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
@@ -130,33 +130,6 @@ export function FAQCompact() {
                 Contact Support
               </button>
             </Link>
-          </div>
-        </div>
-        
-        {/* Quick Help */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8 text-green-600" />
-            </div>
-            <h4 className="font-semibold text-lg text-gray-900 mb-2">Quick Start Guide</h4>
-            <p className="text-gray-600 text-sm">Get up and running in minutes with our step-by-step guide</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <HelpCircle className="w-8 h-8 text-blue-600" />
-            </div>
-            <h4 className="font-semibold text-lg text-gray-900 mb-2">Help Center</h4>
-            <p className="text-gray-600 text-sm">Comprehensive documentation and video tutorials</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-8 h-8 text-purple-600" />
-            </div>
-            <h4 className="font-semibold text-lg text-gray-900 mb-2">Live Chat</h4>
-            <p className="text-gray-600 text-sm">Get instant help from our support team</p>
           </div>
         </div>
       </div>

@@ -12,13 +12,13 @@ const SHOWCASE_TABS = [
     icon: BarChart3,
     content: {
       title: 'Total Spending',
-      amount: '£1,247.80',
+      amount: '$1,247.80',
       period: 'This month',
       chart: 'overview-chart',
       categories: [
-        { name: 'Dining Out', amount: '£156.80', percentage: 12.6, color: 'bg-red-500' },
-        { name: 'Groceries', amount: '£89.45', percentage: 7.2, color: 'bg-green-500' },
-        { name: 'Transport', amount: '£67.20', percentage: 5.4, color: 'bg-blue-500' }
+        { name: 'Dining Out', amount: '$156.80', percentage: 12.6, color: 'bg-red-500' },
+        { name: 'Groceries', amount: '$89.45', percentage: 7.2, color: 'bg-green-500' },
+        { name: 'Transport', amount: '$67.20', percentage: 5.4, color: 'bg-blue-500' }
       ]
     }
   },
@@ -28,13 +28,13 @@ const SHOWCASE_TABS = [
     icon: PieChart,
     content: {
       title: 'Dining Out',
-      amount: '£156.80',
+      amount: '$156.80',
       period: 'This month',
       chart: 'category-chart',
       subcategories: [
-        { name: 'Restaurants', amount: '£89.45', percentage: 57.1 },
-        { name: 'Coffee Shops', amount: '£34.20', percentage: 21.8 },
-        { name: 'Takeaway', amount: '£33.15', percentage: 21.1 }
+        { name: 'Restaurants', amount: '$89.45', percentage: 57.1 },
+        { name: 'Coffee Shops', amount: '$34.20', percentage: 21.8 },
+        { name: 'Takeaway', amount: '$33.15', percentage: 21.1 }
       ]
     }
   },
@@ -44,8 +44,8 @@ const SHOWCASE_TABS = [
     icon: TrendingUp,
     content: {
       title: 'Monthly Budget',
-      amount: '£2,000',
-      period: '£752.20 remaining',
+      amount: '$2,000',
+      period: '$752.20 remaining',
       chart: 'budget-chart',
       progress: 62.4,
       status: 'On track'

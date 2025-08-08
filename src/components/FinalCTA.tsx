@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export function FinalCTA() {
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 right-20 w-32 h-32 bg-purple-400 rounded-full opacity-20 animate-pulse"></div>
@@ -33,8 +33,8 @@ export function FinalCTA() {
             Start free, set up in under 2 minutes. No credit card required.
           </p>
           
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          {/* CTA Button */}
+          <div className="flex justify-center mb-12">
             <Link to="/signup">
               <Button
                 size="lg"
@@ -44,39 +44,12 @@ export function FinalCTA() {
                 Start free — no card
               </Button>
             </Link>
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-full px-8 py-4 border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900 font-semibold transition-all duration-300"
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Watch demo
-            </Button>
           </div>
           
-          {/* Trust Indicators */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="flex items-center justify-center gap-3 bg-white/50 rounded-xl p-4 border border-gray-200">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center">
-                <Shield className="w-5 h-5 text-green-600" />
-              </div>
-              <span className="font-semibold text-gray-900">Bank-level security</span>
-            </div>
-            <div className="flex items-center justify-center gap-3 bg-white/50 rounded-xl p-4 border border-gray-200">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
-                <Globe className="w-5 h-5 text-blue-600" />
-              </div>
-              <span className="font-semibold text-gray-900">100+ currencies</span>
-            </div>
-            <div className="flex items-center justify-center gap-3 bg-white/50 rounded-xl p-4 border border-gray-200">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-purple-600" />
-              </div>
-              <span className="font-semibold text-gray-900">Real-time analytics</span>
-            </div>
-          </div>
+
         </div>
       </div>
     </section>
   );
 }
+    
