@@ -9,7 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 import { ContentUpdateIndicator } from "@/components/ContentUpdateIndicator";
 import './i18n';
-import Home from "./pages/Home";
+import Homepage1 from "./pages/Homepage1";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import About from "./pages/About";
@@ -33,6 +33,15 @@ import AdminImages from "./pages/admin/AdminImages";
 import AdminFooter from "./pages/admin/AdminFooter";
 import AdminFAQ from "./pages/admin/AdminFAQ";
 import AdminPackages from "./pages/admin/AdminPackages";
+
+// Import new auth pages
+import { 
+  ForgotPasswordPage, 
+  ResetPasswordPage, 
+  VerifyEmailPage, 
+  TwoFactorPage,
+  AuthRouterDemo 
+} from "@/components/auth";
 
 // Error Boundary Component
 interface ErrorBoundaryState {
@@ -115,18 +124,27 @@ const AppContent = () => {
     <>
       <AuthProvider>
         <BrandingProvider>
-          <SettingsProvider>
-            <TooltipProvider>
-              <Toaster />
-              <BrowserRouter>
+          <TooltipProvider>
+            <Toaster />
+            <BrowserRouter>
+              <SettingsProvider>
                 <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/" element={<Homepage1 />} />
                   <Route path="/features" element={<Features />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
+                  
+                  {/* Authentication Routes */}
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<SignUp />} />
+                  <Route path="/signin" element={<Login />} /> {/* Alias for login */}
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage />} />
+                  <Route path="/verify-email" element={<VerifyEmailPage />} />
+                  <Route path="/two-factor" element={<TwoFactorPage />} />
+                  <Route path="/auth-demo" element={<AuthRouterDemo />} /> {/* Demo route */}
+                  
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/transactions" element={<Transactions />} />
                   <Route path="/categories" element={<Categories />} />
@@ -137,18 +155,20 @@ const AppContent = () => {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/subscription" element={<Subscription />} />
                   <Route path="/help" element={<Help />} />
+                  
                   {/* Admin Routes */}
-                           <Route path="/admin/pages" element={<AdminPages />} />
-           <Route path="/admin/branding" element={<AdminBranding />} />
-           <Route path="/admin/images" element={<AdminImages />} />
-           <Route path="/admin/footer" element={<AdminFooter />} />
-           <Route path="/admin/faq" element={<AdminFAQ />} />
-           <Route path="/admin/packages" element={<AdminPackages />} />
+                  <Route path="/admin/pages" element={<AdminPages />} />
+                  <Route path="/admin/branding" element={<AdminBranding />} />
+                  <Route path="/admin/images" element={<AdminImages />} />
+                  <Route path="/admin/footer" element={<AdminFooter />} />
+                  <Route path="/admin/faq" element={<AdminFAQ />} />
+                  <Route path="/admin/packages" element={<AdminPackages />} />
+                  
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </SettingsProvider>
+              </SettingsProvider>
+            </BrowserRouter>
+          </TooltipProvider>
         </BrandingProvider>
       </AuthProvider>
       <ContentUpdateIndicator isUpdating={false} />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
@@ -29,12 +29,16 @@ import {
   RefreshCw,
   AlertTriangle,
   CheckCircle,
-  Info
+  Info,
+  Shield
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useTranslation } from "react-i18next";
+import { useUserRole } from "@/hooks/useUserRole";
+import { FormSubmissions } from "@/components/admin/FormSubmissions";
+import { NewsletterSubscribers } from "@/components/admin/NewsletterSubscribers";
 
 interface SettingsSection {
   id: string;
@@ -57,10 +61,12 @@ export default function Settings() {
   });
   
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { t } = useTranslation();
   const { user: authUser } = useAuth();
   const { preferences, userProfile, updatePreferences, updateUserProfile } = useSettings();
+  const { isAdmin } = useUserRole(authUser);
 
   // Form states
   const [profileForm, setProfileForm] = useState({
@@ -113,6 +119,14 @@ export default function Settings() {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Handle tab parameter from URL
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['profile', 'preferences', 'billing', 'admin', 'newsletter'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   const loadUserProfile = async (user: User) => {
     try {
@@ -295,7 +309,7 @@ export default function Settings() {
 
         {/* Settings Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <UserIcon className="h-4 w-4" />
               Profile
@@ -308,6 +322,12 @@ export default function Settings() {
               <CreditCard className="h-4 w-4" />
               Billing
             </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="admin" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Admin
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Profile Tab */}
@@ -882,6 +902,40 @@ export default function Settings() {
               </CardContent>
             </Card>
           </TabsContent>
+
+                        {/* Admin Tab */}
+              {isAdmin && (
+                <TabsContent value="admin" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Admin Panel
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <FormSubmissions />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
+
+              {/* Newsletter Tab */}
+              {isAdmin && (
+                <TabsContent value="newsletter" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Mail className="h-5 w-5" />
+                        Newsletter Management
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <NewsletterSubscribers />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
         </Tabs>
         </div>
       </div>

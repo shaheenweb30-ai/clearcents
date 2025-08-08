@@ -118,7 +118,11 @@ export function DynamicHomepage() {
                     {/* Netflix Card */}
                     <div className="bg-gray-200 rounded-xl p-3 flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center text-white font-bold">N</div>
+                        <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
+                          <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 4h12v2H6V4zm0 4h12v2H6V8zm0 4h12v2H6v-2zm0 4h12v2H6v-2z"/>
+                          </svg>
+                        </div>
                         <div>
                           <div className="font-semibold">Netflix</div>
                           <div className="text-sm text-gray-600">$24 /month</div>
@@ -134,7 +138,9 @@ export function DynamicHomepage() {
                     <div className="bg-blue-500 rounded-xl p-3 flex items-center justify-between transform rotate-1">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                          <div className="w-4 h-4 bg-green-500 rounded"></div>
+                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                          </svg>
                         </div>
                         <div className="text-white">
                           <div className="font-semibold">Spotify</div>

@@ -24,20 +24,20 @@ export function Logo({ className = "", showText = true, size = "md" }: LogoProps
   };
 
   return (
-    <Link to="/" className={`flex items-center space-x-2 hover:opacity-80 transition-opacity ${className}`}>
+    <Link to="/" className={`flex items-center space-x-3 hover:opacity-90 transition-all duration-300 group ${className}`}>
       {brandingSettings?.logo_url ? (
         <img 
           src={brandingSettings.logo_url} 
           alt={brandingSettings.business_name || "Logo"} 
-          className={`${sizeClasses[size]} w-auto object-contain`}
+          className={`${sizeClasses[size]} w-auto object-contain group-hover:scale-110 transition-transform duration-300`}
         />
       ) : (
-        <div className={`${sizeClasses[size]} bg-primary rounded-full flex items-center justify-center`}>
-          <DollarSign className={`${size === "sm" ? "w-3 h-3" : size === "md" ? "w-5 h-5" : "w-7 h-7"} text-primary-foreground`} />
+        <div className={`${sizeClasses[size]} bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
+          <span className="text-white font-bold text-sm">C</span>
         </div>
       )}
       {showText && (
-        <span className={`font-heading font-bold ${textSizes[size]} text-primary`}>
+        <span className={`font-bold ${textSizes[size]} text-gray-900 group-hover:scale-105 transition-transform duration-300`}>
           {brandingSettings?.business_name || 'ClearCents'}
         </span>
       )}

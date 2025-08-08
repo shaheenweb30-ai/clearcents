@@ -7,10 +7,12 @@ import { Link } from "react-router-dom";
 import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
 import { useOptimizedPricingContent } from "@/hooks/useOptimizedPricingContent";
 import { supabase } from "@/integrations/supabase/client";
+import { PricingPage } from "@/components/pricing";
 
 const Pricing = () => {
   const { getContentBySection, loading, error } = useOptimizedPricingContent();
   const [faqs, setFaqs] = useState([]);
+  const [useNewPricing, setUseNewPricing] = useState(true);
   
   const heroContent = getContentBySection('hero');
   const pricingContent = getContentBySection('pricing');
@@ -39,17 +41,6 @@ const Pricing = () => {
 
     fetchFAQs();
   }, []);
-  
-  const features = [
-    "Unlimited budgeting categories",
-    "Unlimited manual transactions",
-    "Cloud sync on all devices",
-    "Full access to all features",
-    "Budget tracking & adjustments",
-    "Simple reports & insights",
-    "Email support",
-    "Cancel anytime"
-  ];
 
   if (loading) {
     return (
@@ -78,6 +69,27 @@ const Pricing = () => {
       </Layout>
     );
   }
+
+  // Use the new simplified pricing page
+  if (useNewPricing) {
+    return (
+      <Layout>
+        <PricingPage />
+      </Layout>
+    );
+  }
+
+  // Legacy pricing page (kept for admin functionality)
+  const features = [
+    "Unlimited budgeting categories",
+    "Unlimited manual transactions",
+    "Cloud sync on all devices",
+    "Full access to all features",
+    "Budget tracking & adjustments",
+    "Simple reports & insights",
+    "Email support",
+    "Cancel anytime"
+  ];
 
   return (
     <Layout>

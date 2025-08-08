@@ -1,12 +1,12 @@
 import React from 'react';
 import ImageManager from '@/components/admin/ImageManager';
-import Layout from '@/components/Layout';
+import DashboardLayout from '@/components/DashboardLayout';
 
 const AdminImages = () => {
   return (
-    <Layout>
+    <DashboardLayout>
       <ImageManager />
-    </Layout>
+    </DashboardLayout>
   );
 };
 

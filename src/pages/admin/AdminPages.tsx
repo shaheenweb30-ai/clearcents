@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
-import Layout from '@/components/Layout';
+import DashboardLayout from '@/components/DashboardLayout';
 import { Link } from 'react-router-dom';
 import { PageManager } from '@/components/admin/PageManager';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,7 +14,7 @@ export default function AdminPages() {
 
   if (!isAdmin) {
     return (
-      <Layout>
+      <DashboardLayout>
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h1>
           <p className="text-muted-foreground mb-8">You don't have permission to access this page.</p>
@@ -22,12 +22,12 @@ export default function AdminPages() {
             <Button>Go Home</Button>
           </Link>
         </div>
-      </Layout>
+      </DashboardLayout>
     );
   }
 
   return (
-    <Layout>
+    <DashboardLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <Link to="/settings" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
@@ -42,6 +42,6 @@ export default function AdminPages() {
         
         <PageManager />
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 }

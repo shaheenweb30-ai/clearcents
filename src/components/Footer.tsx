@@ -1,148 +1,465 @@
-import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github } from "lucide-react";
-import { AdminContentWrapper } from "@/components/admin/AdminContentWrapper";
-import { useOptimizedHomepageContent } from "@/hooks/useOptimizedHomepageContent";
-import { useFooterLinks } from "@/hooks/useFooterLinks";
-import { FooterManager } from "@/components/admin/FooterManager";
-import { useOptimizedBrandingSettings } from "@/hooks/useOptimizedBrandingSettings";
-import { Logo } from "./Logo";
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { 
+  ChevronDown, 
+  ChevronUp, 
+  Globe, 
+  Shield, 
+  BarChart3, 
+  Twitter, 
+  Linkedin, 
+  Youtube,
+  CheckCircle,
+  ExternalLink,
+  Settings,
+  X,
+  Sparkles,
+  Heart,
+  Mail,
+  ArrowRight,
+  Zap,
+  Users,
+  Star
+} from 'lucide-react';
 
+
+
+// Footer Link Component
+const FooterLink = ({ href, children, className = "" }: { href: string; children: React.ReactNode; className?: string }) => (
+  <a 
+    href={href} 
+    className={`text-gray-600 hover:text-blue-600 transition-all duration-300 hover:translate-x-1 group ${className}`}
+  >
+    <span className="flex items-center gap-1">
+      {children}
+      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+    </span>
+  </a>
+);
+
+// Footer Section Component
+const FooterSection = ({ 
+  title, 
+  children, 
+  isExpanded = false, 
+  onToggle 
+}: { 
+  title: string; 
+  children: React.ReactNode; 
+  isExpanded?: boolean; 
+  onToggle?: () => void;
+}) => (
+  <div className="border-b border-gray-200/50 lg:border-b-0 group">
+    <div className="flex items-center justify-between py-4 lg:py-0">
+      <h3 className="font-bold text-gray-900 lg:mb-4 group-hover:text-blue-600 transition-colors duration-300">{title}</h3>
+      {onToggle && (
+        <button
+          onClick={onToggle}
+          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-all duration-300"
+          aria-expanded={isExpanded}
+          aria-label={`Toggle ${title} section`}
+        >
+          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
+      )}
+    </div>
+    <div className={`lg:block ${isExpanded ? 'block' : 'hidden'}`}>
+      <div className="space-y-3 pb-4 lg:pb-0">
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+// Cookie Banner Component
+const CookieBanner = ({ onAccept, onReject, onManage }: {
+  onAccept: () => void;
+  onReject: () => void;
+  onManage: () => void;
+}) => {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200/50 p-4 shadow-2xl z-50">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="w-4 h-4 text-blue-600" />
+              <span className="font-semibold text-gray-900">Cookie Preferences</span>
+            </div>
+            <p className="text-sm text-gray-600">
+              We use essential cookies to run ClearCents and optional analytics to improve it.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button size="sm" onClick={onAccept} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full">
+              <CheckCircle className="w-4 h-4 mr-1" />
+              Accept all
+            </Button>
+            <Button size="sm" variant="outline" onClick={onReject} className="rounded-full">
+              Reject non-essential
+            </Button>
+            <Button size="sm" variant="ghost" onClick={onManage} className="rounded-full">
+              <Settings className="w-4 h-4 mr-1" />
+              Manage
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main Footer Component
 const Footer = () => {
-  const { getContentBySection } = useOptimizedHomepageContent();
-  const { getNavigationByGroup, getSocialLinks, loading } = useFooterLinks();
-  const { settings: brandingSettings } = useOptimizedBrandingSettings();
-  const footerContent = getContentBySection('footer');
+  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
+  const [showCookieBanner, setShowCookieBanner] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const { toast } = useToast();
+  const currentYear = new Date().getFullYear();
 
-  const navigationGroups = getNavigationByGroup();
-  const socialLinks = getSocialLinks().sort((a, b) => a.display_order - b.display_order);
-
-  // Helper function to get social icon component
-  const getSocialIcon = (iconName: string) => {
-    const iconMap = {
-      facebook: Facebook,
-      instagram: Instagram,
-      twitter: Twitter,
-      linkedin: Linkedin,
-      youtube: Youtube,
-      github: Github
-    };
-    const IconComponent = iconMap[iconName?.toLowerCase() as keyof typeof iconMap] || Facebook;
-    return <IconComponent className="w-5 h-5" />;
+  // Toggle mobile accordion sections
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
   };
 
-  // Helper function to render link (internal vs external)
-  const renderLink = (link: { url: string; title: string }, className: string) => {
-    const isInternal = link.url.startsWith('/');
+  // Cookie banner handlers
+  const handleAcceptCookies = () => {
+    localStorage.setItem('cookiePreference', 'accepted');
+    setShowCookieBanner(false);
+  };
+
+  const handleRejectCookies = () => {
+    localStorage.setItem('cookiePreference', 'rejected');
+    setShowCookieBanner(false);
+  };
+
+  const handleManageCookies = () => {
+    // TODO: Link to cookies page
+    console.log('Navigate to cookies page');
+  };
+
+  // Handle newsletter subscription
+  const handleNewsletterSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    if (isInternal) {
-      return (
-        <Link to={link.url} className={className}>
-          {link.title}
-        </Link>
-      );
-    } else {
-      return (
-        <a 
-          href={link.url} 
-          className={className}
-          target="_blank" 
-          rel="noopener noreferrer"
-        >
-          {link.title}
-        </a>
-      );
+    console.log('Newsletter subscription started:', newsletterEmail);
+    
+    // Basic validation
+    if (!newsletterEmail) {
+      console.log('Validation failed: Missing email');
+      toast({
+        title: "Missing Email",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newsletterEmail)) {
+      console.log('Validation failed: Invalid email');
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log('Validation passed, starting subscription...');
+    setIsSubscribing(true);
+
+    try {
+      // Save newsletter subscription to database
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert({
+          email: newsletterEmail,
+          status: 'active'
+        });
+
+      if (error) {
+        console.error('Error saving newsletter subscription:', error);
+        throw error;
+      }
+      
+      console.log('Database save successful, showing success message...');
+      
+      // Show success feedback
+      toast({
+        title: "Successfully Subscribed!",
+        description: "You'll receive our monthly newsletter with tips and updates.",
+      });
+      
+      // Reset form
+      setNewsletterEmail('');
+      console.log('Setting isSubscribed to true...');
+      setIsSubscribed(true);
+      
+      // Reset submitted state after 5 seconds
+      setTimeout(() => {
+        console.log('Resetting isSubscribed to false...');
+        setIsSubscribed(false);
+      }, 5000);
+      
+    } catch (error) {
+      console.error('Newsletter subscription failed:', error);
+      toast({
+        title: "Subscription Failed",
+        description: "There was an error subscribing to the newsletter. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      console.log('Setting isSubscribing to false...');
+      setIsSubscribing(false);
     }
   };
 
-  if (loading) {
-    return (
-      <footer className="bg-gray-50 text-gray-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">Loading footer...</div>
-        </div>
-      </footer>
-    );
-  }
+  // Check for cookie preference on mount
+  useEffect(() => {
+    const cookiePreference = localStorage.getItem('cookiePreference');
+    if (!cookiePreference) {
+      setShowCookieBanner(true);
+    }
+  }, []);
 
   return (
-    <>
-      <AdminContentWrapper sectionId="footer">
-        <footer className="bg-gray-50 text-gray-600">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-              {/* Logo and tagline */}
-              <div className="lg:col-span-2">
-                <div className="mb-4">
-                  <Logo size="md" showText={true} />
+    <footer className="bg-gradient-to-br from-white via-gray-50/30 to-blue-50/20 border-t border-gray-200/50 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-10 right-20 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
+        <div className="absolute bottom-10 left-20 w-24 h-24 bg-purple-200 rounded-full opacity-15 animate-bounce"></div>
+        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-green-200 rounded-full opacity-20 animate-ping"></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Brand Section */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <FooterSection title="Brand">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 group">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-white font-bold text-sm">C</span>
+                  </div>
+                  <div>
+                    <span className="font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors duration-300">ClearCents</span>
+                    <div className="flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-purple-500" />
+                      <span className="text-xs text-gray-500">AI-Powered</span>
+                    </div>
+                  </div>
                 </div>
-                <p 
-                  className="font-body mb-6 max-w-sm"
-                  style={{ color: footerContent?.description_color || '#6B7280' }}
-                >
-                  {footerContent?.description || 'Welcome to FinSuite, where financial management meets simplicity and efficiency.'}
+                <p className="text-sm text-gray-600">
+                  Smarter budgeting with real-time AI insights.
                 </p>
                 
-                {/* Dynamic Social Icons */}
-                <div className="flex space-x-3">
-                  {socialLinks.map((social) => (
-                    <a 
-                      key={social.id}
-                      href={social.url} 
-                      className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-gray-700 transition-colors"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title={social.title}
-                    >
-                      {getSocialIcon(social.icon_name || 'facebook')}
-                    </a>
-                  ))}
+                {/* Trust Badges - Compact */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                    <span>GDPR-ready & SOC 2 compliant</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span>All systems operational</span>
+                  </div>
+                </div>
+
+                {/* Social Links */}
+                <div className="flex gap-2">
+                  <a href="#" className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-all duration-300" aria-label="Follow us on Twitter">
+                    <Twitter className="w-3 h-3" />
+                  </a>
+                  <a href="#" className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-all duration-300" aria-label="Follow us on LinkedIn">
+                    <Linkedin className="w-3 h-3" />
+                  </a>
+                  <a href="#" className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-all duration-300" aria-label="Follow us on YouTube">
+                    <Youtube className="w-3 h-3" />
+                  </a>
                 </div>
               </div>
+            </FooterSection>
+          </div>
 
-              {/* Dynamic Navigation Groups */}
-              {Object.keys(navigationGroups).slice(0, 4).map((groupName) => (
-                <div key={groupName}>
-                  <h3 className="font-heading font-semibold text-lg text-gray-900 mb-4">
-                    {groupName}
-                  </h3>
-                  <ul className="space-y-3">
-                    {navigationGroups[groupName].map((link) => (
-                      <li key={link.id}>
-                        {renderLink(
-                          link,
-                          "text-gray-600 hover:text-gray-900 font-body transition-colors"
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+          {/* Product & Resources Section */}
+          <div>
+            <FooterSection 
+              title="Product & Resources" 
+              isExpanded={expandedSections.product}
+              onToggle={() => toggleSection('product')}
+            >
+              <FooterLink href="/features">Features</FooterLink>
+              <FooterLink href="/pricing">Pricing</FooterLink>
+              <FooterLink href="/getting-started">Getting started</FooterLink>
+              <FooterLink href="/blog">Blog</FooterLink>
+            </FooterSection>
+          </div>
+
+          {/* Company & Legal Section */}
+          <div>
+            <FooterSection 
+              title="Company & Legal" 
+              isExpanded={expandedSections.company}
+              onToggle={() => toggleSection('company')}
+            >
+              <FooterLink href="/about">About</FooterLink>
+              <FooterLink href="/careers">Careers</FooterLink>
+              <FooterLink href="/contact">Contact</FooterLink>
+              <FooterLink href="/privacy">Privacy policy</FooterLink>
+              <FooterLink href="/terms">Terms of service</FooterLink>
+              <FooterLink href="/cookies">Cookies</FooterLink>
+            </FooterSection>
+          </div>
+
+          {/* Newsletter Section */}
+          <div>
+            <FooterSection 
+              title="Newsletter" 
+              isExpanded={expandedSections.newsletter}
+              onToggle={() => toggleSection('newsletter')}
+            >
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-gray-900">Get smarter with money</span>
                 </div>
-              ))}
+                <p className="text-xs text-gray-600">
+                  Monthly tips, product updates, and templates. No spam.
+                </p>
+                
+                {/* Success Message */}
+                {isSubscribed && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-green-800 text-xs">Successfully Subscribed!</h4>
+                        <p className="text-xs text-green-700">You'll receive our monthly newsletter.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <form onSubmit={handleNewsletterSubscribe} className="space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={newsletterEmail}
+                      onChange={(e) => setNewsletterEmail(e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-xs"
+                      required
+                    />
+                    <Button 
+                      type="submit"
+                      size="sm" 
+                      disabled={isSubscribing}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg px-3 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubscribing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                          Subscribing...
+                        </>
+                      ) : isSubscribed ? (
+                        <>
+                          <span className="mr-1">✅</span>
+                          Subscribed!
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          Subscribe
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </FooterSection>
+          </div>
+        </div>
+
+        {/* Locale/Preferences Row */}
+        <div className="border-t border-gray-200/50 pt-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="flex flex-wrap gap-3">
+              {/* Language Selector */}
+              <div className="flex items-center gap-2 bg-gray-50 px-2 py-1 rounded-lg">
+                <Globe className="w-3 h-3 text-gray-600" />
+                <label className="text-xs text-gray-600 font-medium">Language:</label>
+                <select className="text-xs border border-gray-300 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white">
+                  <option value="en">English</option>
+                  <option value="es">Español</option>
+                  <option value="fr">Français</option>
+                  <option value="de">Deutsch</option>
+                </select>
+              </div>
+
+              {/* Region */}
+              <div className="flex items-center gap-2 bg-gray-50 px-2 py-1 rounded-lg">
+                <Zap className="w-3 h-3 text-gray-600" />
+                <label className="text-xs text-gray-600 font-medium">Region:</label>
+                <span className="text-xs text-gray-700 font-medium">Auto-detected</span>
+              </div>
             </div>
 
-            {/* Bottom bar */}
-            <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-              <p 
-                className="font-body text-sm"
-                style={{ color: footerContent?.subtitle_color || '#6B7280' }}
-              >
-                {footerContent?.subtitle || '© 2024 All Rights Reserved'}
-              </p>
-              <div className="flex space-x-6 mt-4 md:mt-0">
-                <a href="#" className="text-gray-600 hover:text-gray-900 font-body text-sm transition-colors">
-                  Terms & Conditions
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 font-body text-sm transition-colors">
-                  Privacy Policy
-                </a>
+            <p className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded-lg">
+              <Shield className="w-3 h-3 inline mr-1" />
+              Data region configurable on paid plans.
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-200/50 pt-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span>© {currentYear} ClearCents Ltd.</span>
+              <div className="flex items-center gap-1 text-xs text-gray-400">
+                <Heart className="w-3 h-3 text-red-500 animate-pulse" />
+                <span>Lebanon</span>
               </div>
+            </div>
+            
+            <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-lg">
+              <Users className="w-3 h-3 inline mr-1" />
+              Company: 12345678
+            </div>
+            
+            <div className="flex items-center gap-3 text-xs">
+              <FooterLink href="/security" className="text-gray-500 hover:text-blue-600">Security</FooterLink>
+              <FooterLink href="/compliance" className="text-gray-500 hover:text-blue-600">Compliance</FooterLink>
+              <FooterLink href="/cookies" className="text-gray-500 hover:text-blue-600 flex items-center gap-1">
+                <Settings className="w-3 h-3" />
+                Cookies
+              </FooterLink>
             </div>
           </div>
-        </footer>
-      </AdminContentWrapper>
-      
-      {/* Footer Manager for Admins */}
-      <FooterManager />
-    </>
+        </div>
+      </div>
+
+      {/* Cookie Banner */}
+      {showCookieBanner && (
+        <CookieBanner
+          onAccept={handleAcceptCookies}
+          onReject={handleRejectCookies}
+          onManage={handleManageCookies}
+        />
+      )}
+    </footer>
   );
 };
 

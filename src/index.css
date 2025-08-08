@@ -348,6 +348,39 @@ All colors MUST be HSL.
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   }
 
+  /* Force light theme for public pages */
+  .light-theme {
+    color-scheme: light;
+  }
+
+  .light-theme * {
+    color-scheme: light;
+  }
+
+  /* Override dark theme for public pages */
+  .light-theme.dark,
+  .light-theme .dark {
+    --background: 0 0% 100% !important;
+    --foreground: 0 0% 15% !important;
+    --card: 0 0% 100% !important;
+    --card-foreground: 0 0% 15% !important;
+    --popover: 0 0% 100% !important;
+    --popover-foreground: 0 0% 15% !important;
+    --primary: 217 100% 55% !important;
+    --primary-foreground: 0 0% 100% !important;
+    --secondary: 0 0% 94% !important;
+    --secondary-foreground: 0 0% 15% !important;
+    --muted: 0 0% 94% !important;
+    --muted-foreground: 0 0% 40% !important;
+    --accent: 217 100% 65% !important;
+    --accent-foreground: 0 0% 100% !important;
+    --destructive: 0 72% 51% !important;
+    --destructive-foreground: 0 0% 100% !important;
+    --border: 0 0% 90% !important;
+    --input: 0 0% 100% !important;
+    --ring: 217 100% 55% !important;
+  }
+
   /* Dark theme gradient backgrounds */
   .dark .bg-gradient-to-br {
     background: linear-gradient(135deg, hsl(220 13% 9%) 0%, hsl(220 13% 11%) 100%);

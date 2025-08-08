@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
+import { useLocation } from 'react-router-dom';
 
 interface UserPreferences {
   theme: 'light' | 'dark' | 'system';
@@ -37,6 +38,7 @@ interface SettingsContextType {
   formatTime: (date: Date | string) => string;
   isDarkMode: boolean;
   toggleTheme: () => void;
+  shouldApplyDarkTheme: () => boolean;
 }
 
 // Currency mapping with symbols
@@ -211,9 +213,28 @@ interface SettingsProviderProps {
 
 export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
   const { user } = useAuth();
+  const location = useLocation();
   const [preferences, setPreferences] = useState<UserPreferences>(defaultPreferences);
   const [userProfile, setUserProfile] = useState<UserProfile>(defaultUserProfile);
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Check if current page is a dashboard/app page
+  const isDashboardPage = () => {
+    const dashboardPaths = [
+      '/dashboard',
+      '/transactions',
+      '/categories',
+      '/reports',
+      '/insights',
+      '/profile',
+      '/settings',
+      '/subscription',
+      '/help'
+    ];
+    
+    return dashboardPaths.some(path => location.pathname.startsWith(path)) || 
+           location.pathname.startsWith('/admin');
+  };
 
   // Load preferences from localStorage on mount
   useEffect(() => {
@@ -244,18 +265,25 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     }
   }, [user]);
 
-  // Apply theme when preferences change
+  // Apply theme when preferences change - only apply dark theme in dashboard/app pages
   useEffect(() => {
     const applyTheme = () => {
       const root = document.documentElement;
       
-      if (preferences.theme === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        root.classList.toggle('dark', systemTheme === 'dark');
-        setIsDarkMode(systemTheme === 'dark');
+      // Only apply dark theme if we're in a dashboard/app page
+      if (isDashboardPage()) {
+        if (preferences.theme === 'system') {
+          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          root.classList.toggle('dark', systemTheme === 'dark');
+          setIsDarkMode(systemTheme === 'dark');
+        } else {
+          root.classList.toggle('dark', preferences.theme === 'dark');
+          setIsDarkMode(preferences.theme === 'dark');
+        }
       } else {
-        root.classList.toggle('dark', preferences.theme === 'dark');
-        setIsDarkMode(preferences.theme === 'dark');
+        // Always use light theme for public pages
+        root.classList.remove('dark');
+        setIsDarkMode(false);
       }
     };
 
@@ -264,14 +292,14 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     // Listen for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
-      if (preferences.theme === 'system') {
+      if (preferences.theme === 'system' && isDashboardPage()) {
         applyTheme();
       }
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [preferences.theme]);
+  }, [preferences.theme, location.pathname]);
 
   const updatePreferences = (newPreferences: Partial<UserPreferences>) => {
     // If currency is being updated, automatically set the currency symbol
@@ -349,6 +377,13 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     updatePreferences({ theme: newTheme });
   };
 
+  const shouldApplyDarkTheme = () => {
+    return isDashboardPage() && (
+      preferences.theme === 'dark' || 
+      (preferences.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    );
+  };
+
   const value: SettingsContextType = {
     preferences,
     userProfile,
@@ -359,6 +394,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     formatTime,
     isDarkMode,
     toggleTheme,
+    shouldApplyDarkTheme,
   };
 
   return (

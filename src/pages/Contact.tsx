@@ -45,24 +45,39 @@ const Contact = () => {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 lg:py-32 bg-gradient-to-br from-white via-gray-50 to-blue-50/30 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 right-20 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
+          <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-200 rounded-full opacity-15 animate-bounce"></div>
+          <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-green-200 rounded-full opacity-20 animate-ping"></div>
+          <div className="absolute top-1/4 left-1/4 w-12 h-12 bg-indigo-200 rounded-full opacity-15 animate-pulse"></div>
+        </div>
+        
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div>
-              <Card className="border-2 border-primary/20 shadow-xl">
-                <CardHeader>
-                  <h2 className="font-heading font-bold text-2xl text-foreground mb-2">
-                    Send us a message
+              <Card className="border-2 border-gray-100 shadow-2xl rounded-3xl bg-white/80 backdrop-blur-sm">
+                <CardHeader className="pb-6">
+                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg mb-4">
+                    <MessageCircle className="w-4 h-4" />
+                    Get in Touch
+                  </div>
+                  <h2 className="font-bold text-3xl text-gray-900 mb-4">
+                    Send us a
+                    <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                      message
+                    </span>
                   </h2>
-                  <p className="font-body text-muted-foreground">
+                  <p className="text-gray-600 text-lg">
                     Fill out the form below and we'll get back to you as soon as possible.
                   </p>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="font-body font-medium text-foreground">
+                    <div className="space-y-3">
+                      <Label htmlFor="name" className="font-semibold text-gray-900">
                         Your Name
                       </Label>
                       <Input
@@ -72,13 +87,13 @@ const Contact = () => {
                         required
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="h-12 border-2 border-primary/20 focus:border-primary"
+                        className="h-14 border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-lg transition-all duration-300"
                         placeholder="Enter your name"
                       />
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="font-body font-medium text-foreground">
+                    <div className="space-y-3">
+                      <Label htmlFor="email" className="font-semibold text-gray-900">
                         Email Address
                       </Label>
                       <Input
@@ -88,13 +103,13 @@ const Contact = () => {
                         required
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="h-12 border-2 border-primary/20 focus:border-primary"
+                        className="h-14 border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-lg transition-all duration-300"
                         placeholder="Enter your email"
                       />
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor="message" className="font-body font-medium text-foreground">
+                    <div className="space-y-3">
+                      <Label htmlFor="message" className="font-semibold text-gray-900">
                         Message
                       </Label>
                       <Textarea
@@ -103,19 +118,18 @@ const Contact = () => {
                         required
                         value={formData.message}
                         onChange={handleInputChange}
-                        className="min-h-32 border-2 border-primary/20 focus:border-primary resize-none"
+                        className="min-h-40 border-2 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-lg resize-none transition-all duration-300"
                         placeholder="Tell us how we can help you..."
                       />
                     </div>
                     
                     <Button 
                       type="submit" 
-                      variant="default" 
                       size="lg" 
-                      className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-3"
+                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-full py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                     >
+                      <Send className="mr-2 w-5 h-5" />
                       Send Message
-                      <Send className="ml-2 w-5 h-5" />
                     </Button>
                   </form>
                 </CardContent>
@@ -125,31 +139,38 @@ const Contact = () => {
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h2 className="font-heading font-bold text-3xl text-foreground mb-4">
-                  Get in touch
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg mb-4">
+                  <MessageCircle className="w-4 h-4" />
+                  We're Here to Help
+                </div>
+                <h2 className="font-bold text-4xl text-gray-900 mb-6">
+                  Have
+                  <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                    questions?
+                  </span>
                 </h2>
-                <p className="font-body text-lg text-muted-foreground mb-8">
+                <p className="text-xl text-gray-600 mb-8">
                   We're here to help! Whether you have questions about features, need technical support, or just want to share feedback, we'd love to hear from you.
                 </p>
               </div>
 
               <div className="space-y-6">
-                <Card className="border-2 border-transparent hover:border-primary/20 transition-colors">
+                <Card className="border-2 border-gray-100 hover:border-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl rounded-2xl">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-                        <Mail className="w-6 h-6 text-white" />
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Mail className="w-6 h-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-heading font-semibold text-xl text-foreground mb-2">
+                        <h3 className="font-semibold text-xl text-gray-900 mb-2">
                           Email Support
                         </h3>
-                        <p className="font-body text-muted-foreground mb-2">
+                        <p className="text-gray-600 mb-2">
                           Drop us a line anytime at:
                         </p>
                         <a
                           href="mailto:hello@finsuite.com"
-                          className="font-body font-semibold text-primary hover:text-primary/80 text-lg"
+                          className="font-semibold text-blue-600 hover:text-blue-700 text-lg transition-colors"
                         >
                           hello@finsuite.com
                         </a>
@@ -158,17 +179,17 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-transparent hover:border-primary/20 transition-colors">
+                <Card className="border-2 border-gray-100 hover:border-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl rounded-2xl">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-6 h-6 text-white" />
+                      <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-6 h-6 text-green-600" />
                       </div>
                       <div>
-                        <h3 className="font-heading font-semibold text-xl text-foreground mb-2">
+                        <h3 className="font-semibold text-xl text-gray-900 mb-2">
                           Response Time
                         </h3>
-                        <p className="font-body text-muted-foreground">
+                        <p className="text-gray-600">
                           We typically reply within 24 hours during business days. For urgent issues, we often respond much faster!
                         </p>
                       </div>
@@ -176,17 +197,17 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-transparent hover:border-primary/20 transition-colors">
+                <Card className="border-2 border-gray-100 hover:border-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl rounded-2xl">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-                        <MessageCircle className="w-6 h-6 text-white" />
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <MessageCircle className="w-6 h-6 text-purple-600" />
                       </div>
                       <div>
-                        <h3 className="font-heading font-semibold text-xl text-foreground mb-2">
+                        <h3 className="font-semibold text-xl text-gray-900 mb-2">
                           What to expect
                         </h3>
-                        <p className="font-body text-muted-foreground">
+                        <p className="text-gray-600">
                           Our support team is friendly, knowledgeable, and genuinely cares about helping you succeed with your budgeting goals.
                         </p>
                       </div>
