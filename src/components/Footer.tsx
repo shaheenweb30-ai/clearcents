@@ -312,7 +312,6 @@ const Footer = () => {
               isExpanded={expandedSections.company}
               onToggle={() => toggleSection('company')}
             >
-              <FooterLink href="/about">About</FooterLink>
               <FooterLink href="/careers">Careers</FooterLink>
               <FooterLink href="/contact">Contact</FooterLink>
               <FooterLink href="/privacy">Privacy policy</FooterLink>

@@ -78,23 +78,7 @@ export function useRealtimeUpdates() {
       )
       .subscribe();
 
-    // Subscribe to about content changes
-    const aboutSubscription = supabase
-      .channel('about-content-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'about_content'
-        },
-        (payload) => {
-          console.log('About content changed:', payload);
-          // Invalidate and refetch about content
-          queryClient.invalidateQueries({ queryKey: ['about-content'] });
-        }
-      )
-      .subscribe();
+
 
     // Subscribe to contact content changes
     const contactSubscription = supabase
@@ -138,7 +122,7 @@ export function useRealtimeUpdates() {
       brandingSubscription.unsubscribe();
       featuresSubscription.unsubscribe();
       pricingSubscription.unsubscribe();
-      aboutSubscription.unsubscribe();
+
       contactSubscription.unsubscribe();
       footerSubscription.unsubscribe();
     };

@@ -596,7 +596,6 @@ export function DynamicFeatures() {
               <h3 className="font-semibold text-gray-900 mb-4">Company</h3>
               <ul className="space-y-3">
                 <li><a href="/" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Home</a></li>
-                <li><a href="/about" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">About us</a></li>
                 <li><a href="/affiliate" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Affiliate Program</a></li>
                 <li><a href="/careers" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Careers</a></li>
               </ul>

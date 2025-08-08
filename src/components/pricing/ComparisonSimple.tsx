@@ -1,194 +1,329 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, X, Minus, Info } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Check, X, ChevronDown, ChevronUp, Sparkles, Trophy, Zap, Shield, ArrowRight, TrendingUp, Crown, Users, BarChart3, CreditCard, Globe, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const features = [
   {
-    name: "Real-time tracking",
-    free: "✓",
-    pro: "✓"
+    feature: "Real-time expense tracking",
+    free: true,
+    pro: true,
+    enterprise: true,
+    description: "Instant updates vs. manual entry"
   },
   {
-    name: "Categories",
-    free: "10",
-    pro: "Unlimited"
+    feature: "Budget categories",
+    free: "10 categories",
+    pro: "Unlimited",
+    enterprise: "Unlimited",
+    description: "Basic vs. comprehensive organization"
   },
   {
-    name: "Budgets",
-    free: "1",
-    pro: "Unlimited"
+    feature: "Budget limits",
+    free: "1 budget",
+    pro: "Unlimited",
+    enterprise: "Unlimited",
+    description: "Single vs. multiple budget tracking"
   },
   {
-    name: "AI insights per month",
-    free: "5",
-    pro: "50+",
-    tooltip: "AI tips reset monthly."
+    feature: "AI insights per month",
+    free: "5 tips",
+    pro: "50+ tips",
+    enterprise: "Unlimited",
+    description: "Basic vs. comprehensive AI guidance"
   },
   {
-    name: "Recurring detection & alerts",
-    free: "—",
-    pro: "✓"
+    feature: "Recurring detection & alerts",
+    free: false,
+    pro: true,
+    enterprise: true,
+    description: "Manual vs. automatic subscription tracking"
   },
   {
-    name: "Multi-currency",
-    free: "Viewer",
-    pro: "Full (with live FX)"
+    feature: "Multi-currency support",
+    free: "Viewer only",
+    pro: "Full with live FX",
+    enterprise: "Full with live FX",
+    description: "Basic vs. real-time currency conversion"
   },
   {
-    name: "CSV import/export",
-    free: "✓",
-    pro: "✓"
+    feature: "CSV import/export",
+    free: true,
+    pro: true,
+    enterprise: true,
+    description: "Data portability for all plans"
   },
   {
-    name: "Receipt attachments",
-    free: "—",
-    pro: "✓"
+    feature: "Receipt attachments",
+    free: false,
+    pro: true,
+    enterprise: true,
+    description: "Manual vs. automated receipt management"
   },
   {
-    name: "Support",
-    free: "Community",
-    pro: "Priority email"
+    feature: "Advanced analytics & reports",
+    free: false,
+    pro: true,
+    enterprise: true,
+    description: "Basic vs. comprehensive insights"
   },
   {
-    name: "Data retention",
+    feature: "Priority support",
+    free: false,
+    pro: true,
+    enterprise: "24/7 priority",
+    description: "Community vs. dedicated support"
+  },
+  {
+    feature: "Data retention",
     free: "6 months",
-    pro: "24 months"
+    pro: "24 months",
+    enterprise: "Unlimited",
+    description: "Limited vs. extended data history"
+  },
+  {
+    feature: "Team collaboration",
+    free: false,
+    pro: "Up to 5 users",
+    enterprise: "Unlimited team members",
+    description: "Individual vs. team financial management"
+  },
+  {
+    feature: "Advanced security & compliance",
+    free: false,
+    pro: false,
+    enterprise: true,
+    description: "Enterprise-grade security features"
+  },
+  {
+    feature: "Custom integrations & API access",
+    free: false,
+    pro: false,
+    enterprise: true,
+    description: "Advanced connectivity options"
+  },
+  {
+    feature: "Dedicated account manager",
+    free: false,
+    pro: false,
+    enterprise: true,
+    description: "Personalized support and guidance"
+  },
+  {
+    feature: "Custom reporting & analytics",
+    free: false,
+    pro: false,
+    enterprise: true,
+    description: "Tailored insights for organizations"
+  },
+  {
+    feature: "White-label options",
+    free: false,
+    pro: false,
+    enterprise: true,
+    description: "Brand customization for organizations"
   }
 ];
 
 export const ComparisonSimple = () => {
-  const [openRows, setOpenRows] = useState<Set<number>>(new Set());
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
 
   const toggleRow = (index: number) => {
-    const newOpenRows = new Set(openRows);
-    if (newOpenRows.has(index)) {
-      newOpenRows.delete(index);
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
     } else {
-      newOpenRows.add(index);
+      newExpanded.add(index);
     }
-    setOpenRows(newOpenRows);
+    setExpandedRows(newExpanded);
   };
 
-  const renderValue = (value: string) => {
-    if (value === "✓") {
-      return <CheckCircle className="w-5 h-5 text-green-500" />;
-    } else if (value === "—") {
-      return <X className="w-5 h-5 text-gray-400" />;
+  const renderValue = (value: boolean | string) => {
+    if (typeof value === 'boolean') {
+      return value ? (
+        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+          <Check className="w-4 h-4 text-green-600" />
+        </div>
+      ) : (
+        <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+          <X className="w-4 h-4 text-red-600" />
+        </div>
+      );
     } else {
-      return <span className="text-sm font-medium">{value}</span>;
+      return <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{value}</span>;
     }
   };
 
   return (
-    <section className="py-20 bg-muted/30">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">What you get on Pro</h2>
+    <section className="py-16 bg-gradient-to-br from-white via-gray-50 to-blue-50/30 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 right-20 w-32 h-32 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
+        <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-200 rounded-full opacity-15 animate-bounce"></div>
+        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-green-200 rounded-full opacity-20 animate-ping"></div>
+        <div className="absolute top-1/4 left-1/4 w-12 h-12 bg-indigo-200 rounded-full opacity-15 animate-pulse"></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg mb-6">
+            <Trophy className="w-4 h-4" />
+            Plan Comparison
+          </div>
+          <h2 className="font-bold text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-6">
+            What you get on
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              {" "}Pro & Enterprise
+            </span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            See the difference between Free, Pro, and Enterprise plans. Upgrade when you're ready.
+          </p>
         </div>
 
         {/* Desktop Table */}
         <div className="hidden lg:block">
-          <Card>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-6 font-semibold text-foreground">Features</th>
-                      <th className="text-center p-6 font-semibold text-foreground">Free</th>
-                      <th className="text-center p-6 font-semibold text-foreground">Pro</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {features.map((feature, index) => (
-                      <tr key={index} className="border-b border-border/50">
-                        <td className="p-6 font-medium text-foreground">
-                          <div className="flex items-center gap-2">
-                            {feature.name}
-                            {feature.tooltip && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <Info className="w-4 h-4 text-muted-foreground" />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>{feature.tooltip}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
-                          </div>
-                        </td>
-                        <td className="p-6 text-center">{renderValue(feature.free)}</td>
-                        <td className="p-6 text-center">{renderValue(feature.pro)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          <div className="bg-white rounded-3xl overflow-hidden border-2 border-gray-100 shadow-2xl">
+            <div className="grid grid-cols-4 bg-gradient-to-r from-gray-50 to-gray-100 p-8">
+              <div className="font-bold text-xl text-gray-900">Feature</div>
+              <div className="font-bold text-xl text-gray-900 text-center">Free</div>
+              <div className="font-bold text-xl text-gray-900 text-center flex items-center justify-center gap-2">
+                <Crown className="w-6 h-6 text-purple-600" />
+                Pro
               </div>
-            </CardContent>
-          </Card>
+              <div className="font-bold text-xl text-gray-900 text-center flex items-center justify-center gap-2">
+                <Trophy className="w-6 h-6 text-indigo-600" />
+                Enterprise
+              </div>
+            </div>
+            
+            {features.map((row, index) => (
+              <div
+                key={index}
+                className={`grid grid-cols-4 p-8 border-t border-gray-100 hover:bg-gray-50/50 transition-colors duration-200 ${
+                  index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
+                }`}
+              >
+                <div className="font-semibold text-lg text-gray-900">
+                  {row.feature}
+                  <span className="block text-sm text-gray-600 mt-1">{row.description}</span>
+                </div>
+                <div className="flex items-center justify-center">
+                  {renderValue(row.free)}
+                </div>
+                <div className="flex items-center justify-center">
+                  {typeof row.pro === 'boolean' ? (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                      <Check className="w-5 h-5 text-white" />
+                    </div>
+                  ) : (
+                    renderValue(row.pro)
+                  )}
+                </div>
+                <div className="flex items-center justify-center">
+                  {typeof row.enterprise === 'boolean' ? (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
+                      <Check className="w-5 h-5 text-white" />
+                    </div>
+                  ) : (
+                    renderValue(row.enterprise)
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Mobile Accordion */}
-        <div className="lg:hidden">
-          <div className="space-y-4">
-            {features.map((feature, index) => (
-              <Collapsible
-                key={index}
-                open={openRows.has(index)}
-                onOpenChange={() => toggleRow(index)}
-              >
-                <Card>
-                  <CollapsibleTrigger asChild>
-                    <CardContent className="p-4 cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-foreground">{feature.name}</span>
-                          {feature.tooltip && (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Info className="w-4 h-4 text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{feature.tooltip}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+        <div className="lg:hidden space-y-6">
+          {features.map((row, index) => {
+            const isExpanded = expandedRows.has(index);
+            return (
+              <div key={index} className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <button
+                  className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50/50 transition-colors"
+                  onClick={() => toggleRow(index)}
+                  aria-expanded={isExpanded}
+                >
+                  <span className="font-semibold text-lg text-gray-900">{row.feature}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-500">{row.description}</span>
+                    {isExpanded ? (
+                      <ChevronUp className="w-6 h-6 text-gray-400" />
+                    ) : (
+                      <ChevronDown className="w-6 h-6 text-gray-400" />
+                    )}
+                  </div>
+                </button>
+                
+                {isExpanded && (
+                  <div className="px-6 pb-6 space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="text-sm font-semibold text-gray-700 mb-3">Free</div>
+                        <div className="flex justify-center">
+                          {renderValue(row.free)}
+                        </div>
+                      </div>
+                      <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border-2 border-purple-200">
+                        <div className="text-sm font-semibold text-gray-700 mb-3 flex items-center justify-center gap-1">
+                          <Crown className="w-4 h-4 text-purple-600" />
+                          Pro
+                        </div>
+                        <div className="flex justify-center">
+                          {typeof row.pro === 'boolean' ? (
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                              <Check className="w-5 h-5 text-white" />
+                            </div>
+                          ) : (
+                            renderValue(row.pro)
                           )}
                         </div>
-                        <Minus className="w-4 h-4 text-muted-foreground" />
                       </div>
-                    </CardContent>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <CardContent className="pt-0 pb-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="text-center">
-                          <div className="text-sm font-medium text-muted-foreground mb-2">
-                            Free
-                          </div>
-                          <div className="flex justify-center">
-                            {renderValue(feature.free)}
-                          </div>
+                      <div className="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200">
+                        <div className="text-sm font-semibold text-gray-700 mb-3 flex items-center justify-center gap-1">
+                          <Trophy className="w-4 h-4 text-indigo-600" />
+                          Enterprise
                         </div>
-                        <div className="text-center">
-                          <div className="text-sm font-medium text-muted-foreground mb-2">
-                            Pro
-                          </div>
-                          <div className="flex justify-center">
-                            {renderValue(feature.pro)}
-                          </div>
+                        <div className="flex justify-center">
+                          {typeof row.enterprise === 'boolean' ? (
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
+                              <Check className="w-5 h-5 text-white" />
+                            </div>
+                          ) : (
+                            renderValue(row.enterprise)
+                          )}
                         </div>
                       </div>
-                    </CardContent>
-                  </CollapsibleContent>
-                </Card>
-              </Collapsible>
-            ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        {/* Upgrade Note */}
+        <div className="text-center mt-16">
+          <div className="inline-flex items-center gap-3 bg-white px-6 py-4 rounded-full shadow-lg border border-gray-200">
+            <Shield className="w-5 h-5 text-green-600" />
+            <p className="text-sm text-gray-600 font-medium">
+              All plans include data export and basic security features.
+            </p>
+          </div>
+        </div>
+        
+        {/* Bottom CTA */}
+        <div className="text-center mt-20">
+          <div className="inline-flex items-center space-x-4 bg-white rounded-full px-8 py-4 shadow-lg border border-gray-200">
+            <span className="text-gray-600 font-medium">Ready to unlock Pro or Enterprise features?</span>
+            <Link to="/signup">
+              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <Zap className="w-5 h-5 mr-2" />
+                Start Free Trial
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

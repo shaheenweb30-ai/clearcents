@@ -20,7 +20,6 @@ const Header = () => {
     { name: t('common.home'), href: "/" },
     { name: t('common.features'), href: "/features" },
     { name: t('common.pricing'), href: "/pricing" },
-    { name: t('common.about'), href: "/about" },
     { name: t('common.contact'), href: "/contact" },
   ];
 

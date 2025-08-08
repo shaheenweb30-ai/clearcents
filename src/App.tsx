@@ -12,7 +12,6 @@ import './i18n';
 import Homepage1 from "./pages/Homepage1";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
-import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -132,7 +131,6 @@ const AppContent = () => {
                   <Route path="/" element={<Homepage1 />} />
                   <Route path="/features" element={<Features />} />
                   <Route path="/pricing" element={<Pricing />} />
-                  <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   
                   {/* Authentication Routes */}

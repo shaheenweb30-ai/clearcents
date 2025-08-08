@@ -5,14 +5,13 @@ import { AdminEditButton } from './AdminEditButton';
 import { useOptimizedHomepageContent } from '@/hooks/useOptimizedHomepageContent';
 import { useFeaturesContent } from '@/hooks/useFeaturesContent';
 import { useOptimizedPricingContent } from '@/hooks/useOptimizedPricingContent';
-import { useOptimizedAboutContent } from '@/hooks/useOptimizedAboutContent';
 
 interface AdminContentWrapperProps {
   sectionId: string;
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
-  contentType?: 'homepage' | 'features' | 'pricing' | 'about';
+  contentType?: 'homepage' | 'features' | 'pricing';
 }
 
 export function AdminContentWrapper({ 
