@@ -38,7 +38,7 @@ export function Logo({ className = "", showText = true, size = "md" }: LogoProps
       )}
       {showText && (
         <span className={`font-bold ${textSizes[size]} text-gray-900 group-hover:scale-105 transition-transform duration-300`}>
-          {brandingSettings?.business_name || 'ClearCents'}
+          {brandingSettings?.business_name || 'Centrabudget'}
         </span>
       )}
     </Link>
