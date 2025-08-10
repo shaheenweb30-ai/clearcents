@@ -248,9 +248,7 @@ const Footer = () => {
             <FooterSection title="Brand">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 group">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-white font-bold text-sm">C</span>
-                  </div>
+                  <img src="/assets/centrabudget-mark.svg" alt="CentraBudget" className="w-8 h-8" />
                   <div>
                     <span className="font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors duration-300">CentraBudget</span>
                     <div className="flex items-center gap-1">
@@ -441,6 +439,7 @@ const Footer = () => {
             <div className="flex items-center gap-3 text-xs">
               <FooterLink href="/security" className="text-gray-500 hover:text-blue-600">Security</FooterLink>
               <FooterLink href="/compliance" className="text-gray-500 hover:text-blue-600">Compliance</FooterLink>
+              <FooterLink href="/privacy" className="text-gray-500 hover:text-blue-600">Privacy</FooterLink>
               <FooterLink href="/cookies" className="text-gray-500 hover:text-blue-600 flex items-center gap-1">
                 <Settings className="w-3 h-3" />
                 Cookies

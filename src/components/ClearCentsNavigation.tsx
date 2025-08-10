@@ -49,9 +49,7 @@ const ClearCentsNavigation = ({ user, onLogout }: ClearCentsNavigationProps) => 
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-navy rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-heading font-bold text-sm">C</span>
-              </div>
+              <img src="/assets/centrabudget-mark.svg" alt="CentraBudget" className="w-8 h-8" />
               <span className="font-heading font-bold text-xl text-primary">CentraBudget</span>
             </Link>
 
@@ -132,9 +130,7 @@ const ClearCentsNavigation = ({ user, onLogout }: ClearCentsNavigationProps) => 
                   <div className="flex flex-col h-full">
                     {/* Mobile Logo */}
                     <div className="flex items-center space-x-2 pb-6">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary to-navy rounded-lg flex items-center justify-center">
-                        <span className="text-primary-foreground font-heading font-bold text-sm">C</span>
-                      </div>
+                    <img src="/assets/centrabudget-mark.svg" alt="CentraBudget" className="w-8 h-8" />
                       <span className="font-heading font-bold text-xl text-primary">CentraBudget</span>
                     </div>
 

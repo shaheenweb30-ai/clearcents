@@ -73,22 +73,26 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {navigation.map((item) => (
-              <button
-                key={item.name}
-                onClick={(e) => handleNavigation(item.href, e)}
-                className={`font-semibold transition-all duration-300 relative group px-3 py-2 rounded-lg ${
-                  isActive(item.href === "#contact" ? "/" : item.href)
-                    ? "text-blue-600 bg-blue-50 border border-blue-200"
-                    : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                }`}
-              >
-                {item.name}
-                {!isActive(item.href === "#contact" ? "/" : item.href) && (
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
-                )}
-              </button>
-            ))}
+            {navigation.map((item) => {
+              const isContact = item.href === "#contact";
+              const active = !isContact && isActive(item.href);
+              return (
+                <button
+                  key={item.name}
+                  onClick={(e) => handleNavigation(item.href, e)}
+                  className={`font-semibold transition-all duration-300 relative group px-3 py-2 rounded-lg ${
+                    active
+                      ? "text-blue-600 bg-blue-50 border border-blue-200"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {item.name}
+                  {!active && (
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
+                  )}
+                </button>
+              );
+            })}
           </nav>
 
           {/* CTA Buttons or User Profile */}
@@ -129,22 +133,26 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden py-8 border-t border-gray-200/50 bg-white/95 backdrop-blur-sm">
             <div className="flex flex-col space-y-4">
-              {navigation.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={(e) => {
-                    handleNavigation(item.href, e);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`font-semibold px-4 py-4 rounded-xl transition-all duration-300 text-left ${
-                    isActive(item.href === "#contact" ? "/" : item.href)
-                      ? "text-blue-600 bg-blue-50 border border-blue-200"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                  }`}
-                >
-                  {item.name}
-                </button>
-              ))}
+              {navigation.map((item) => {
+                const isContact = item.href === "#contact";
+                const active = !isContact && isActive(item.href);
+                return (
+                  <button
+                    key={item.name}
+                    onClick={(e) => {
+                      handleNavigation(item.href, e);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`font-semibold px-4 py-4 rounded-xl transition-all duration-300 text-left ${
+                      active
+                        ? "text-blue-600 bg-blue-50 border border-blue-200"
+                        : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                );
+              })}
               
               {loading ? (
                 <div className="px-4 text-sm text-gray-500">{t('common.loading')}</div>

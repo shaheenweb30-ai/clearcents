@@ -28,13 +28,15 @@ export function Logo({ className = "", showText = true, size = "md" }: LogoProps
       {brandingSettings?.logo_url ? (
         <img 
           src={brandingSettings.logo_url} 
-          alt={brandingSettings.business_name || "Logo"} 
+          alt={brandingSettings.business_name || "CentraBudget"} 
           className={`${sizeClasses[size]} w-auto object-contain group-hover:scale-110 transition-transform duration-300`}
         />
       ) : (
-        <div className={`${sizeClasses[size]} bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
-          <span className="text-white font-bold text-sm">C</span>
-        </div>
+        <img 
+          src="/assets/centrabudget-mark.svg" 
+          alt="CentraBudget" 
+          className={`${sizeClasses[size]} w-auto object-contain group-hover:scale-110 transition-transform duration-300`}
+        />
       )}
       {showText && (
         <span className={`font-bold ${textSizes[size]} text-gray-900 group-hover:scale-105 transition-transform duration-300`}>

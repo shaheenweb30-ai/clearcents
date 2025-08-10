@@ -20,6 +20,7 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Subscription from "./pages/Subscription";
 import Help from "./pages/Help";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
@@ -167,6 +168,7 @@ const AppContent = () => {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/subscription" element={<Subscription />} />
                     <Route path="/help" element={<Help />} />
+                    <Route path="/privacy" element={<Privacy />} />
                     
                     {/* Admin Routes */}
                     <Route path="/admin/pages" element={<AdminPages />} />
