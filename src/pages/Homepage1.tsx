@@ -965,7 +965,7 @@ export default function Homepage1() {
                     <span className="text-white font-bold text-lg">E</span>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-300">Enterprise</h3>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">$29</div>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">Contact us</div>
                   <p className="text-sm text-gray-600 mb-4">For teams & businesses</p>
                   <div className="text-xs text-gray-500 space-y-1">
                     <div>✓ Team collaboration</div>

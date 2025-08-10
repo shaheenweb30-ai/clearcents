@@ -199,21 +199,23 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
 
                 {/* Price */}
                 <div className="mb-4">
-                  <div className="flex items-baseline justify-center">
-                    <span className="font-bold text-4xl text-gray-900">${getDisplayPrice(plan.price)}</span>
-                    <span className="text-lg text-gray-600 ml-1">
-                      /mo
-                    </span>
-                  </div>
-                  {billing.cycle === 'yearly' && plan.name !== 'Free' && (
-                    <div className="text-sm text-gray-500 mt-1">
-                      billed yearly
+                  {((plan as any).key === 'enterprise') ? (
+                    <div className="flex items-baseline justify-center">
+                      <span className="font-bold text-3xl text-gray-900">Contact us</span>
                     </div>
+                  ) : (
+                    <>
+                      <div className="flex items-baseline justify-center">
+                        <span className="font-bold text-4xl text-gray-900">${getDisplayPrice(plan.price)}</span>
+                        <span className="text-lg text-gray-600 ml-1">/mo</span>
+                      </div>
+                      {billing.cycle === 'yearly' && (plan as any).key !== 'free' && (plan as any).key !== 'enterprise' && (
+                        <div className="text-sm text-gray-500 mt-1">billed yearly</div>
+                      )}
+                    </>
                   )}
                   {plan.name === 'Enterprise' && (
-                    <div className="text-sm text-gray-500 mt-1">
-                      custom pricing
-                    </div>
+                    <div className="text-sm text-gray-500 mt-1">custom pricing</div>
                   )}
                 </div>
 
