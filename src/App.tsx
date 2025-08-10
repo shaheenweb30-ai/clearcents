@@ -6,6 +6,7 @@ import { BrandingProvider } from "@/contexts/BrandingContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Analytics } from "@vercel/analytics/react";
 import { ContentUpdateIndicator } from "@/components/ContentUpdateIndicator";
 import { OnboardingProvider } from "@/components";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -140,6 +141,7 @@ const AppContent = () => {
               <OnboardingProvider>
                 <TooltipProvider>
                   <Toaster />
+                  {import.meta.env.PROD && <Analytics />}
                   <ScrollToTop />
                   <Routes>
                     <Route path="/" element={<Homepage1 />} />
