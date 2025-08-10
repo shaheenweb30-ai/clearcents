@@ -78,7 +78,7 @@ export function FeaturesHero() {
                   <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-xs">C</span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">ClearCents</span>
+                  <span className="text-sm font-semibold text-gray-900">CentraBudget</span>
                 </div>
               </div>
               

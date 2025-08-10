@@ -126,7 +126,7 @@ export const ChatGPTStyleSignIn = () => {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-sm">C</span>
             </div>
-            ClearCents
+            CentraBudget
           </div>
         </Link>
         
@@ -154,7 +154,7 @@ export const ChatGPTStyleSignIn = () => {
                   Welcome back
                 </h1>
                 <p className="text-lg text-gray-600 max-w-sm mx-auto">
-                  Enter your email to continue to ClearCents
+                  Enter your email to continue to CentraBudget
                 </p>
               </div>
 

@@ -141,7 +141,7 @@ export const SignUpPage = () => {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-sm">C</span>
             </div>
-            ClearCents
+             CentraBudget
           </div>
         </Link>
         
@@ -163,10 +163,10 @@ export const SignUpPage = () => {
             <div className="text-center space-y-4">
               <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                {step === 1 ? "Join ClearCents" : "Set your password"}
+                 {step === 1 ? "Join CentraBudget" : "Set your password"}
               </div>
               <h1 className="text-3xl font-bold text-gray-900">
-                {step === 1 ? "Create your account" : "Set your password for ClearCents to continue"}
+                 {step === 1 ? "Create your account" : "Set your password for CentraBudget to continue"}
               </h1>
               {step === 1 && (
                 <p className="text-lg text-gray-600 max-w-sm mx-auto">

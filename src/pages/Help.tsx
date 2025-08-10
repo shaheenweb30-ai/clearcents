@@ -99,7 +99,7 @@ const Help = () => {
   // Mock help articles
   const helpArticles: HelpArticle[] = [
     {
-      title: "Getting Started with ClearCents",
+      title: "Getting Started with CentraBudget",
       description: "Learn the basics of setting up your account and tracking your first transactions.",
       category: "getting-started",
       difficulty: "beginner",
@@ -240,7 +240,7 @@ const Help = () => {
                     Help Center
                   </h1>
                   <p className="text-emerald-100 text-lg font-body">
-                    Find answers to your questions and learn how to use ClearCents effectively
+                    Find answers to your questions and learn how to use CentraBudget effectively
                   </p>
                 </div>
               </div>
@@ -563,7 +563,7 @@ const Help = () => {
                       </div>
                       <div>
                         <p className="font-semibold text-slate-800 dark:text-slate-100">Email Support</p>
-                        <p className="text-sm text-muted-foreground">support@clearcents.com</p>
+                        <p className="text-sm text-muted-foreground">support@centrabudget.com</p>
                       </div>
                     </div>
 

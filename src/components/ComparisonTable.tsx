@@ -73,7 +73,7 @@ export function ComparisonTable() {
             Superior Features
           </div>
           <h2 className="font-bold text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-6">
-            Why ClearCents beats
+            Why CentraBudget beats
             <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
               spreadsheets
             </span>
@@ -91,7 +91,7 @@ export function ComparisonTable() {
               <div className="font-bold text-xl text-gray-900 text-center">Spreadsheets</div>
               <div className="font-bold text-xl text-gray-900 text-center flex items-center justify-center gap-2">
                 <Sparkles className="w-6 h-6 text-blue-600" />
-                ClearCents
+                 CentraBudget
               </div>
             </div>
             
@@ -174,8 +174,8 @@ export function ComparisonTable() {
                       </div>
                       <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border-2 border-blue-200">
                         <div className="text-sm font-semibold text-gray-700 mb-3 flex items-center justify-center gap-1">
-                          <Sparkles className="w-4 h-4 text-blue-600" />
-                          ClearCents
+                           <Sparkles className="w-4 h-4 text-blue-600" />
+                           CentraBudget
                         </div>
                         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mx-auto shadow-lg">
                           <Check className="w-5 h-5 text-white" />

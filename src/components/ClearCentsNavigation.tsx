@@ -52,7 +52,7 @@ const ClearCentsNavigation = ({ user, onLogout }: ClearCentsNavigationProps) => 
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-navy rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-heading font-bold text-sm">C</span>
               </div>
-              <span className="font-heading font-bold text-xl text-primary">Centrabudget</span>
+              <span className="font-heading font-bold text-xl text-primary">CentraBudget</span>
             </Link>
 
             {/* Desktop Navigation Links */}
@@ -135,7 +135,7 @@ const ClearCentsNavigation = ({ user, onLogout }: ClearCentsNavigationProps) => 
                       <div className="w-8 h-8 bg-gradient-to-br from-primary to-navy rounded-lg flex items-center justify-center">
                         <span className="text-primary-foreground font-heading font-bold text-sm">C</span>
                       </div>
-                      <span className="font-heading font-bold text-xl text-primary">Centrabudget</span>
+                      <span className="font-heading font-bold text-xl text-primary">CentraBudget</span>
                     </div>
 
                     {/* Mobile Navigation Links */}

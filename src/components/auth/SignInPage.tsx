@@ -112,7 +112,7 @@ export const SignInPage = () => {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <div className="text-2xl font-bold text-[#0B1F4E] dark:text-white">
-              ClearCents
+              CentraBudget
             </div>
           </div>
 

@@ -37,7 +37,7 @@ export function DynamicHomepage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-foreground mb-4">
-              ClearCents
+              CentraBudget
             </h1>
             <p className="text-lg text-muted-foreground mb-4">
               {t('home.hero.subtitle')}
@@ -576,7 +576,7 @@ export function DynamicHomepage() {
               We'd love to hear from you
             </h2>
             <p className="font-body text-xl text-gray-600 max-w-3xl mx-auto">
-              Have questions about ClearCents? Need help getting started? Just want to say hello? 
+              Have questions about CentraBudget? Need help getting started? Just want to say hello? 
               We're here to help you take control of your finances.
             </p>
           </div>
@@ -675,10 +675,10 @@ export function DynamicHomepage() {
                           Drop us a line anytime at:
                         </p>
                         <a
-                          href="mailto:hello@clearcents.com"
+                          href="mailto:hello@centrabudget.com"
                           className="font-semibold text-blue-600 hover:text-blue-700 text-lg transition-colors"
                         >
-                          hello@clearcents.com
+                          hello@centrabudget.com
                         </a>
                       </div>
                     </div>
@@ -728,7 +728,7 @@ export function DynamicHomepage() {
                     Need help getting started?
                   </h4>
                   <p className="font-body text-gray-600 mb-4">
-                    Check out our quick start guide and tutorials to get the most out of ClearCents.
+                    Check out our quick start guide and tutorials to get the most out of CentraBudget.
                   </p>
                   <Button variant="outline" size="lg" className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
                     View Help Center

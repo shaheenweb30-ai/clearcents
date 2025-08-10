@@ -253,7 +253,7 @@ export default function Homepage1() {
                       <span className="text-white font-bold text-lg">C</span>
                     </div>
                     <div>
-                      <div className="font-bold text-gray-900 text-base">ClearCents</div>
+                       <div className="font-bold text-gray-900 text-base">CentraBudget</div>
                       <div className="text-xs text-gray-500 flex items-center gap-1">
                         <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                         AI Budget Tracker
@@ -431,7 +431,7 @@ export default function Homepage1() {
                 </span>
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Join thousands of professionals who trust ClearCents to manage their finances
+                 Join thousands of professionals who trust CentraBudget to manage their finances
               </p>
             </div>
 
@@ -1016,7 +1016,7 @@ export default function Homepage1() {
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              See what our users are saying about their experience with ClearCents
+               See what our users are saying about their experience with CentraBudget
             </p>
           </div>
 
@@ -1035,7 +1035,7 @@ export default function Homepage1() {
                   </div>
                 </div>
                 <p className="text-gray-600 leading-relaxed mb-6 text-lg">
-                  "ClearCents has completely transformed how I track my business expenses. The AI insights are incredibly accurate and have helped me save over $200/month."
+                   "CentraBudget has completely transformed how I track my business expenses. The AI insights are incredibly accurate and have helped me save over $200/month."
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex space-x-1">

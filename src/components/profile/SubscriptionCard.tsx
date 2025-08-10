@@ -6,7 +6,7 @@ import { CreditCard, ExternalLink } from "lucide-react";
 const SubscriptionCard = () => {
   // Mock subscription data - in a real app, this would come from your subscription service
   const subscription = {
-    planName: "ClearCents Monthly",
+    planName: "CentraBudget Monthly",
     status: "active" as const,
     renewalDate: "2024-09-04",
     price: "$9.99/month"

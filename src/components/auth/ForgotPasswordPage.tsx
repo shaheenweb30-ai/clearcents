@@ -59,7 +59,7 @@ export const ForgotPasswordPage = () => {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-sm">C</span>
             </div>
-            ClearCents
+            CentraBudget
           </div>
         </Link>
         

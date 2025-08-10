@@ -66,7 +66,7 @@ export function FAQCompact() {
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Everything you need to know about ClearCents. Can't find what you're looking for?
+            Everything you need to know about CentraBudget. Can't find what you're looking for?
           </p>
         </div>
         

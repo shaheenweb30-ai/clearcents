@@ -564,10 +564,10 @@ export function DynamicFeatures() {
                     <div className="w-4 h-1 bg-white rounded-full"></div>
                   </div>
                 </div>
-                <span className="font-bold text-xl text-gray-900">ClearCents</span>
+                <span className="font-bold text-xl text-gray-900">CentraBudget</span>
               </div>
               <p className="text-gray-600 text-sm mb-6 max-w-xs">
-                Welcome to ClearCents, where financial management meets simplicity and efficiency.
+                Welcome to CentraBudget, where financial management meets simplicity and efficiency.
               </p>
               <div className="flex space-x-4">
                 <a href="#" className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors">

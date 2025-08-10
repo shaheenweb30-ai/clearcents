@@ -42,7 +42,7 @@ export function OnboardingModal({ state }: OnboardingModalProps) {
             idTitle="onb-title"
             idSubtitle="onb-desc"
             title="Let’s get you set up"
-            subtitle="Answer a few quick questions to tailor ClearCents to you."
+            subtitle="Answer a few quick questions to tailor CentraBudget to you."
           />
         </div>
 

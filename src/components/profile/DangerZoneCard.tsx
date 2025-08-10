@@ -76,7 +76,7 @@ const DangerZoneCard = ({ user }: DangerZoneCardProps) => {
         <div className="bg-destructive/10 p-4 rounded-lg border border-destructive/20">
           <h3 className="font-medium text-destructive mb-2">Delete Account</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Permanently delete your ClearCents account and all associated data. 
+            Permanently delete your CentraBudget account and all associated data. 
             This action cannot be undone.
           </p>
           

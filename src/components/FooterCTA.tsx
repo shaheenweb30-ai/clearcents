@@ -26,7 +26,7 @@ export function FooterCTA() {
           <h2 className="font-bold text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-6">
             Ready to try
             <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              ClearCents?
+              CentraBudget?
             </span>
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
