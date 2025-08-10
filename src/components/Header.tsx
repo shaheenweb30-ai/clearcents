@@ -83,35 +83,53 @@ const Header: React.FC = () => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex justify-between items-center h-16 sm:h-18 md:h-20">
+        <div className="flex items-center h-16 sm:h-18 md:h-20">
           {/* Logo */}
-          <div className="group">
+          <div className="group flex-shrink-0">
             <Logo size="lg" className="group-hover:scale-105 transition-transform duration-300 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10" />
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-6 xl:space-x-8">
-            {navigation.map((item) => {
-              const isContact = item.href === "#contact";
-              const active = !isContact && isActive(item.href);
-              return (
-                <button
-                  key={item.name}
-                  onClick={() => handleNavigation(item.href)}
-                  className={`relative px-3 py-2 text-sm sm:text-base font-medium transition-all duration-300 rounded-lg hover:bg-gray-100/80 active:bg-gray-200/80 ${
-                    active 
-                      ? 'text-primary bg-primary/10' 
-                      : 'text-gray-700 hover:text-primary'
-                  }`}
-                >
-                  {item.name}
-                  {active && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></div>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden lg:flex flex-1 justify-center">
+            <nav className="flex items-center space-x-6 xl:space-x-8 ml-8">
+              {navigation.map((item) => {
+                const isContact = item.href === "#contact";
+                const active = !isContact && isActive(item.href);
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => handleNavigation(item.href)}
+                    className={`relative px-3 py-2 text-sm sm:text-base font-medium transition-all duration-300 rounded-lg hover:bg-gray-100/80 active:bg-gray-200/80 ${
+                      active 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-gray-700 hover:text-primary'
+                    }`}
+                  >
+                    {item.name}
+                    {active && (
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></div>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+          
+          {/* Desktop CTA Buttons */}
+          <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
+            <button
+              onClick={() => handleNavigation("/login")}
+              className="px-3 py-2 text-sm sm:text-base font-medium text-gray-700 hover:text-primary transition-all duration-300 rounded-lg hover:bg-gray-100/80 active:bg-gray-200/80"
+            >
+              {t('common.login')}
+            </button>
+            <button
+              onClick={() => handleNavigation("/signup")}
+              className="px-3 py-2 text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full transition-all duration-300 hover:bg-gray-100/80 active:bg-gray-200/80"
+            >
+              {t('common.getStarted')}
+            </button>
+          </div>
 
           {/* Mobile Menu Button */}
           <button
