@@ -6,8 +6,8 @@ import { BrandingProvider } from "@/contexts/BrandingContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 import { ContentUpdateIndicator } from "@/components/ContentUpdateIndicator";
+import { OnboardingProvider } from "@/components";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import './i18n';
 import Homepage1 from "./pages/Homepage1";
@@ -33,6 +33,8 @@ import AdminImages from "./pages/admin/AdminImages";
 import AdminFooter from "./pages/admin/AdminFooter";
 import AdminFAQ from "./pages/admin/AdminFAQ";
 import AdminPackages from "./pages/admin/AdminPackages";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminComparison from "./pages/admin/AdminComparison";
 
 // Import new auth pages
 import { 
@@ -65,6 +67,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
+    console.error('Error stack:', error.stack);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
   }
 
   render() {
@@ -107,6 +112,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
+console.log('App: Creating QueryClient');
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -116,59 +122,64 @@ const queryClient = new QueryClient({
     },
   },
 });
+console.log('App: QueryClient created successfully');
 
 const AppContent = () => {
-  useRealtimeUpdates();
+  console.log('AppContent: Starting to render');
   
   return (
     <>
       <AuthProvider>
         <BrandingProvider>
-          <TooltipProvider>
-            <Toaster />
-            <BrowserRouter>
-              <ScrollToTop />
-              <SettingsProvider>
-                <Routes>
-                  <Route path="/" element={<Homepage1 />} />
-                  <Route path="/features" element={<Features />} />
-                  <Route path="/pricing" element={<Pricing />} />
-                  <Route path="/contact" element={<Contact />} />
-                  
-                  {/* Authentication Routes */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<SignUp />} />
-                  <Route path="/signin" element={<Login />} /> {/* Alias for login */}
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                  <Route path="/reset-password" element={<ResetPasswordPage />} />
-                  <Route path="/verify-email" element={<VerifyEmailPage />} />
-                  <Route path="/two-factor" element={<TwoFactorPage />} />
-                  <Route path="/auth-demo" element={<AuthRouterDemo />} /> {/* Demo route */}
-                  
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/transactions" element={<Transactions />} />
-                  <Route path="/categories" element={<Categories />} />
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/insights" element={<ClearScore />} />
+          <BrowserRouter>
+            <SettingsProvider>
+              <OnboardingProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <ScrollToTop />
+                  <Routes>
+                    <Route path="/" element={<Homepage1 />} />
+                    <Route path="/features" element={<Features />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/contact" element={<Contact />} />
+                    
+                    {/* Authentication Routes */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/signin" element={<Login />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password" element={<ResetPasswordPage />} />
+                    <Route path="/verify-email" element={<VerifyEmailPage />} />
+                    <Route path="/two-factor" element={<TwoFactorPage />} />
+                    <Route path="/auth-demo" element={<AuthRouterDemo />} />
+                    
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/transactions" element={<Transactions />} />
+                    <Route path="/categories" element={<Categories />} />
+                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/insights" element={<ClearScore />} />
 
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/subscription" element={<Subscription />} />
-                  <Route path="/help" element={<Help />} />
-                  
-                  {/* Admin Routes */}
-                  <Route path="/admin/pages" element={<AdminPages />} />
-                  <Route path="/admin/branding" element={<AdminBranding />} />
-                  <Route path="/admin/images" element={<AdminImages />} />
-                  <Route path="/admin/footer" element={<AdminFooter />} />
-                  <Route path="/admin/faq" element={<AdminFAQ />} />
-                  <Route path="/admin/packages" element={<AdminPackages />} />
-                  
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </SettingsProvider>
-            </BrowserRouter>
-          </TooltipProvider>
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/subscription" element={<Subscription />} />
+                    <Route path="/help" element={<Help />} />
+                    
+                    {/* Admin Routes */}
+                    <Route path="/admin/pages" element={<AdminPages />} />
+                    <Route path="/admin/branding" element={<AdminBranding />} />
+                    <Route path="/admin/images" element={<AdminImages />} />
+                    <Route path="/admin/footer" element={<AdminFooter />} />
+                    <Route path="/admin/faq" element={<AdminFAQ />} />
+                    <Route path="/admin/packages" element={<AdminPackages />} />
+                    <Route path="/admin/users" element={<AdminUsers />} />
+                    <Route path="/admin/comparison" element={<AdminComparison />} />
+                    
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </TooltipProvider>
+              </OnboardingProvider>
+            </SettingsProvider>
+          </BrowserRouter>
         </BrandingProvider>
       </AuthProvider>
       <ContentUpdateIndicator isUpdating={false} />
@@ -177,13 +188,20 @@ const AppContent = () => {
 };
 
 const App = () => {
-  return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AppContent />
-      </QueryClientProvider>
-    </ErrorBoundary>
-  );
+  console.log('App: Main component rendering');
+  
+  try {
+    return (
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <AppContent />
+        </QueryClientProvider>
+      </ErrorBoundary>
+    );
+  } catch (error) {
+    console.error('App: Error in main render:', error);
+    throw error;
+  }
 };
 
 export default App;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,8 @@ import {
   BarChart3,
   Receipt,
   CreditCard,
-  Banknote
+  Banknote,
+  Tag
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -141,6 +142,11 @@ const Transactions = () => {
       setFilteredCategories(filtered);
     }
   }, [categories, categorySearchTerm]);
+
+  // Debug effect for showFilters
+  useEffect(() => {
+    console.log('showFilters state changed to:', showFilters);
+  }, [showFilters]);
 
   const fetchTransactions = async () => {
     try {
@@ -410,84 +416,113 @@ const Transactions = () => {
     .filter(t => t.amount < 0)
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
+  // Group transactions by date for a modern timeline rendering
+  const groupedByDate = useMemo(() => {
+    const groups: Record<string, Transaction[]> = {};
+    filteredTransactions.forEach((t) => {
+      const key = format(new Date(t.transaction_date), 'PPP');
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(t);
+    });
+    return groups;
+  }, [filteredTransactions]);
+
+  const orderedDates = useMemo(() => {
+    return Object.keys(groupedByDate).sort(
+      (a, b) => new Date(b).getTime() - new Date(a).getTime()
+    );
+  }, [groupedByDate]);
+
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-6">
+        <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Transactions</h1>
-              <p className="text-muted-foreground">View and manage all your income and expenses in one place</p>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg mb-4">
+                <Receipt className="w-4 h-4" />
+                Transactions
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-3">Track and manage money flow</h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400">Fast entry, powerful filters, real-time totals</p>
             </div>
             <Button 
               onClick={() => {
                 resetForm();
                 setIsDialogOpen(true);
               }}
-              className="bg-primary hover:bg-primary/90 shadow-lg"
+              className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
             >
               <Plus className="w-4 h-4 mr-2" />
-              + Add Transaction
+              Add Transaction
             </Button>
           </div>
 
           {/* Summary Cards - Only show when there are transactions */}
           {transactions.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">Total Transactions</CardTitle>
-                  <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Total Transactions</CardTitle>
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="h-4 w-4 text-white" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">{filteredTransactions.length}</div>
-                  <p className="text-xs text-blue-600 dark:text-blue-400">
+                  <div className="text-3xl font-bold text-slate-900 dark:text-slate-100">{filteredTransactions.length}</div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     {transactions.length} total
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">Total Income</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Total Income</CardTitle>
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-white" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-900 dark:text-green-100">
+                  <div className="text-3xl font-bold text-green-600 dark:text-green-400">
                     {formatCurrency(totalIncome)}
                   </div>
-                  <p className="text-xs text-green-600 dark:text-green-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     From filtered results
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-red-700 dark:text-red-300">Total Expenses</CardTitle>
-                  <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                  <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Total Expenses</CardTitle>
+                  <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                    <TrendingDown className="h-4 w-4 text-white" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-red-900 dark:text-red-100">
+                  <div className="text-3xl font-bold text-red-600 dark:text-red-400">
                     {formatCurrency(totalExpenses)}
                   </div>
-                  <p className="text-xs text-red-600 dark:text-red-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     From filtered results
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300">Net Balance</CardTitle>
-                  <Wallet className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Net Balance</CardTitle>
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <Wallet className="h-4 w-4 text-white" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className={`text-2xl font-bold ${totalIncome - totalExpenses >= 0 ? 'text-purple-900 dark:text-purple-100' : 'text-red-900 dark:text-red-100'}`}>
+                  <div className={`text-3xl font-bold ${totalIncome - totalExpenses >= 0 ? 'text-purple-600 dark:text-purple-400' : 'text-red-600 dark:text-red-400'}`}>
                     {formatCurrency(totalIncome - totalExpenses)}
                   </div>
-                  <p className="text-xs text-purple-600 dark:text-purple-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     Income - Expenses
                   </p>
                 </CardContent>
@@ -495,118 +530,218 @@ const Transactions = () => {
             </div>
           )}
 
-          {/* Filters and Search - Only show when there are transactions */}
-          {transactions.length > 0 && (
-            <Card className="border-0 shadow-sm bg-background/50 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-primary" />
-                    Filters & Search
-                  </CardTitle>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowFilters(!showFilters)}
-                      className="border-primary/20 hover:bg-primary/5"
-                    >
-                      <Filter className="w-4 h-4 mr-2" />
-                      {showFilters ? 'Hide' : 'Show'} Filters
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={clearFilters}
-                      className="border-red-200 hover:bg-red-50 text-red-600 dark:border-red-800 dark:hover:bg-red-950/50 dark:text-red-400"
-                    >
-                      <RefreshCw className="w-4 h-4 mr-2" />
-                      Reset Filters
-                    </Button>
+          {/* Filters and Search - Always show */}
+          <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <Filter className="w-4 h-4 text-white" />
                   </div>
+                  Filters & Search
+                </CardTitle>
+                <div className="flex items-center space-x-2">
+                  <div className="text-xs text-slate-500 mr-2">State: {showFilters ? 'true' : 'false'}</div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      console.log('Button clicked! Current showFilters:', showFilters);
+                      setShowFilters(!showFilters);
+                      console.log('Setting showFilters to:', !showFilters);
+                    }}
+                    className="border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200"
+                  >
+                    <Filter className="w-4 h-4 mr-2" />
+                    {showFilters ? 'Hide' : 'Show'} Filters
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="border-red-200 hover:bg-red-50 text-red-600 dark:border-red-700 dark:hover:bg-red-950/50 dark:text-red-400 transition-all duration-200"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Reset Filters
+                  </Button>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder="Search transactions by description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200"
+                />
+              </div>
+
+              {/* Advanced Filters */}
+              {showFilters && (
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-4 pt-4 border-t border-gray-100">
+                {/* Type Filter */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Transaction Type</Label>
+                  <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+                    <SelectTrigger className="border-2 focus:border-primary focus:ring-2 focus:ring-primary/20">
+                      <SelectValue placeholder="All types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">All types</SelectItem>
+                      <SelectItem value="income">Income</SelectItem>
+                      <SelectItem value="expense">Expense</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Enhanced Category Filter */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Category</Label>
+                  <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
+                    <SelectTrigger className="h-10 border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200">
+                      <SelectValue placeholder="All categories" />
+                    </SelectTrigger>
+                    <SelectContent className="w-[280px] max-h-[300px] border-0 shadow-2xl rounded-xl">
+                      {/* Header */}
+                      <div className="p-3 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-200 dark:from-slate-800 dark:to-blue-900/20">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <CreditCard className="w-3 h-3 text-white" />
+                          </div>
+                          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">Filter by Category</div>
+                        </div>
+                      </div>
+                      
+                      {/* Categories List */}
+                      <div className="max-h-[200px] overflow-y-auto p-2">
+                        <SelectItem value="" className="py-2 px-3 hover:bg-slate-50 dark:hover:bg-slate-800">
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 bg-gradient-to-br from-slate-400 to-slate-500 rounded-lg flex items-center justify-center">
+                              <X className="w-3 h-3 text-white" />
+                            </div>
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">All categories</span>
+                          </div>
+                        </SelectItem>
+                        
+                        {categories.map((category) => (
+                          <SelectItem 
+                            key={category.id} 
+                            value={category.id} 
+                            className="py-2 px-3 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className="w-5 h-5 rounded-lg flex items-center justify-center text-white text-xs font-medium shadow-sm"
+                                style={{ backgroundColor: category.color }}
+                              >
+                                {category.icon.charAt(0).toUpperCase()}
+                              </div>
+                              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{category.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </div>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Date Range Filter - From */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Date From</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal border-2 border-slate-200 hover:border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:hover:border-blue-600 dark:focus:border-blue-400 transition-all duration-200",
+                          !filters.dateRange.from && "text-slate-500 dark:text-slate-400"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {filters.dateRange.from ? format(filters.dateRange.from, "MMM dd") : <span>From</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 border-0 shadow-2xl rounded-xl" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={filters.dateRange.from}
+                        onSelect={(date) => setFilters(prev => ({ 
+                          ...prev, 
+                          dateRange: { ...prev.dateRange, from: date }
+                        }))}
+                        initialFocus
+                        className="rounded-xl"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Date Range Filter - To */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Date To</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal border-2 border-slate-200 hover:border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:hover:border-blue-600 dark:focus:border-blue-400 transition-all duration-200",
+                          !filters.dateRange.to && "text-slate-500 dark:text-slate-400"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {filters.dateRange.to ? format(filters.dateRange.to, "MMM dd") : <span>To</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 border-0 shadow-2xl rounded-xl" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={filters.dateRange.to}
+                        onSelect={(date) => setFilters(prev => ({ 
+                          ...prev, 
+                          dateRange: { ...prev.dateRange, to: date }
+                        }))}
+                        initialFocus
+                        className="rounded-xl"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Amount Range */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Min Amount</Label>
                   <Input
-                    placeholder="Search transactions by description..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-2 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    type="number"
+                    placeholder="0.00"
+                    value={filters.amountRange.min}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      amountRange: { ...prev.amountRange, min: e.target.value }
+                    }))}
+                    className="border-2 focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
 
-                {/* Advanced Filters */}
-                {showFilters && (
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-gray-100">
-                  {/* Type Filter */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Transaction Type</Label>
-                    <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
-                      <SelectTrigger className="border-2 focus:border-primary focus:ring-2 focus:ring-primary/20">
-                        <SelectValue placeholder="All types" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">All types</SelectItem>
-                        <SelectItem value="income">Income</SelectItem>
-                        <SelectItem value="expense">Expense</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Category Filter */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Category</Label>
-                    <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
-                      <SelectTrigger className="border-2 focus:border-primary focus:ring-2 focus:ring-primary/20">
-                        <SelectValue placeholder="All categories" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">All categories</SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Amount Range */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Min Amount</Label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={filters.amountRange.min}
-                      onChange={(e) => setFilters(prev => ({ 
-                        ...prev, 
-                        amountRange: { ...prev.amountRange, min: e.target.value }
-                      }))}
-                      className="border-2 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Max Amount</Label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={filters.amountRange.max}
-                      onChange={(e) => setFilters(prev => ({ 
-                        ...prev, 
-                        amountRange: { ...prev.amountRange, max: e.target.value }
-                      }))}
-                      className="border-2 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Max Amount</Label>
+                  <Input
+                    type="number"
+                    placeholder="0.00"
+                    value={filters.amountRange.max}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      amountRange: { ...prev.amountRange, max: e.target.value }
+                    }))}
+                    className="border-2 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  />
                 </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+              </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Transactions Table */}
           <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -628,9 +763,9 @@ const Transactions = () => {
                   {transactions.length === 0 ? (
                     // Empty State
                     <div className="max-w-md mx-auto">
-                      <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-950/50 dark:to-blue-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Receipt className="w-12 h-12 text-blue-600 dark:text-blue-400" />
-                      </div>
+                                          <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                      <Receipt className="w-12 h-12 text-white" />
+                    </div>
                       <h3 className="text-xl font-semibold text-foreground mb-2">No Transactions Yet</h3>
                       <p className="text-muted-foreground mb-6">
                         Start tracking your expenses and income by adding your first transaction.
@@ -640,18 +775,18 @@ const Transactions = () => {
                           resetForm();
                           setIsDialogOpen(true);
                         }}
-                        className="bg-primary hover:bg-primary/90 shadow-lg"
+                        className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        + Add Transaction
+                        Add Transaction
                       </Button>
                     </div>
                   ) : (
                     // No Results State
                     <div className="max-w-md mx-auto">
-                      <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800/50 dark:to-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Search className="w-12 h-12 text-gray-600 dark:text-gray-400" />
-                      </div>
+                                          <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                      <Search className="w-12 h-12 text-white" />
+                    </div>
                       <h3 className="text-xl font-semibold text-foreground mb-2">No Results Found</h3>
                       <p className="text-muted-foreground mb-6">
                         No transactions match your current filters. Try adjusting your search criteria.
@@ -759,42 +894,54 @@ const Transactions = () => {
 
         {/* Add/Edit Transaction Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[420px] p-0 border-0 shadow-xl">
-            {/* Minimalist Header */}
-            <div className="border-b p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <DialogTitle className="text-lg font-semibold text-foreground">
+          <DialogContent className="sm:max-w-[480px] p-0 border-0 shadow-2xl rounded-2xl overflow-hidden">
+            {/* Enhanced Header with Gradient */}
+            <div className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 p-6 text-white">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  {editingTransaction ? (
+                    <Edit className="h-6 w-6 text-white" />
+                  ) : (
+                    <Plus className="h-6 w-6 text-white" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <DialogTitle className="text-xl font-bold text-white">
                     {editingTransaction ? 'Edit Transaction' : 'New Transaction'}
                   </DialogTitle>
-                  <p className="text-muted-foreground text-sm mt-1">
+                  <p className="text-blue-100 text-sm mt-1">
                     {editingTransaction ? 'Update your transaction details' : 'Record your income or expense'}
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setIsDialogOpen(false);
-                    resetForm();
-                  }}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
               </div>
+              {/* Floating close button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  resetForm();
+                }}
+                className="absolute top-4 right-4 h-8 w-8 p-0 bg-white/10 hover:bg-white/20 text-white border-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                {/* Minimalist Type Selection */}
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                {/* Enhanced Type Selection */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium text-foreground">Type</Label>
-                  <div className="flex gap-2">
+                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Transaction Type</Label>
+                  <div className="flex gap-3">
                     <Button
                       type="button"
                       variant={formData.type === 'income' ? 'default' : 'outline'}
                       onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
-                      className="flex-1"
+                      className={`flex-1 h-12 transition-all duration-200 ${
+                        formData.type === 'income' 
+                          ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg' 
+                          : 'border-2 border-slate-200 hover:border-green-300 hover:bg-green-50 dark:border-slate-700 dark:hover:border-green-600 dark:hover:bg-green-950/20'
+                      }`}
                     >
                       <TrendingUp className="w-4 h-4 mr-2" />
                       Income
@@ -803,7 +950,11 @@ const Transactions = () => {
                       type="button"
                       variant={formData.type === 'expense' ? 'default' : 'outline'}
                       onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
-                      className="flex-1"
+                      className={`flex-1 h-12 transition-all duration-200 ${
+                        formData.type === 'expense' 
+                          ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg' 
+                          : 'border-2 border-slate-200 hover:border-red-300 hover:bg-red-50 dark:border-slate-700 dark:hover:border-red-600 dark:hover:bg-red-950/20'
+                      }`}
                     >
                       <TrendingDown className="w-4 h-4 mr-2" />
                       Expense
@@ -812,22 +963,23 @@ const Transactions = () => {
                 </div>
 
                 {/* Transaction Name Input */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">
-                    Name <span className="text-muted-foreground font-normal">(Optional)</span>
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Name <span className="text-slate-500 dark:text-slate-400 font-normal">(Optional)</span>
                   </Label>
                   <Input
                     placeholder="e.g., Grocery shopping, Salary, Coffee"
                     value={formData.transaction_name}
                     onChange={(e) => setFormData(prev => ({ ...prev, transaction_name: e.target.value }))}
+                    className="h-12 border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200"
                   />
                 </div>
 
                 {/* Amount Input */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">Amount</Label>
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Amount</Label>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 font-medium">
                       {preferences.currency_symbol}
                     </div>
                     <Input
@@ -836,15 +988,15 @@ const Transactions = () => {
                       placeholder="0.00"
                       value={formData.amount}
                       onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
-                      className="pl-8"
+                      className="pl-8 h-12 border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200"
                       required
                     />
                   </div>
                 </div>
 
-                {/* Modern Category Selection - For Both Income and Expenses */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">Category</Label>
+                {/* Enhanced Category Selection */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Category</Label>
                   <Select value={formData.category_id} onValueChange={(value) => {
                     if (value === 'create-new') {
                       setShowCategoryDialog(true);
@@ -852,118 +1004,145 @@ const Transactions = () => {
                       setFormData(prev => ({ ...prev, category_id: value }));
                     }
                   }}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200">
                       <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>
-                    <SelectContent className="w-[320px] max-h-[240px]">
-                      <div className="p-3 border-b bg-muted/30">
+                    <SelectContent className="w-[360px] max-h-[400px] border-0 shadow-2xl rounded-xl">
+                      {/* Enhanced Header */}
+                      <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-blue-50/30 dark:from-slate-800 dark:to-blue-900/20">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <CreditCard className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-slate-800 dark:text-slate-200">Categories</div>
+                            <div className="text-xs text-slate-600 dark:text-slate-400">Select or create a new one</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Search Bar */}
+                      <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
                         <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                           <Input
                             placeholder="Search categories..."
-                            className="pl-9 h-9 text-sm"
+                            className="pl-9 h-10 text-sm border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200"
                             value={categorySearchTerm}
                             onChange={(e) => setCategorySearchTerm(e.target.value)}
                           />
                         </div>
                       </div>
                       
-                      <div className="max-h-[180px] overflow-y-auto p-2">
-                        <div className="space-y-1">
-                          {filteredCategories.length === 0 ? (
-                            <div className="p-4 text-center text-muted-foreground">
-                              <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                              <p className="text-sm">
-                                {categorySearchTerm ? 'No categories found' : 'No categories available'}
-                              </p>
+                      {/* Categories List */}
+                      <div className="max-h-[280px] overflow-y-auto">
+                        {filteredCategories.length === 0 ? (
+                          <div className="p-6 text-center">
+                            <div className="w-16 h-16 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                              <Search className="h-6 w-6 text-slate-500 dark:text-slate-400" />
                             </div>
-                          ) : (
-                            <>
-                              {filteredCategories.map((category) => (
-                                <SelectItem 
-                                  key={category.id} 
-                                  value={category.id} 
-                                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+                              {categorySearchTerm ? 'No categories found' : 'No categories available'}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                              {categorySearchTerm ? 'Try a different search term' : 'Create your first category'}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-2 space-y-1">
+                            {filteredCategories.map((category) => (
+                              <SelectItem 
+                                key={category.id} 
+                                value={category.id} 
+                                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-200 cursor-pointer"
+                              >
+                                <div 
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-semibold shadow-sm"
+                                  style={{ backgroundColor: category.color }}
                                 >
-                                  <div 
-                                    className="w-6 h-6 rounded-lg flex items-center justify-center text-white text-xs font-medium shadow-sm"
-                                    style={{ backgroundColor: category.color }}
-                                  >
-                                    {category.icon.charAt(0).toUpperCase()}
-                                  </div>
-                                  <span className="font-medium">{category.name}</span>
-                                </SelectItem>
-                              ))}
-                              <div className="border-t pt-2 mt-2">
-                                <SelectItem 
-                                  value="create-new" 
-                                  className="flex items-center gap-3 p-3 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                                >
-                                  <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
-                                    <Plus className="h-4 w-4 text-primary" />
-                                  </div>
-                                  <span className="font-medium">Create New Category</span>
-                                </SelectItem>
-                              </div>
-                            </>
-                          )}
-                        </div>
+                                  {category.icon.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-slate-700 dark:text-slate-300">{category.name}</div>
+                                  <div className="text-xs text-slate-500 dark:text-slate-400">Category</div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Create New Category Option */}
+                      <div className="border-t border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-purple-50/30 dark:from-blue-950/20 dark:to-purple-950/20">
+                        <SelectItem 
+                          value="create-new" 
+                          className="flex items-center gap-3 p-4 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200 cursor-pointer"
+                        >
+                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <Plus className="h-4 h-4 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium text-blue-700 dark:text-blue-300">Create New Category</div>
+                            <div className="text-xs text-blue-600 dark:text-blue-400">Add a custom category</div>
+                          </div>
+                        </SelectItem>
                       </div>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Date Selection */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">Date</Label>
+                {/* Enhanced Date Selection */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !formData.transaction_date && "text-muted-foreground"
+                          "w-full h-12 justify-start text-left font-normal border-2 border-slate-200 hover:border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:hover:border-blue-600 dark:focus:border-blue-400 transition-all duration-200",
+                          !formData.transaction_date && "text-slate-500 dark:text-slate-400"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {formData.transaction_date ? format(formData.transaction_date, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0 border-0 shadow-2xl rounded-xl" align="start">
                       <Calendar
                         mode="single"
                         selected={formData.transaction_date}
                         onSelect={(date) => date && setFormData(prev => ({ ...prev, transaction_date: date }))}
                         initialFocus
+                        className="rounded-xl"
                       />
                     </PopoverContent>
                   </Popover>
                 </div>
 
-
-              </form>
-              
-              {/* Minimalist Form Actions */}
-              <div className="border-t p-6">
-                <div className="flex justify-end gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsDialogOpen(false);
-                      resetForm();
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit"
-                    disabled={!formData.amount}
-                  >
-                    {editingTransaction ? 'Update' : 'Add'} Transaction
-                  </Button>
+                {/* Enhanced Form Actions */}
+                <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-6">
+                  <div className="flex justify-end gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setIsDialogOpen(false);
+                        resetForm();
+                      }}
+                      className="px-6 py-2 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit"
+                      disabled={!formData.amount}
+                      className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      {editingTransaction ? 'Update' : 'Add'} Transaction
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              </form>
           </DialogContent>
         </Dialog>
 
@@ -1121,7 +1300,7 @@ const Transactions = () => {
                   <Button 
                     type="submit"
                     onClick={handleCreateCategory}
-                    className="px-6 py-2 bg-primary hover:bg-primary/90 shadow-lg"
+                    className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={!newCategory.name.trim()}
                   >
                     Create Category

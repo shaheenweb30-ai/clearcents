@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, X, ChevronDown, ChevronUp, Sparkles, Trophy, Zap, Shield, ArrowRight, TrendingUp, Crown, Users, BarChart3, CreditCard, Globe, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useOptimizedPricingContent } from "@/hooks/useOptimizedPricingContent";
+import { usePricingComparison } from "@/hooks/usePricingComparison";
 
 const features = [
   {
@@ -127,6 +129,21 @@ const features = [
 
 export const ComparisonSimple = () => {
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const { getContentBySection } = useOptimizedPricingContent();
+  const freeName = (getContentBySection('free')?.title || 'Free') as string;
+  const proName = (getContentBySection('pro')?.title || 'Pro') as string;
+  const enterpriseName = (getContentBySection('enterprise')?.title || 'Enterprise') as string;
+  const { rows } = usePricingComparison();
+  const dynamicRows = useMemo(() => rows.filter((r: any) => r.is_active), [rows]);
+
+  const getCell = (r: any, plan: 'free' | 'pro' | 'enterprise'): boolean | string => {
+    if (r && typeof r === 'object' && 'free_is_boolean' in r) {
+      const isBool = r[`${plan}_is_boolean`];
+      const val = r[`${plan}_value`];
+      return isBool ? true : (val || '');
+    }
+    return r?.[plan];
+  };
 
   const toggleRow = (index: number) => {
     const newExpanded = new Set(expandedRows);
@@ -187,18 +204,18 @@ export const ComparisonSimple = () => {
           <div className="bg-white rounded-3xl overflow-hidden border-2 border-gray-100 shadow-2xl">
             <div className="grid grid-cols-4 bg-gradient-to-r from-gray-50 to-gray-100 p-8">
               <div className="font-bold text-xl text-gray-900">Feature</div>
-              <div className="font-bold text-xl text-gray-900 text-center">Free</div>
+              <div className="font-bold text-xl text-gray-900 text-center">{freeName}</div>
               <div className="font-bold text-xl text-gray-900 text-center flex items-center justify-center gap-2">
                 <Crown className="w-6 h-6 text-purple-600" />
-                Pro
+                {proName}
               </div>
               <div className="font-bold text-xl text-gray-900 text-center flex items-center justify-center gap-2">
                 <Trophy className="w-6 h-6 text-indigo-600" />
-                Enterprise
+                {enterpriseName}
               </div>
             </div>
             
-            {features.map((row, index) => (
+            {(dynamicRows.length ? dynamicRows : features).map((row: any, index: number) => (
               <div
                 key={index}
                 className={`grid grid-cols-4 p-8 border-t border-gray-100 hover:bg-gray-50/50 transition-colors duration-200 ${
@@ -207,28 +224,16 @@ export const ComparisonSimple = () => {
               >
                 <div className="font-semibold text-lg text-gray-900">
                   {row.feature}
-                  <span className="block text-sm text-gray-600 mt-1">{row.description}</span>
+                  <span className="block text-sm text-gray-600 mt-1">{row.description || ''}</span>
                 </div>
                 <div className="flex items-center justify-center">
-                  {renderValue(row.free)}
+                  {renderValue(getCell(row, 'free'))}
                 </div>
                 <div className="flex items-center justify-center">
-                  {typeof row.pro === 'boolean' ? (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                      <Check className="w-5 h-5 text-white" />
-                    </div>
-                  ) : (
-                    renderValue(row.pro)
-                  )}
+                  {renderValue(getCell(row, 'pro'))}
                 </div>
                 <div className="flex items-center justify-center">
-                  {typeof row.enterprise === 'boolean' ? (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
-                      <Check className="w-5 h-5 text-white" />
-                    </div>
-                  ) : (
-                    renderValue(row.enterprise)
-                  )}
+                  {renderValue(getCell(row, 'enterprise'))}
                 </div>
               </div>
             ))}
@@ -237,7 +242,7 @@ export const ComparisonSimple = () => {
 
         {/* Mobile Accordion */}
         <div className="lg:hidden space-y-6">
-          {features.map((row, index) => {
+          {(dynamicRows.length ? dynamicRows : features).map((row: any, index: number) => {
             const isExpanded = expandedRows.has(index);
             return (
               <div key={index} className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -248,7 +253,7 @@ export const ComparisonSimple = () => {
                 >
                   <span className="font-semibold text-lg text-gray-900">{row.feature}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-500">{row.description}</span>
+                    <span className="text-sm text-gray-500">{row.description || ''}</span>
                     {isExpanded ? (
                       <ChevronUp className="w-6 h-6 text-gray-400" />
                     ) : (
@@ -261,39 +266,27 @@ export const ComparisonSimple = () => {
                   <div className="px-6 pb-6 space-y-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
-                        <div className="text-sm font-semibold text-gray-700 mb-3">Free</div>
+                        <div className="text-sm font-semibold text-gray-700 mb-3">{freeName}</div>
                         <div className="flex justify-center">
-                          {renderValue(row.free)}
+                          {renderValue(getCell(row, 'free'))}
                         </div>
                       </div>
                       <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border-2 border-purple-200">
                         <div className="text-sm font-semibold text-gray-700 mb-3 flex items-center justify-center gap-1">
                           <Crown className="w-4 h-4 text-purple-600" />
-                          Pro
+                          {proName}
                         </div>
                         <div className="flex justify-center">
-                          {typeof row.pro === 'boolean' ? (
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                              <Check className="w-5 h-5 text-white" />
-                            </div>
-                          ) : (
-                            renderValue(row.pro)
-                          )}
+                          {renderValue(getCell(row, 'pro'))}
                         </div>
                       </div>
                       <div className="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200">
                         <div className="text-sm font-semibold text-gray-700 mb-3 flex items-center justify-center gap-1">
                           <Trophy className="w-4 h-4 text-indigo-600" />
-                          Enterprise
+                          {enterpriseName}
                         </div>
                         <div className="flex justify-center">
-                          {typeof row.enterprise === 'boolean' ? (
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
-                              <Check className="w-5 h-5 text-white" />
-                            </div>
-                          ) : (
-                            renderValue(row.enterprise)
-                          )}
+                          {renderValue(getCell(row, 'enterprise'))}
                         </div>
                       </div>
                     </div>

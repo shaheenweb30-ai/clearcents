@@ -15,6 +15,9 @@ export interface PricingContent {
   description_color: string | null;
   background_color: string | null;
   image_url: string | null;
+  price?: number | null;
+  features?: string[] | null;
+  is_popular?: boolean | null;
 }
 
 const PRICING_CONTENT_KEY = 'pricing-content';

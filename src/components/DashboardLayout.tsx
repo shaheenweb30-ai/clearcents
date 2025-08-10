@@ -87,8 +87,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   ];
 
   const administrationNavigation = [
+    { name: "Users", href: "/admin/users", icon: Users },
     { name: "Form Submissions", href: "/settings?tab=admin", icon: MessageSquare },
     { name: "Newsletter Subscribers", href: "/settings?tab=newsletter", icon: Mail },
+    { name: "Comparison Configurator", href: "/admin/comparison", icon: FileText },
   ];
 
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -216,7 +218,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </SidebarGroup>
             )}
 
-            {isAdminPage && (
+            {isAdmin && isAdminPage && (
               <SidebarGroup>
                 <SidebarGroupLabel>Admin</SidebarGroupLabel>
                 <SidebarGroupContent>

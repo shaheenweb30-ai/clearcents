@@ -33,6 +33,7 @@ import {
   Shield
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { OnboardingTestButton, SettingsResetOnboarding } from "@/components";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useTranslation } from "react-i18next";
@@ -84,6 +85,7 @@ export default function Settings() {
   const [preferencesForm, setPreferencesForm] = useState({
     theme: preferences.theme as 'light' | 'dark' | 'system',
     currency: preferences.currency,
+    budgetPeriod: (preferences.budgetPeriod ?? 'monthly') as 'monthly' | 'quarterly' | 'yearly',
     dateFormat: preferences.dateFormat,
     timeFormat: preferences.timeFormat as '12h' | '24h',
     notifications: preferences.notifications
@@ -206,6 +208,7 @@ export default function Settings() {
       updatePreferences({
         theme: preferencesForm.theme,
         currency: preferencesForm.currency,
+        budgetPeriod: preferencesForm.budgetPeriod,
         dateFormat: preferencesForm.dateFormat,
         timeFormat: preferencesForm.timeFormat,
         notifications: preferencesForm.notifications
@@ -260,33 +263,30 @@ export default function Settings() {
   };
 
   if (loading) {
-      return (
-    <DashboardLayout>
-      <div className="p-4 sm:p-6 lg:p-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-              <p className="text-muted-foreground">
-                Manage your account settings and preferences
-              </p>
+    return (
+      <DashboardLayout>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-6">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <div className="animate-pulse space-y-6">
+              <div className="h-8 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+              <div className="grid gap-6">
+                {[...Array(3)].map((_, i) => (
+                  <Card key={i} className="animate-pulse rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg">
+                    <CardHeader>
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/3 mb-2"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {[...Array(4)].map((_, j) => (
+                          <div key={j} className="h-4 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="grid gap-6">
-            {[...Array(3)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardHeader>
-                  <div className="h-6 bg-gray-200 rounded w-1/3 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[...Array(4)].map((_, j) => (
-                      <div key={j} className="h-4 bg-gray-200 rounded"></div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
       </DashboardLayout>
@@ -295,21 +295,32 @@ export default function Settings() {
 
   return (
     <DashboardLayout>
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-6">
+        <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
-          <div className="mb-6 sm:mb-8">
-            <h1 className="text-3xl font-heading font-bold text-foreground mb-2">
-              Settings
-            </h1>
-            <p className="text-muted-foreground">
-              Manage your account settings and preferences
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg mb-4">
+                <SettingsIcon className="w-4 h-4" />
+                Settings
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-3">
+                Account Settings
+              </h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400">Manage your account settings and preferences</p>
+            </div>
           </div>
 
-        {/* Settings Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          {/* Developer helpers */}
+          <div className="flex items-center gap-3">
+            <OnboardingTestButton />
+            <SettingsResetOnboarding />
+          </div>
+
+          {/* Settings Tabs */}
+          <div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <UserIcon className="h-4 w-4" />
               Profile
@@ -710,6 +721,19 @@ export default function Settings() {
                         <option value="KGS">KGS - Kyrgyzstani Som (с)</option>
                       </select>
                     </div>
+                    <div>
+                      <Label htmlFor="budgetPeriod">Budget Period</Label>
+                      <select
+                        id="budgetPeriod"
+                        value={preferencesForm.budgetPeriod}
+                        onChange={(e) => setPreferencesForm({ ...preferencesForm, budgetPeriod: e.target.value as 'monthly' | 'quarterly' | 'yearly' })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -937,6 +961,7 @@ export default function Settings() {
                 </TabsContent>
               )}
         </Tabs>
+          </div>
         </div>
       </div>
     </DashboardLayout>

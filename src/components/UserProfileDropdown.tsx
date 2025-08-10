@@ -13,7 +13,7 @@ import {
   DropdownMenuSubTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User as UserIcon, Settings, LogOut, ChevronDown, Shield, Globe, FileText, Package, MessageSquare, LayoutDashboard, Receipt, FolderOpen } from 'lucide-react';
+import { User as UserIcon, Settings, LogOut, ChevronDown, Shield, Globe, FileText, Package, MessageSquare, LayoutDashboard, Receipt, FolderOpen, Users } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -117,6 +117,12 @@ export function UserProfileDropdown() {
                 Website Administration
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="bg-background border border-border shadow-lg">
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/admin/users" className="flex items-center">
+                    <Users className="w-4 h-4 mr-2" />
+                    Manage Users
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer">
                   <Link to="/admin/footer" className="flex items-center">
                     <Globe className="w-4 h-4 mr-2" />

@@ -8,10 +8,31 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
+console.log('Supabase client: Initializing with URL:', SUPABASE_URL);
+console.log('Supabase client: Key available:', !!SUPABASE_PUBLISHABLE_KEY);
+
+let storage;
+try {
+  storage = localStorage;
+  console.log('Supabase client: localStorage available');
+} catch (error) {
+  console.warn('Supabase client: localStorage not available, using memory storage:', error);
+  storage = {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {},
+    clear: () => {},
+    key: () => null,
+    length: 0
+  };
+}
+
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
+    storage: storage,
     persistSession: true,
     autoRefreshToken: true,
   }
 });
+
+console.log('Supabase client: Created successfully');

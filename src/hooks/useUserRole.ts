@@ -36,5 +36,11 @@ export function useUserRole(user: User | null) {
     fetchUserRole();
   }, [user]);
 
-  return { role, loading, isAdmin: role === 'admin' };
+  return { 
+    role, 
+    loading, 
+    isAdmin: role === 'admin',
+    isSubscriber: role === 'subscriber',
+    isUser: role === 'user' || !role
+  };
 }

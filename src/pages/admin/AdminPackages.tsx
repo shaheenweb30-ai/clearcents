@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,75 +17,111 @@ import { toast } from 'sonner';
 export default function AdminPackages() {
   const { user } = useAuth();
   const { isAdmin } = useUserRole(user);
-  const { getContentBySection, updateContent, loading } = useOptimizedPricingContent();
+  const { content, getContentBySection, updateContent, loading } = useOptimizedPricingContent();
+  const hasHydratedRef = useRef(false);
 
-  const [pricingData, setPricingData] = useState({
-    title: '',
-    description: '',
-    price: '9',
-    features: 'Unlimited budgeting categories\nUnlimited manual transactions\nCloud sync on all devices\nFull access to all features\nBudget tracking & adjustments\nSimple reports & insights\nEmail support\nCancel anytime',
-    buttonText: '',
-    titleColor: '#1F2937',
-    descriptionColor: '#666666',
-    buttonColor: '#500CB0',
-    buttonTextColor: '#FFFFFF',
-    backgroundColor: '#FFFFFF'
-  });
+  const [plans, setPlans] = useState([
+    {
+      key: 'free',
+      label: 'Free',
+      title: '',
+      description: 'Best for getting started.',
+      price: '0',
+      features: [
+        'Real-time expense tracking',
+        'Up to 10 categories',
+        '1 budget',
+        'AI insights (lite: 5 tips/mo)',
+        'CSV import & export',
+        'Multi-currency viewer',
+        'Community support'
+      ] as string[],
+      buttonText: 'Start free',
+      isPopular: false,
+    },
+    {
+      key: 'pro',
+      label: 'Pro',
+      title: '',
+      description: 'Everything you need, no add-ons.',
+      price: '12',
+      features: [
+        'Unlimited categories & budgets',
+        'AI insights (full: 50+ tips/mo)',
+        'Recurring detection & alerts',
+        'Custom periods & auto-refresh',
+        'Receipt attachments (email-in beta)',
+        'Priority email support',
+        'Advanced analytics & reports',
+        'Team collaboration (up to 5 users)'
+      ] as string[],
+      buttonText: 'Start 14-day trial',
+      isPopular: true,
+    },
+    {
+      key: 'enterprise',
+      label: 'Enterprise',
+      title: '',
+      description: 'For large organizations.',
+      price: '29',
+      features: [
+        'Everything in Pro',
+        'Unlimited team members',
+        'Advanced security & compliance',
+        'Custom integrations & API access',
+        'Dedicated account manager',
+        'Custom reporting & analytics',
+        'White-label options',
+        '24/7 priority support'
+      ] as string[],
+      buttonText: 'Contact sales',
+      isPopular: false,
+    },
+  ]);
 
   const [saving, setSaving] = useState(false);
 
-  // Load existing pricing content
+  // Load existing plan content per section
   useEffect(() => {
-    if (!loading) {
-      const content = getContentBySection('pricing');
-      if (content) {
-        setPricingData(prev => ({
-          ...prev,
-          title: content.title || '',
-          description: content.description || '',
-          price: content.price ? content.price.toString() : '9',
-          buttonText: content.button_text || '',
-          titleColor: content.title_color || '#1F2937',
-          descriptionColor: content.description_color || '#666666',
-          buttonColor: content.button_color || '#500CB0',
-          buttonTextColor: content.button_text_color || '#FFFFFF',
-          backgroundColor: content.background_color || '#FFFFFF'
-        }));
-      }
+    if (!loading && !hasHydratedRef.current) {
+      setPlans((prev) =>
+        prev.map((plan) => {
+          const section = getContentBySection(plan.key);
+          if (!section) return plan;
+          return {
+            ...plan,
+            title: section.title || plan.title,
+            description: section.description || plan.description,
+            price: (section.price ?? parseFloat(plan.price)).toString(),
+            buttonText: section.button_text || plan.buttonText,
+            features: section.features ?? plan.features,
+            isPopular: section.is_popular ?? plan.isPopular,
+          };
+        })
+      );
+      hasHydratedRef.current = true;
     }
-  }, [loading]);
+  }, [loading, content]);
 
   const handleSave = async () => {
     console.log('=== PACKAGE SAVE DEBUG ===');
-    console.log('Current pricing data:', pricingData);
-    console.log('Price value:', pricingData.price);
-    console.log('Parsed price:', parseFloat(pricingData.price));
+    console.log('Plans:', plans);
     
     setSaving(true);
     try {
-      const saveData = {
-        title: pricingData.title,
-        description: pricingData.description,
-        button_text: pricingData.buttonText,
-        price: parseFloat(pricingData.price) || 9.00,
-        title_color: pricingData.titleColor,
-        description_color: pricingData.descriptionColor,
-        button_color: pricingData.buttonColor,
-        button_text_color: pricingData.buttonTextColor,
-        background_color: pricingData.backgroundColor
-      };
-      
-      console.log('Data being saved:', saveData);
-      
-      const result = await updateContent('pricing', saveData);
-      console.log('Save result:', result);
-      
+      for (const plan of plans) {
+        const saveData: any = {
+          title: plan.title,
+          description: plan.description,
+          button_text: plan.buttonText,
+          price: parseFloat(plan.price) || 0,
+          features: plan.features,
+          is_popular: plan.isPopular,
+        };
+        console.log('Saving plan', plan.key, saveData);
+        await updateContent(plan.key, saveData);
+      }
       toast.success('Package configuration updated successfully!');
-      
-      // Refresh the data after successful save
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       console.error('Error saving package config:', error);
       console.error('Error details:', {
@@ -127,219 +163,98 @@ export default function AdminPackages() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Configuration Form */}
-          <div className="space-y-6">
-            {/* Content Configuration */}
-            <Card>
+        <div className="grid grid-cols-1 gap-8">
+          {plans.map((plan, idx) => (
+            <Card key={plan.key} className="overflow-hidden">
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <FileText className="w-5 h-5 mr-2" />
-                  Package Content
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center"><Package className="w-5 h-5 mr-2" />{plan.label} Plan</span>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={plan.isPopular}
+                      onChange={(e) => setPlans(prev => prev.map((p, i) => i === idx ? { ...p, isPopular: e.target.checked } : p))}
+                    />
+                    Mark as Most Popular
+                  </label>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Package Title</Label>
-                  <Input
-                    id="title"
-                    value={pricingData.title}
-                    onChange={(e) => setPricingData({ ...pricingData, title: e.target.value })}
-                    placeholder="e.g., FinSuite Monthly"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={pricingData.description}
-                    onChange={(e) => setPricingData({ ...pricingData, description: e.target.value })}
-                    placeholder="e.g., Everything you need to budget like a pro"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="buttonText">Button Text</Label>
-                  <Input
-                    id="buttonText"
-                    value={pricingData.buttonText}
-                    onChange={(e) => setPricingData({ ...pricingData, buttonText: e.target.value })}
-                    placeholder="e.g., Start Now"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="features">Features (one per line)</Label>
-                  <Textarea
-                    id="features"
-                    value={pricingData.features}
-                    onChange={(e) => setPricingData({ ...pricingData, features: e.target.value })}
-                    placeholder="Enter features, one per line"
-                    rows={8}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pricing Configuration */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="w-5 h-5 mr-2" />
-                  Pricing
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div>
-                  <Label htmlFor="price">Monthly Price (USD)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={pricingData.price}
-                    onChange={(e) => setPricingData({ ...pricingData, price: e.target.value })}
-                    placeholder="9"
-                  />
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Note: This only updates the display. Payment integration requires additional setup.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Style Configuration */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Palette className="w-5 h-5 mr-2" />
-                  Appearance
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="titleColor">Title Color</Label>
-                    <Input
-                      id="titleColor"
-                      type="color"
-                      value={pricingData.titleColor}
-                      onChange={(e) => setPricingData({ ...pricingData, titleColor: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="descriptionColor">Description Color</Label>
-                    <Input
-                      id="descriptionColor"
-                      type="color"
-                      value={pricingData.descriptionColor}
-                      onChange={(e) => setPricingData({ ...pricingData, descriptionColor: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="buttonColor">Button Color</Label>
-                    <Input
-                      id="buttonColor"
-                      type="color"
-                      value={pricingData.buttonColor}
-                      onChange={(e) => setPricingData({ ...pricingData, buttonColor: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="buttonTextColor">Button Text Color</Label>
-                    <Input
-                      id="buttonTextColor"
-                      type="color"
-                      value={pricingData.buttonTextColor}
-                      onChange={(e) => setPricingData({ ...pricingData, buttonTextColor: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="backgroundColor">Section Background Color</Label>
-                  <Input
-                    id="backgroundColor"
-                    type="color"
-                    value={pricingData.backgroundColor}
-                    onChange={(e) => setPricingData({ ...pricingData, backgroundColor: e.target.value })}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Button onClick={handleSave} disabled={saving} className="w-full">
-              {saving ? 'Saving...' : 'Save Package Configuration'}
-            </Button>
-          </div>
-
-          {/* Preview */}
-          <div className="lg:sticky lg:top-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Preview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div 
-                  className="p-6 rounded-lg border-2 border-primary/20"
-                  style={{ backgroundColor: pricingData.backgroundColor }}
-                >
-                  <div className="text-center">
-                    <Badge className="mb-4">MOST POPULAR</Badge>
-                    <h3 
-                      className="text-2xl font-bold mb-2"
-                      style={{ color: pricingData.titleColor }}
-                    >
-                      {pricingData.title || 'Package Title'}
-                    </h3>
-                    <div className="flex items-center justify-center mb-4">
-                      <span className="text-4xl font-bold" style={{ color: pricingData.titleColor }}>
-                        ${pricingData.price || '9'}
-                      </span>
-                      <span className="text-lg ml-2" style={{ color: pricingData.descriptionColor }}>
-                        /month
-                      </span>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Title</Label>
+                      <Input
+                        value={plan.title}
+                        onChange={(e) => setPlans(prev => prev.map((p, i) => i === idx ? { ...p, title: e.target.value } : p))}
+                        placeholder={`${plan.label}`}
+                      />
                     </div>
-                    <p 
-                      className="mb-6"
-                      style={{ color: pricingData.descriptionColor }}
-                    >
-                      {pricingData.description || 'Package description'}
-                    </p>
-                    
+                    <div>
+                      <Label>Description</Label>
+                      <Textarea
+                        rows={3}
+                        value={plan.description}
+                        onChange={(e) => setPlans(prev => prev.map((p, i) => i === idx ? { ...p, description: e.target.value } : p))}
+                        placeholder={`Describe the ${plan.label} plan`}
+                      />
+                    </div>
+                    <div>
+                      <Label>Button Text</Label>
+                      <Input
+                        value={plan.buttonText}
+                        onChange={(e) => setPlans(prev => prev.map((p, i) => i === idx ? { ...p, buttonText: e.target.value } : p))}
+                        placeholder={plan.buttonText || 'CTA'}
+                      />
+                    </div>
+                    <div>
+                      <Label>Monthly Price (USD)</Label>
+                      <Input
+                        type="number"
+                        value={plan.price}
+                        onChange={(e) => setPlans(prev => prev.map((p, i) => i === idx ? { ...p, price: e.target.value } : p))}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Features (one per line)</Label>
+                    <Textarea
+                      rows={10}
+                      value={plan.features.join('\n')}
+                      onChange={(e) => setPlans(prev => prev.map((p, i) => i === idx ? { ...p, features: e.target.value.split('\n').map(f => f.trim()).filter(Boolean) } : p))}
+                      placeholder="Enter features, one per line"
+                    />
+                  </div>
+                </div>
+
+                {/* Preview */}
+                <div className="border rounded-lg p-6">
+                  <div className="text-center">
+                    {plan.isPopular && <Badge className="mb-4">MOST POPULAR</Badge>}
+                    <h3 className="text-2xl font-bold mb-2">{plan.title || plan.label}</h3>
+                    <div className="flex items-center justify-center mb-4">
+                      <span className="text-4xl font-bold">${plan.price}</span>
+                      <span className="text-lg ml-2 text-muted-foreground">/month</span>
+                    </div>
+                    <p className="mb-6 text-muted-foreground">{plan.description}</p>
                     <div className="space-y-2 mb-6 text-sm">
-                      {pricingData.features.split('\n').filter(f => f.trim()).slice(0, 4).map((feature, index) => (
+                      {plan.features.slice(0, 6).map((feature, index) => (
                         <div key={index} className="flex items-center text-left">
                           <span className="w-2 h-2 bg-primary rounded-full mr-2 flex-shrink-0"></span>
                           <span>{feature}</span>
                         </div>
                       ))}
-                      {pricingData.features.split('\n').filter(f => f.trim()).length > 4 && (
-                        <p className="text-xs text-muted-foreground">
-                          +{pricingData.features.split('\n').filter(f => f.trim()).length - 4} more features
-                        </p>
-                      )}
                     </div>
-                    
-                    <Button 
-                      className="w-full"
-                      style={{ 
-                        backgroundColor: pricingData.buttonColor,
-                        color: pricingData.buttonTextColor 
-                      }}
-                    >
-                      {pricingData.buttonText || 'Button Text'}
-                    </Button>
+                    <Button className="w-full">{plan.buttonText || 'Select'}</Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          ))}
+
+          <Button onClick={handleSave} disabled={saving} className="w-full">
+            {saving ? 'Saving...' : 'Save Package Configuration'}
+          </Button>
         </div>
               </div>
       </DashboardLayout>

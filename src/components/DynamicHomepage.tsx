@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, Users, CreditCard, DollarSign, BarChart3, PieChart, Globe, Shield, MessageCircle, Send, Mail, Clock } from "lucide-react";
 import Layout from "@/components/Layout";
+import { PlansSimple } from "@/components/pricing/PlansSimple";
 import { useTranslation } from "react-i18next";
 export function DynamicHomepage() {
   const { t } = useTranslation();
@@ -739,6 +740,9 @@ export function DynamicHomepage() {
         </div>
       </section>
       
+      {/* Pricing Plans Section (dynamically sourced) */}
+      <PlansSimple billing={{ cycle: 'monthly' }} />
+
       {/* Page Manager for Admins */}
       <PageManager />
     </Layout>;

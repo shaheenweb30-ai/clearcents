@@ -10,6 +10,8 @@ interface UserPreferences {
   timeFormat: '12h' | '24h';
   language: string;
   timezone: string;
+  budgetPeriod?: 'monthly' | 'quarterly' | 'yearly';
+  fixedCosts?: { amount: number; categoryId: string }[];
   notifications: {
     transactions: boolean;
     budgets: boolean;
@@ -172,13 +174,15 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
 };
 
 const defaultPreferences: UserPreferences = {
-  theme: 'system',
+  theme: 'light',
   currency: 'USD',
   currency_symbol: '$',
   dateFormat: 'MM/DD/YYYY',
   timeFormat: '12h',
   language: 'en',
   timezone: 'UTC',
+  budgetPeriod: 'monthly',
+  fixedCosts: [],
   notifications: {
     transactions: true,
     budgets: true,
@@ -242,7 +246,16 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     if (savedPreferences) {
       try {
         const parsed = JSON.parse(savedPreferences);
-        setPreferences({ ...defaultPreferences, ...parsed });
+        const merged = { ...defaultPreferences, ...parsed } as UserPreferences;
+        // Also merge fixed costs from onboarding storage if present and not already in preferences
+        try {
+          const fixedCostsRaw = localStorage.getItem('cc_fixed_costs_v1');
+          if (fixedCostsRaw && (!merged.fixedCosts || merged.fixedCosts.length === 0)) {
+            const fixedCosts = JSON.parse(fixedCostsRaw);
+            if (Array.isArray(fixedCosts)) merged.fixedCosts = fixedCosts;
+          }
+        } catch {}
+        setPreferences(merged);
       } catch (error) {
         console.error('Error parsing saved preferences:', error);
       }
@@ -265,38 +278,20 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     }
   }, [user]);
 
-  // Apply theme when preferences change - only apply dark theme in dashboard/app pages
+  // Apply theme when preferences change - force light theme everywhere
   useEffect(() => {
     const applyTheme = () => {
       const root = document.documentElement;
-      
-      // Only apply dark theme if we're in a dashboard/app page
-      if (isDashboardPage()) {
-        if (preferences.theme === 'system') {
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          root.classList.toggle('dark', systemTheme === 'dark');
-          setIsDarkMode(systemTheme === 'dark');
-        } else {
-          root.classList.toggle('dark', preferences.theme === 'dark');
-          setIsDarkMode(preferences.theme === 'dark');
-        }
-      } else {
-        // Always use light theme for public pages
-        root.classList.remove('dark');
-        setIsDarkMode(false);
-      }
+      // Force light theme globally
+      root.classList.remove('dark');
+      setIsDarkMode(false);
     };
 
     applyTheme();
 
     // Listen for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => {
-      if (preferences.theme === 'system' && isDashboardPage()) {
-        applyTheme();
-      }
-    };
-
+    const handleChange = () => applyTheme();
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [preferences.theme, location.pathname]);
@@ -323,12 +318,13 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     const sign = amount >= 0 ? '' : '-';
     
     try {
-      // Use Intl.NumberFormat for proper currency formatting
+      // Force English locale for currency formatting regardless of document language
       const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: preferences.currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
+        numberingSystem: 'latn', // Force Latin numerals
       });
 
       return `${sign}${formatter.format(absAmount)}`;
@@ -373,16 +369,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   };
 
   const toggleTheme = () => {
-    const newTheme = preferences.theme === 'light' ? 'dark' : 'light';
-    updatePreferences({ theme: newTheme });
+    // Force light theme regardless of toggle
+    updatePreferences({ theme: 'light' });
   };
 
-  const shouldApplyDarkTheme = () => {
-    return isDashboardPage() && (
-      preferences.theme === 'dark' || 
-      (preferences.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    );
-  };
+  const shouldApplyDarkTheme = () => false;
 
   const value: SettingsContextType = {
     preferences,

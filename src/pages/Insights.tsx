@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 
 const ClearScore = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isPremium, setIsPremium] = useState(false);
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -204,7 +206,13 @@ const ClearScore = () => {
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                 Maybe Later
               </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  navigate('/subscription');
+                }}
+              >
                 <Crown className="w-4 h-4 mr-2" />
                 Upgrade Now
               </Button>

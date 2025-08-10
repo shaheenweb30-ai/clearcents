@@ -3,80 +3,38 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Sparkles, Crown } from "lucide-react";
 import { BillingState } from "./BillingControls";
+import { useOptimizedPricingContent } from "@/hooks/useOptimizedPricingContent";
 
 interface PlansSimpleProps {
   billing: BillingState;
   onBillingChange?: (billing: BillingState) => void;
 }
 
-// Base USD prices (using $ as default)
-const BASE_PRICES = { Free: 0, Pro: 12, Enterprise: 29 };
-
-function priceFor(plan: 'Free' | 'Pro' | 'Enterprise', cycle: 'monthly' | 'yearly'): number {
-  const usd = BASE_PRICES[plan];
-  if (usd === 0) return 0;
-  const perMonthUSD = cycle === 'yearly' ? usd * 0.8 : usd;
-  return Math.round(perMonthUSD * 100) / 100;
-}
-
-const plans = [
-  {
-    name: 'Free',
-    cta: 'Start free',
-    ctaVariant: 'outline' as const,
-    features: [
-      'Real-time expense tracking',
-      'Up to 10 categories',
-      '1 budget',
-      'AI insights (lite: 5 tips/mo)',
-      'CSV import & export',
-      'Multi-currency viewer',
-      'Community support'
-    ],
-    smallPrint: 'Best for getting started.',
-    popular: false
-  },
-  {
-    name: 'Pro',
-    cta: 'Start 14-day trial',
-    ctaVariant: 'default' as const,
-    features: [
-      'Unlimited categories & budgets',
-      'AI insights (full: 50+ tips/mo)',
-      'Recurring detection & alerts',
-      'Custom periods & auto-refresh',
-      'Receipt attachments (email-in beta)',
-      'Priority email support',
-      'Advanced analytics & reports',
-      'Team collaboration (up to 5 users)'
-    ],
-    smallPrint: 'Everything you need, no add-ons.',
-    popular: true
-  },
-  {
-    name: 'Enterprise',
-    cta: 'Contact sales',
-    ctaVariant: 'default' as const,
-    features: [
-      'Everything in Pro',
-      'Unlimited team members',
-      'Advanced security & compliance',
-      'Custom integrations & API access',
-      'Dedicated account manager',
-      'Custom reporting & analytics',
-      'White-label options',
-      '24/7 priority support'
-    ],
-    smallPrint: 'For large organizations.',
-    popular: false
-  }
-];
+type PlanKey = 'free' | 'pro' | 'enterprise';
 
 export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
-  const getDisplayPrice = (plan: 'Free' | 'Pro' | 'Enterprise') => {
-    const price = priceFor(plan, billing.cycle);
+  const { getContentBySection } = useOptimizedPricingContent();
+
+  const getPlan = (key: PlanKey) => {
+    const content = getContentBySection(key);
+    return {
+      key,
+      name: (content?.title || (key.charAt(0).toUpperCase() + key.slice(1))) as string,
+      cta: (content?.button_text || (key === 'enterprise' ? 'Contact sales' : key === 'pro' ? 'Start 14-day trial' : 'Start free')) as string,
+      ctaVariant: (key === 'free' ? 'outline' : 'default') as const,
+      features: (content?.features || []) as string[],
+      smallPrint: (content?.description || '') as string,
+      popular: Boolean(content?.is_popular),
+      price: typeof content?.price === 'number' ? content?.price : key === 'free' ? 0 : key === 'pro' ? 12 : 29,
+    };
+  };
+
+  const plans = [getPlan('free'), getPlan('pro'), getPlan('enterprise')];
+
+  const getDisplayPrice = (price: number) => {
     if (price === 0) return '0';
-    return price.toString();
+    const perMonth = billing.cycle === 'yearly' ? price * 0.8 : price;
+    return Math.round(perMonth * 100) / 100 + '';
   };
 
   const handleCycleChange = (cycle: 'monthly' | 'yearly') => {
@@ -165,7 +123,7 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
               className={`relative transition-all duration-300 hover:shadow-xl hover:-translate-y-2 rounded-2xl border-2 ${
                 plan.popular 
                   ? 'ring-2 ring-blue-500/20 shadow-xl bg-gradient-to-br from-blue-50 to-purple-50/30 border-blue-200' 
-                  : plan.name === 'Enterprise'
+                  : (plan as any).key === 'enterprise'
                   ? 'ring-2 ring-purple-500/20 shadow-xl bg-gradient-to-br from-purple-50 to-indigo-50/30 border-purple-200'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -180,7 +138,7 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
               )}
 
               {/* Enterprise Badge */}
-              {plan.name === 'Enterprise' && (
+              {(plan as any).key === 'enterprise' && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-1 shadow-lg flex items-center gap-1">
                     <Crown className="w-3 h-3" />
@@ -191,16 +149,12 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
 
               <CardHeader className="text-center pb-6 pt-8">
                 {/* Plan Name */}
-                <h3 className="font-bold text-2xl mb-4 text-gray-900">
-                  {plan.name}
-                </h3>
+                <h3 className="font-bold text-2xl mb-4 text-gray-900">{plan.name}</h3>
 
                 {/* Price */}
                 <div className="mb-4">
                   <div className="flex items-baseline justify-center">
-                    <span className="font-bold text-4xl text-gray-900">
-                      ${getDisplayPrice(plan.name as 'Free' | 'Pro' | 'Enterprise')}
-                    </span>
+                    <span className="font-bold text-4xl text-gray-900">${getDisplayPrice(plan.price)}</span>
                     <span className="text-lg text-gray-600 ml-1">
                       /mo
                     </span>

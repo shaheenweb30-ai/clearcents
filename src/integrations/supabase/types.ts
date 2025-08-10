@@ -360,12 +360,14 @@ export type Database = {
           id: string
           image_url: string | null
           price: number | null
+          features: string[] | null
           section_id: string
           subtitle: string | null
           subtitle_color: string | null
           title: string | null
           title_color: string | null
           updated_at: string
+          is_popular: boolean | null
         }
         Insert: {
           background_color?: string | null
@@ -378,12 +380,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           price?: number | null
+          features?: string[] | null
           section_id: string
           subtitle?: string | null
           subtitle_color?: string | null
           title?: string | null
           title_color?: string | null
           updated_at?: string
+          is_popular?: boolean | null
         }
         Update: {
           background_color?: string | null
@@ -396,11 +400,61 @@ export type Database = {
           id?: string
           image_url?: string | null
           price?: number | null
+          features?: string[] | null
           section_id?: string
           subtitle?: string | null
           subtitle_color?: string | null
           title?: string | null
           title_color?: string | null
+          updated_at?: string
+          is_popular?: boolean | null
+        }
+        Relationships: []
+      }
+      pricing_comparison: {
+        Row: {
+          id: string
+          display_order: number
+          feature: string
+          description: string | null
+          free_is_boolean: boolean
+          free_value: string | null
+          pro_is_boolean: boolean
+          pro_value: string | null
+          enterprise_is_boolean: boolean
+          enterprise_value: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          display_order?: number
+          feature: string
+          description?: string | null
+          free_is_boolean?: boolean
+          free_value?: string | null
+          pro_is_boolean?: boolean
+          pro_value?: string | null
+          enterprise_is_boolean?: boolean
+          enterprise_value?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          display_order?: number
+          feature?: string
+          description?: string | null
+          free_is_boolean?: boolean
+          free_value?: string | null
+          pro_is_boolean?: boolean
+          pro_value?: string | null
+          enterprise_is_boolean?: boolean
+          enterprise_value?: string | null
+          is_active?: boolean
+          created_at?: string
           updated_at?: string
         }
         Relationships: []
@@ -601,7 +655,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "subscriber" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
