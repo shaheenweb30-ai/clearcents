@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import Logo from './Logo';
+import { Logo } from './Logo';
 import { useResponsive } from '@/hooks/use-mobile';
 
 const Header: React.FC = () => {
