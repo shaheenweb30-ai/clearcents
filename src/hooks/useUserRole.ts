@@ -18,16 +18,28 @@ export function useUserRole(user: User | null) {
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
-          .eq('user_id', user.id)
-          .single();
+          .eq('user_id', user.id);
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           console.error('Error fetching user role:', error);
+          setRole(null);
         } else {
-          setRole(data?.role || null);
+          const roles = (data || []).map(r => r.role as string);
+          // Prioritize highest privilege
+          const resolvedRole = roles.includes('admin')
+            ? 'admin'
+            : roles.includes('moderator')
+            ? 'moderator'
+            : roles.includes('subscriber')
+            ? 'subscriber'
+            : roles.includes('user')
+            ? 'user'
+            : null;
+          setRole(resolvedRole);
         }
       } catch (error) {
         console.error('Error fetching user role:', error);
+        setRole(null);
       } finally {
         setLoading(false);
       }

@@ -17,6 +17,14 @@ export default {
 				'2xl': '1400px'
 			}
 		},
+		screens: {
+			'xs': '480px',
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1536px',
+		},
 		extend: {
 			fontFamily: {
 				'nunito': ['Nunito', 'ui-sans-serif', 'system-ui'],
@@ -27,7 +35,7 @@ export default {
 				'h1': ['80px', { lineHeight: '92px', fontWeight: '300', letterSpacing: '-0.02em' }], // Book weight
 				'h2': ['64px', { lineHeight: '72px', fontWeight: '300', letterSpacing: '-0.05em' }], // Book weight  
 				'h3': ['50px', { lineHeight: '56px', fontWeight: '300', letterSpacing: '-0.02em' }], // Book weight
-				'h4': ['32px', { lineHeight: '40px', fontWeight: '300', letterSpacing: '-0.01em' }], // Book weight
+				'h4': ['32px', { lineHeight: '40px', fontWeight: '300', letterSpacing: '-0.01em' }], // Regular weight
 				'h5': ['24px', { lineHeight: '28px', fontWeight: '400', letterSpacing: '0em' }], // Regular weight
 				'body1': ['18px', { lineHeight: '24px', fontWeight: '400', letterSpacing: '-0.02em' }], // Regular weight
 				'body2': ['16px', { lineHeight: '22px', fontWeight: '400', letterSpacing: '0.01em' }], // Regular weight
@@ -92,6 +100,22 @@ export default {
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
+			},
+			// Enhanced spacing for mobile-first design
+			spacing: {
+				'18': '4.5rem',
+				'88': '22rem',
+				'128': '32rem',
+			},
+			// Enhanced shadows for better mobile experience
+			boxShadow: {
+				'mobile': '0 2px 8px rgba(0, 0, 0, 0.1)',
+				'mobile-lg': '0 4px 16px rgba(0, 0, 0, 0.15)',
+			},
+			// Enhanced transitions for touch devices
+			transitionDuration: {
+				'400': '400ms',
+				'600': '600ms',
 			},
 		},
 	},

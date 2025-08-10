@@ -103,25 +103,25 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <SidebarProvider>
         <Sidebar>
           <SidebarHeader className="border-b border-border">
-            <div className="flex items-center gap-2 px-2">
-              <Logo size="sm" />
-              <SidebarTrigger />
+            <div className="flex items-center gap-2 px-2 py-2">
+              <Logo size="sm" className="w-8 h-8 sm:w-10 sm:h-10" />
+              <SidebarTrigger className="hidden sm:block" />
             </div>
           </SidebarHeader>
-          <SidebarContent>
+          <SidebarContent className="px-2">
             {/* Main Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>Main</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Main</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {mainNavigation.map((item) => {
                     const Icon = item.icon;
                     return (
                       <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                        <SidebarMenuButton asChild isActive={isActive(item.href)} className="text-sm sm:text-base">
                           <Link to={item.href}>
-                            <Icon className="h-4 w-4" />
-                            <span>{item.name}</span>
+                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                            <span className="hidden sm:inline">{item.name}</span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -133,17 +133,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {/* Financial Management */}
             <SidebarGroup>
-              <SidebarGroupLabel>Financial</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Financial</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {financialNavigation.map((item) => {
                     const Icon = item.icon;
                     return (
                       <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                        <SidebarMenuButton asChild isActive={isActive(item.href)} className="text-sm sm:text-base">
                           <Link to={item.href}>
-                            <Icon className="h-4 w-4" />
-                            <span>{item.name}</span>
+                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                            <span className="hidden sm:inline">{item.name}</span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -155,21 +155,21 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {/* Account Management */}
             <SidebarGroup>
-              <SidebarGroupLabel>Account</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Account</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {accountNavigation.map((item) => {
                     const Icon = item.icon;
                     return (
                       <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                        <SidebarMenuButton asChild isActive={isActive(item.href)} className="text-sm sm:text-base">
                           <Link to={item.href}>
-                            <Icon className="h-4 w-4" />
-                            <span>{item.name}</span>
+                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                            <span className="hidden sm:inline">{item.name}</span>
                           </Link>
                         </SidebarMenuButton>
                         {item.href === '/subscription' && !loadingTrial && (
-                          <SidebarMenuBadge className={isTrialActive ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'}>
+                          <SidebarMenuBadge className={`text-xs px-2 py-1 ${isTrialActive ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'}`}>
                             {isTrialActive ? 'Trial' : 'Free'}
                           </SidebarMenuBadge>
                         )}
@@ -182,17 +182,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {/* Support */}
             <SidebarGroup>
-              <SidebarGroupLabel>Support</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Support</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {supportNavigation.map((item) => {
                     const Icon = item.icon;
                     return (
                       <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                        <SidebarMenuButton asChild isActive={isActive(item.href)} className="text-sm sm:text-base">
                           <Link to={item.href}>
-                            <Icon className="h-4 w-4" />
-                            <span>{item.name}</span>
+                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                            <span className="hidden sm:inline">{item.name}</span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -205,17 +205,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             {/* Administration - Admin Only */}
             {isAdmin && (
               <SidebarGroup>
-                <SidebarGroupLabel>Administration</SidebarGroupLabel>
+                <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Administration</SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {administrationNavigation.map((item) => {
                       const Icon = item.icon;
                       return (
                         <SidebarMenuItem key={item.name}>
-                          <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                          <SidebarMenuButton asChild isActive={isActive(item.href)} className="text-sm sm:text-base">
                             <Link to={item.href}>
-                              <Icon className="h-4 w-4" />
-                              <span>{item.name}</span>
+                              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                              <span className="hidden sm:inline">{item.name}</span>
                             </Link>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -228,17 +228,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {isAdmin && isAdminPage && (
               <SidebarGroup>
-                <SidebarGroupLabel>Admin</SidebarGroupLabel>
+                <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Admin</SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {adminNavigation.map((item) => {
                       const Icon = item.icon;
                       return (
                         <SidebarMenuItem key={item.name}>
-                          <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                          <SidebarMenuButton asChild isActive={isActive(item.href)} className="text-sm sm:text-base">
                             <Link to={item.href}>
-                              <Icon className="h-4 w-4" />
-                              <span>{item.name}</span>
+                              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                              <span className="hidden sm:inline">{item.name}</span>
                             </Link>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -249,14 +249,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </SidebarGroup>
             )}
           </SidebarContent>
-          <SidebarFooter className="border-t border-border">
-            <div className="flex items-center gap-2 px-2 py-2">
+          <SidebarFooter className="border-t border-border px-2 py-2">
+            <div className="flex items-center gap-2">
               <UserProfileDropdown />
             </div>
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
             {children}
           </div>
         </SidebarInset>

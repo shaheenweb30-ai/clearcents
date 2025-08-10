@@ -88,115 +88,53 @@
 All colors MUST be HSL.
 */
 
-@layer base {
-  :root {
-    /* Light theme with GT Walsheim Pro branding - Blue Only */
-    --background: 0 0% 100%; /* Pure white background */
-    --foreground: 0 0% 15%; /* Medium gray */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 222.2 84% 4.9%;
+}
 
-    --card: 0 0% 100%; /* White cards */
-    --card-foreground: 0 0% 15%; /* Medium gray text */
-
-    --popover: 0 0% 100%; /* White popover */
-    --popover-foreground: 0 0% 15%; /* Medium gray text */
-
-    --primary: 217 100% 55%; /* Bright Blue #1752F3 */
-    --primary-foreground: 0 0% 100%; /* White text on primary */
-
-    --secondary: 0 0% 94%; /* Light Gray #F0F0F0 */
-    --secondary-foreground: 0 0% 15%; /* Medium gray text */
-
-    --muted: 0 0% 94%; /* Light Gray #F0F0F0 */
-    --muted-foreground: 0 0% 40%; /* Muted text */
-
-    --accent: 217 100% 65%; /* Lighter Blue #4A90E2 instead of green */
-    --accent-foreground: 0 0% 100%; /* White text on accent */
-
-    --destructive: 0 72% 51%; /* Red for destructive actions */
-    --destructive-foreground: 0 0% 100%; /* White text on red */
-
-    --border: 0 0% 90%; /* Light border */
-    --input: 0 0% 100%; /* White input background */
-    --ring: 217 100% 55%; /* Bright blue focus ring */
-    
-    /* Brand color tokens - Blue Only */
-    --brand-primary: 217 100% 55%; /* #1752F3 - Bright Blue */
-    --brand-secondary: 0 0% 94%; /* #F0F0F0 - Light Gray */
-    --brand-accent: 217 100% 65%; /* #4A90E2 - Lighter Blue */
-    
-    /* Gradients - Blue focused */
-    --gradient-primary: linear-gradient(135deg, hsl(217 100% 55%), hsl(217 100% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 94%), hsl(0 0% 98%));
-    --gradient-light: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 94%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 96%));
-    
-    /* Shadows - Blue tinted */
-    --shadow-soft: 0 2px 8px -2px hsl(217 100% 55% / 0.08);
-    --shadow-medium: 0 4px 16px -4px hsl(217 100% 55% / 0.12);
-    --shadow-strong: 0 8px 32px -8px hsl(217 100% 55% / 0.16);
-    --shadow-accent: 0 4px 20px hsl(217 100% 55% / 0.15);
-    
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    --radius: 12px; /* Rounded, clean UI */
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    /* Enhanced Dark mode - Modern & Visually Appealing */
-    --background: 220 13% 9%; /* Slightly warmer deep dark */
-    --foreground: 210 20% 98%; /* Softer light text */
-
-    --card: 220 13% 13%; /* Warmer dark card */
-    --card-foreground: 210 20% 98%; /* Soft light card text */
-
-    --popover: 220 13% 11%; /* Warmer dark popover */
-    --popover-foreground: 210 20% 98%; /* Soft light popover text */
-
-    --primary: 217 91% 60%; /* Vibrant blue */
-    --primary-foreground: 0 0% 100%; /* White text */
-
-    --secondary: 217 91% 70%; /* Lighter blue */
-    --secondary-foreground: 220 13% 9%; /* Dark text */
-
-    --muted: 220 13% 20%; /* Softer muted */
-    --muted-foreground: 215 16% 65%; /* Better contrast muted text */
-
-    --accent: 217 91% 80%; /* Very light blue */
-    --accent-foreground: 0 0% 100%; /* White text */
-
-    --destructive: 0 84% 60%; /* Brighter red */
-    --destructive-foreground: 0 0% 100%; /* White text on red */
-
-    --border: 220 13% 20%; /* Softer border */
-    --input: 220 13% 13%; /* Warmer input */
-    --ring: 217 91% 60%; /* Vibrant blue ring */
-    
-    --sidebar-background: 220 13% 9%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 13% 13%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 220 13% 20%;
-    --sidebar-ring: 217 91% 60%;
-  }
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 84% 4.9%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 94.1%;
+  --sidebar: 222.2 84% 4.9%;
+  --sidebar-foreground: 210 40% 98%;
 }
 
 @layer base {
@@ -267,219 +205,292 @@ All colors MUST be HSL.
     letter-spacing: 0em;
   }
   
-  /* Responsive typography adjustments */
+  /* Mobile-first responsive typography adjustments */
+  @media (max-width: 480px) {
+    .text-h1 {
+      font-size: 48px;
+      line-height: 56px;
+    }
+    
+    .text-h2 {
+      font-size: 36px;
+      line-height: 42px;
+    }
+    
+    .text-h3 {
+      font-size: 28px;
+      line-height: 32px;
+    }
+    
+    .text-h4 {
+      font-size: 24px;
+      line-height: 28px;
+    }
+    
+    .text-h5 {
+      font-size: 20px;
+      line-height: 24px;
+    }
+    
+    .text-body1 {
+      font-size: 16px;
+      line-height: 22px;
+    }
+    
+    .text-body2 {
+      font-size: 14px;
+      line-height: 20px;
+    }
+  }
+  
   @media (max-width: 768px) {
-    .text-h1 { font-size: 48px; line-height: 56px; }
-    .text-h2 { font-size: 40px; line-height: 48px; }
-    .text-h3 { font-size: 32px; line-height: 40px; }
+    .text-h1 {
+      font-size: 56px;
+      line-height: 64px;
+    }
+    
+    .text-h2 {
+      font-size: 42px;
+      line-height: 48px;
+    }
+    
+    .text-h3 {
+      font-size: 32px;
+      line-height: 36px;
+    }
+    
+    .text-h4 {
+      font-size: 28px;
+      line-height: 32px;
+    }
+    
+    .text-h5 {
+      font-size: 22px;
+      line-height: 26px;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .text-h1 {
+      font-size: 64px;
+      line-height: 72px;
+    }
+    
+    .text-h2 {
+      font-size: 48px;
+      line-height: 54px;
+    }
+    
+    .text-h3 {
+      font-size: 36px;
+      line-height: 40px;
+    }
   }
 }
 
+/* Mobile-first responsive utilities */
 @layer utilities {
-  .font-heading {
-    font-family: 'Nunito', system-ui, sans-serif;
-  }
-  .font-body {
-    font-family: 'Nunito', system-ui, sans-serif;
-  }
-  
-  /* Neon glow effects */
-  .glow-lime {
-    box-shadow: 0 0 20px hsl(var(--neon-lime) / 0.4);
+  /* Touch-friendly button sizes */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
   
-  .glow-yellow {
-    box-shadow: 0 0 20px hsl(var(--neon-yellow) / 0.4);
+  /* Mobile-optimized spacing */
+  .mobile-padding {
+    @apply px-4 py-6;
   }
   
-  /* Pill buttons */
-  .pill-button {
-    @apply rounded-full px-4 py-2 text-sm font-medium transition-all duration-200;
-    @apply bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground;
+  .mobile-padding-lg {
+    @apply px-6 py-8;
   }
   
-  .pill-button-active {
-    @apply bg-primary text-primary-foreground glow-lime;
+  /* Mobile-optimized shadows */
+  .mobile-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
-  /* Chart animations */
-  .chart-animate {
-    animation: chart-fade-in 0.6s ease-out;
+  .mobile-shadow-lg {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
   
-  @keyframes chart-fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  /* Mobile-optimized transitions */
+  .mobile-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
-  /* Enhanced Dark Theme Effects */
-  .dark .card {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
+  
+  /* Mobile-optimized focus states */
+  .mobile-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
   }
-
-  .dark .card:hover {
-    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-    transform: translateY(-1px);
-    transition: all 0.2s ease-in-out;
+  
+  /* Mobile-optimized hover states */
+  .mobile-hover {
+    @apply hover:scale-105 active:scale-95;
   }
-
-  .dark .button {
-    transition: all 0.2s ease-in-out;
+  
+  /* Mobile-optimized text sizes */
+  .mobile-text-xs {
+    @apply text-xs leading-4;
   }
-
-  .dark .button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  
+  .mobile-text-sm {
+    @apply text-sm leading-5;
   }
-
-  .dark .input:focus {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  
+  .mobile-text-base {
+    @apply text-base leading-6;
   }
+  
+  .mobile-text-lg {
+    @apply text-lg leading-7;
+  }
+  
+  .mobile-text-xl {
+    @apply text-xl leading-8;
+  }
+  
+  .mobile-text-2xl {
+    @apply text-2xl leading-9;
+  }
+  
+  .mobile-text-3xl {
+    @apply text-3xl leading-10;
+  }
+  
+  .mobile-text-4xl {
+    @apply text-4xl leading-tight;
+  }
+  
+  .mobile-text-5xl {
+    @apply text-5xl leading-tight;
+  }
+  
+  /* Mobile-optimized grid layouts */
+  .mobile-grid-1 {
+    @apply grid-cols-1;
+  }
+  
+  .mobile-grid-2 {
+    @apply grid-cols-1 sm:grid-cols-2;
+  }
+  
+  .mobile-grid-3 {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  .mobile-grid-4 {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+  }
+  
+  /* Mobile-optimized flex layouts */
+  .mobile-flex-col {
+    @apply flex-col sm:flex-row;
+  }
+  
+  .mobile-flex-row {
+    @apply flex-row sm:flex-col;
+  }
+  
+  /* Mobile-optimized spacing */
+  .mobile-space-y {
+    @apply space-y-4 sm:space-y-6 lg:space-y-8;
+  }
+  
+  .mobile-space-x {
+    @apply space-x-4 sm:space-x-6 lg:space-x-8;
+  }
+  
+  /* Mobile-optimized margins */
+  .mobile-margin {
+    @apply m-4 sm:m-6 lg:m-8;
+  }
+  
+  .mobile-margin-y {
+    @apply my-4 sm:my-6 lg:my-8;
+  }
+  
+  .mobile-margin-x {
+    @apply mx-4 sm:mx-6 lg:mx-8;
+  }
+  
+  /* Mobile-optimized padding */
+  .mobile-padding {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+  
+  .mobile-padding-y {
+    @apply py-4 sm:py-6 lg:py-8;
+  }
+  
+  .mobile-padding-x {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+}
 
-  /* Smooth theme transitions */
+/* Mobile-specific optimizations */
+@media (max-width: 480px) {
+  /* Ensure minimum touch targets */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Optimize form elements for mobile */
+  input, textarea, select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Optimize spacing for small screens */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Tablet-specific optimizations */
+@media (min-width: 481px) and (max-width: 1024px) {
+  /* Optimize for tablet landscape and portrait */
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Desktop-specific optimizations */
+@media (min-width: 1025px) {
+  /* Optimize for larger screens */
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* High-DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Ensure crisp rendering on high-DPI displays */
+  img, svg {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Print styles */
+@media print {
+  /* Hide non-essential elements when printing */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Optimize text for print */
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  /* Ensure good contrast for print */
   * {
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-  }
-
-  /* Force light theme for public pages */
-  .light-theme {
-    color-scheme: light;
-  }
-
-  .light-theme * {
-    color-scheme: light;
-  }
-
-  /* Override dark theme for public pages */
-  .light-theme.dark,
-  .light-theme .dark {
-    --background: 0 0% 100% !important;
-    --foreground: 0 0% 15% !important;
-    --card: 0 0% 100% !important;
-    --card-foreground: 0 0% 15% !important;
-    --popover: 0 0% 100% !important;
-    --popover-foreground: 0 0% 15% !important;
-    --primary: 217 100% 55% !important;
-    --primary-foreground: 0 0% 100% !important;
-    --secondary: 0 0% 94% !important;
-    --secondary-foreground: 0 0% 15% !important;
-    --muted: 0 0% 94% !important;
-    --muted-foreground: 0 0% 40% !important;
-    --accent: 217 100% 65% !important;
-    --accent-foreground: 0 0% 100% !important;
-    --destructive: 0 72% 51% !important;
-    --destructive-foreground: 0 0% 100% !important;
-    --border: 0 0% 90% !important;
-    --input: 0 0% 100% !important;
-    --ring: 217 100% 55% !important;
-  }
-
-  /* Dark theme gradient backgrounds */
-  .dark .bg-gradient-to-br {
-    background: linear-gradient(135deg, hsl(220 13% 9%) 0%, hsl(220 13% 11%) 100%);
-  }
-
-  /* Enhanced dark theme text shadows */
-  .dark .text-foreground {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Dark theme glow effects */
-  .dark .glow-blue {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-  }
-
-  .dark .glow-green {
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
-  }
-
-  .dark .glow-red {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-  }
-
-  .dark .glow-purple {
-    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
-  }
-
-  /* Enhanced dark theme form elements */
-  .dark input,
-  .dark textarea,
-  .dark select {
-    background-color: hsl(var(--input));
-    border-color: hsl(var(--border));
-    color: hsl(var(--foreground));
-  }
-
-  .dark input:focus,
-  .dark textarea:focus,
-  .dark select:focus {
-    border-color: hsl(var(--ring));
-    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
-  }
-
-  /* Dark theme table improvements */
-  .dark table {
-    border-color: hsl(var(--border));
-  }
-
-  .dark th {
-    background-color: hsl(var(--muted));
-    color: hsl(var(--muted-foreground));
-  }
-
-  .dark td {
-    border-color: hsl(var(--border));
-  }
-
-  /* Dark theme badge improvements */
-  .dark .badge {
-    background-color: hsl(var(--muted));
-    color: hsl(var(--muted-foreground));
-  }
-
-  /* Dark theme progress bar */
-  .dark .progress {
-    background-color: hsl(var(--muted));
-  }
-
-  .dark .progress-indicator {
-    background-color: hsl(var(--primary));
-  }
-
-  /* Dark theme scrollbar */
-  .dark ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .dark ::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
-  }
-
-  .dark ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 4px;
-  }
-
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground));
-  }
-
-  /* Dark theme focus improvements */
-  .dark *:focus-visible {
-    outline-color: hsl(var(--ring));
-  }
-
-  /* Dark theme selection */
-  .dark ::selection {
-    background-color: hsl(var(--primary) / 0.3);
-    color: hsl(var(--primary-foreground));
+    color: black !important;
+    background: white !important;
   }
 }
