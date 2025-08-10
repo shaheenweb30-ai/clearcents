@@ -63,7 +63,7 @@ const Help = () => {
     },
     {
       question: "Can I export my data?",
-      answer: "Yes! You can export your data in various formats including CSV, PDF, and Excel. Go to the Reports page and use the 'Export' button to download your financial data.",
+      answer: "Yes! You can export your data in various formats including CSV, PDF, and Excel. Go to the Dashboard page and use the 'Export' button to download your financial data.",
       category: "data"
     },
     {

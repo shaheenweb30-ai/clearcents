@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Compass, 
@@ -31,6 +32,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Transactions = () => {
+  const navigate = useNavigate();
+  
   const transactions = [
     { id: 'TXN-24020110', name: 'Transfer from Bank', amount: 980, type: 'income', date: 'February 29, 2025 09:41 PM', status: 'Completed' },
     { id: 'TXN-24020109', name: 'Youtube Premium', amount: -20, type: 'expense', date: 'February 29, 2025 09:41 PM', status: 'Completed' },
@@ -81,7 +84,10 @@ const Transactions = () => {
         {/* Navigation Menu */}
         <nav className="flex-1 p-4">
           <div className="space-y-2">
-            <div className="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+            <div 
+              className="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+              onClick={() => navigate('/dashboard')}
+            >
               <Compass className="w-5 h-5" />
               <span className="text-sm">Dashboard</span>
             </div>
@@ -96,6 +102,13 @@ const Transactions = () => {
             <div className="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
               <DollarSign className="w-5 h-5" />
               <span className="text-sm">Budget & Expense</span>
+            </div>
+            <div 
+              className="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+              onClick={() => navigate('/categories-budget')}
+            >
+              <Target className="w-5 h-5" />
+              <span className="text-sm">Categories & Budget</span>
             </div>
             <div className="flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
               <TrendingUp className="w-5 h-5" />

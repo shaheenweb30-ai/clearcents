@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 import {
   BarChart3,
+  Brain,
   CreditCard,
   FileText,
   Home,
@@ -38,6 +39,7 @@ import {
   TrendingUp,
   MessageSquare,
   Mail,
+  Target,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -62,9 +64,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const financialNavigation = [
     { name: "Transactions", href: "/transactions", icon: CreditCard },
-    { name: "Categories", href: "/categories", icon: FileText },
+    { name: "Categories & Budget", href: "/categories-budget", icon: Target },
     { name: "Reports", href: "/reports", icon: BarChart3 },
-    { name: "Insights", href: "/insights", icon: TrendingUp },
   ];
 
   const accountNavigation = [
@@ -92,7 +93,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Newsletter Subscribers", href: "/settings?tab=newsletter", icon: Mail },
     { name: "Comparison Configurator", href: "/admin/comparison", icon: FileText },
   ];
-
   const isAdminPage = location.pathname.startsWith('/admin');
 
   return (

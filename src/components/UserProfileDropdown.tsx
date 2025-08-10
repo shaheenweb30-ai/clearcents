@@ -87,12 +87,7 @@ export function UserProfileDropdown() {
           </Link>
         </DropdownMenuItem>
         
-        <DropdownMenuItem asChild className="cursor-pointer">
-          <Link to="/categories" className="flex items-center">
-            <FolderOpen className="w-4 h-4 mr-2" />
-            Categories
-          </Link>
-        </DropdownMenuItem>
+
         
         <DropdownMenuItem asChild className="cursor-pointer">
           <Link to="/profile" className="flex items-center">

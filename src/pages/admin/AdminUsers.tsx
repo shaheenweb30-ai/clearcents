@@ -58,6 +58,14 @@ const AdminUsers = () => {
       return;
     }
 
+    // Debug: Check current user's admin status
+    console.log('Current user admin check:', {
+      userId: user?.id,
+      userEmail: user?.email,
+      isAdmin,
+      timestamp: new Date().toISOString()
+    });
+
     fetchUsers();
   }, [isAdmin, user]);
 
@@ -73,17 +81,28 @@ const AdminUsers = () => {
     try {
       setLoading(true);
       
+      // First, let's check if we can access auth.users directly (for debugging)
+      console.log('Attempting to fetch users...');
+      
       // Fetch users from the public.users table
       const { data: users, error: usersError } = await supabase
         .from('users')
         .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('Users fetch result:', { users, usersError });
+      console.log('Users fetch result:', { users, usersError, count: users?.length || 0 });
 
       if (usersError) {
         console.error('Error fetching users:', usersError);
-        toast.error('Failed to fetch users');
+        
+        // Try to get more specific error information
+        if (usersError.code === '42501') {
+          toast.error('Permission denied. Check if you have admin access.');
+        } else if (usersError.code === '42P01') {
+          toast.error('Users table not found. Database may not be properly set up.');
+        } else {
+          toast.error(`Failed to fetch users: ${usersError.message}`);
+        }
         return;
       }
 
@@ -92,10 +111,11 @@ const AdminUsers = () => {
         .from('user_roles')
         .select('user_id, role');
 
-      console.log('User roles fetch result:', { userRoles, rolesError });
+      console.log('User roles fetch result:', { userRoles, rolesError, count: userRoles?.length || 0 });
 
       if (rolesError) {
         console.error('Error fetching user roles:', rolesError);
+        toast.warning('Warning: Could not fetch user roles. Users will show with default role.');
       }
 
       // Create a map of user roles
@@ -115,12 +135,23 @@ const AdminUsers = () => {
         created_at: user.created_at,
         updated_at: user.updated_at,
         role: roleMap.get(user.id) || 'user',
-        is_active: true // Default to active, you can add an is_active field to your users table if needed
+        is_active: true
       }));
 
       if (transformedUsers.length === 0) {
-        console.log('No users found in database, showing sample data');
-        // Fallback to sample data if no users found
+        console.log('No users found in public.users table');
+        
+        // Try to fetch from auth.users to see if the trigger is working
+        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+        console.log('Auth users check:', { authUsers, authError });
+        
+        if (authUsers?.users && authUsers.users.length > 0) {
+          toast.error(`Found ${authUsers.users.length} users in auth but none in public.users. Database trigger may not be working.`);
+        } else {
+          toast.info('No users found in database. This might be normal for a new installation.');
+        }
+        
+        // Show sample data for development
         const sampleUsers: User[] = [
           {
             id: 'sample-1',
@@ -152,11 +183,15 @@ const AdminUsers = () => {
         const adminUsers = transformedUsers.filter(u => u.role === 'admin');
         console.log('Admin Users:', adminUsers);
         
+        if (adminUsers.length === 0) {
+          toast.warning('No admin users found. You may need to promote a user to admin.');
+        }
+        
         toast.success(`Loaded ${transformedUsers.length} users successfully`);
       }
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast.error('Failed to fetch users');
+      toast.error(`Failed to fetch users: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }

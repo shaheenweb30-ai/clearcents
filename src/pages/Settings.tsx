@@ -298,17 +298,17 @@ export default function Settings() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-6">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg mb-4">
-                <SettingsIcon className="w-4 h-4" />
-                Settings
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-3">
-                Account Settings
-              </h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400">Manage your account settings and preferences</p>
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+              <SettingsIcon className="h-4 w-4" />
+              Settings
             </div>
+            <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl leading-tight text-gray-900 dark:text-white">
+              Account Settings
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
+              Manage your account settings and preferences
+            </p>
           </div>
 
           {/* Developer helpers */}
@@ -320,21 +320,21 @@ export default function Settings() {
           {/* Settings Tabs */}
           <div>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-slate-900 border border-gray-200/50 dark:border-slate-700/50 rounded-2xl p-1 shadow-lg">
+            <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl transition-all">
               <UserIcon className="h-4 w-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="preferences" className="flex items-center gap-2">
+            <TabsTrigger value="preferences" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl transition-all">
               <SettingsIcon className="h-4 w-4" />
               Preferences
             </TabsTrigger>
-            <TabsTrigger value="billing" className="flex items-center gap-2">
+            <TabsTrigger value="billing" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl transition-all">
               <CreditCard className="h-4 w-4" />
               Billing
             </TabsTrigger>
             {isAdmin && (
-              <TabsTrigger value="admin" className="flex items-center gap-2">
+              <TabsTrigger value="admin" className="flex items-center gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl transition-all">
                 <Shield className="h-4 w-4" />
                 Admin
               </TabsTrigger>

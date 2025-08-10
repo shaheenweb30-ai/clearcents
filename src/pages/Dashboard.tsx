@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -21,7 +21,9 @@ import {
   CreditCard,
   Wallet,
   Activity,
-  RefreshCw
+  RefreshCw,
+  Target,
+  Calendar
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -29,8 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useRealtimeDashboard } from "@/hooks/useRealtimeDashboard";
-
-
+import { useBudgets } from "@/hooks/useBudgets";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -38,11 +39,25 @@ const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Get the selected period from preferences
-  const selectedPeriod: 'monthly' | 'quarterly' | 'yearly' = (preferences.budgetPeriod as 'monthly' | 'quarterly' | 'yearly') || 'monthly';
+  // Date filter state
+  const [startDate, setStartDate] = useState<string>(() => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 6);
+    return date.toISOString().split('T')[0];
+  });
+  const [endDate, setEndDate] = useState<string>(() => {
+    const date = new Date();
+    return date.toISOString().split('T')[0];
+  });
   
-  // Use the real-time dashboard hook
-  const { dashboardData, loading, refetch } = useRealtimeDashboard();
+  // Use monthly as default period for budget calculations
+  const selectedPeriod: 'weekly' | 'monthly' | 'yearly' = 'monthly';
+  
+  // Use the real-time dashboard hook with date filters
+  const { dashboardData, loading, refetch } = useRealtimeDashboard(startDate, endDate);
+  
+  // Use the budgets hook for conversion logic
+  const { getConvertedBudgets, getTotalConvertedBudgetAmount } = useBudgets(user?.id);
 
   // Safely access dashboard data with fallbacks
   const safeData = {
@@ -64,8 +79,6 @@ const Dashboard = () => {
     subscriptions: dashboardData?.subscriptions || [],
     recentTransactions: dashboardData?.recentTransactions || []
   };
-
-
 
   const getBalanceColor = (balance: number) => {
     return balance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400';
@@ -129,12 +142,58 @@ const Dashboard = () => {
                 Refresh
               </Button>
               <Button 
+                onClick={() => navigate('/categories-budget')}
+                variant="outline"
+                size="sm"
+                className="rounded-full border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                Categories & Budget
+              </Button>
+              <Button 
                 onClick={() => navigate('/transactions')}
                 className="rounded-full bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Transaction
               </Button>
+            </div>
+          </div>
+
+          {/* Date Filter */}
+          <div className="flex items-center justify-center mb-6">
+            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full p-3 border border-white/20 dark:border-slate-700/30 shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                  <span className="text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">From:</span>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="bg-transparent border-0 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-0"
+                  />
+                </div>
+                <div className="w-px h-6 bg-slate-300 dark:bg-slate-600"></div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">To:</span>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="bg-transparent border-0 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-0"
+                  />
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={refetch}
+                  className="ml-2 h-8 px-3 text-xs rounded-full border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                >
+                  <RefreshCw className="w-3 h-3 mr-1" />
+                  Apply
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -201,27 +260,27 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Monthly Budget */}
+            {/* Budget Summary */}
             <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Monthly Budget</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">{selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1)} Budget</CardTitle>
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <ShieldCheck className="h-4 w-4 text-white" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                  {formatCurrency(safeData.monthlyBudgetSpent)} / {formatCurrency(safeData.monthlyBudgetTotal)}
+                  {formatCurrency(safeData.monthlyBudgetSpent)} / {formatCurrency(getTotalConvertedBudgetAmount(selectedPeriod))}
                 </div>
                 <div className="mt-3">
                   <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700">
                     <div
                       className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600"
-                      style={{ width: `${safeData.monthlyBudgetTotal ? Math.min((safeData.monthlyBudgetSpent / safeData.monthlyBudgetTotal) * 100, 100) : 0}%` }}
+                      style={{ width: `${getTotalConvertedBudgetAmount(selectedPeriod) ? Math.min((safeData.monthlyBudgetSpent / getTotalConvertedBudgetAmount(selectedPeriod)) * 100, 100) : 0}%` }}
                     />
                   </div>
                   <div className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                    {safeData.monthlyBudgetTotal ? `${Math.min((safeData.monthlyBudgetSpent / safeData.monthlyBudgetTotal) * 100, 100).toFixed(0)}% used` : 'No budgets set'}
+                    {getTotalConvertedBudgetAmount(selectedPeriod) ? `${Math.min((safeData.monthlyBudgetSpent / getTotalConvertedBudgetAmount(selectedPeriod)) * 100, 100).toFixed(0)}% used` : 'No budgets set'}
                   </div>
                   {preferences.fixedCosts && preferences.fixedCosts.length > 0 && (
                     <div className="mt-3 text-sm text-slate-600 dark:text-slate-400">
@@ -359,7 +418,7 @@ const Dashboard = () => {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => navigate('/insights')}
+                      onClick={() => navigate('/reports-insights')}
                       className="mt-3 rounded-full border-purple-200 text-purple-600 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-400 dark:hover:bg-purple-950/50"
                     >
                       View All Insights
@@ -392,7 +451,12 @@ const Dashboard = () => {
               <CardContent className="space-y-4">
                 {safeData.categoryBudgets.length > 0 ? (
                   safeData.categoryBudgets.map((item) => {
-                    const status = getBudgetStatus(item.percentage);
+                    const convertedBudget = getConvertedBudgets(selectedPeriod).find(b => b.id === item.budget.id);
+                    const convertedAmount = convertedBudget?.convertedAmount || item.budget.amount;
+                    const convertedPercentage = convertedAmount && convertedAmount > 0 
+                      ? Math.min((item.spent / convertedAmount) * 100, 100) 
+                      : 0;
+                    const status = getBudgetStatus(convertedPercentage);
                     const StatusIcon = status.icon;
                     
                     return (
@@ -401,19 +465,24 @@ const Dashboard = () => {
                           <div className="flex items-center space-x-3">
                             <div 
                               className="w-4 h-4 rounded-full shadow-sm" 
-                              style={{ backgroundColor: item.category.color }}
+                              style={{ backgroundColor: '#6b7280' }}
                             />
                             <span className="font-medium text-slate-700 dark:text-slate-300">{item.category.name}</span>
                             <StatusIcon className={`w-4 h-4 ${status.color}`} />
                           </div>
                           <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                            {formatCurrency(item.spent)} / {formatCurrency(item.budget.amount)}
+                            {formatCurrency(item.spent)} / {formatCurrency(getConvertedBudgets(selectedPeriod).find(b => b.id === item.budget.id)?.convertedAmount || item.budget.amount)}
+                            {item.budget.period !== selectedPeriod && (
+                              <div className="text-xs text-slate-500 dark:text-slate-500">
+                                ({item.budget.period} → {selectedPeriod})
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <Progress value={item.percentage} className="h-2 bg-slate-200 dark:bg-slate-700" />
+                        <Progress value={convertedPercentage} className="h-2 bg-slate-200 dark:bg-slate-700" />
                         <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400">
-                          <span>{item.percentage.toFixed(1)}% used</span>
-                          <span>{formatCurrency(item.remaining)} remaining</span>
+                          <span>{convertedPercentage.toFixed(1)}% used</span>
+                          <span>{formatCurrency(Math.max(0, (getConvertedBudgets(selectedPeriod).find(b => b.id === item.budget.id)?.convertedAmount || item.budget.amount) - item.spent))} remaining</span>
                         </div>
                       </div>
                     );

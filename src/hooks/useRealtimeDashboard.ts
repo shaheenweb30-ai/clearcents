@@ -66,7 +66,7 @@ interface DashboardData {
   transactionFrequency: string;
 }
 
-export const useRealtimeDashboard = () => {
+export const useRealtimeDashboard = (startDate?: string, endDate?: string) => {
   const { user } = useAuth();
   const { preferences } = useSettings();
   const [dashboardData, setDashboardData] = useState<DashboardData>({
@@ -91,7 +91,7 @@ export const useRealtimeDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const selectedPeriod: 'monthly' | 'quarterly' | 'yearly' = (preferences.budgetPeriod as 'monthly' | 'quarterly' | 'yearly') || 'monthly';
+  const selectedPeriod: 'weekly' | 'monthly' | 'yearly' = (preferences.budgetPeriod as 'weekly' | 'monthly' | 'yearly') || 'monthly';
 
   const fetchDashboardData = useCallback(async () => {
     if (!user) return;
@@ -101,26 +101,39 @@ export const useRealtimeDashboard = () => {
       
       const now = new Date();
 
-      // Determine period range based on selected timeline
-      const getPeriodRange = (date: Date, period: 'monthly' | 'quarterly' | 'yearly') => {
-        if (period === 'yearly') {
-          const start = new Date(date.getFullYear(), 0, 1);
-          const end = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
+      // Use custom date range if provided, otherwise use period-based range
+      let periodStart: Date, periodEnd: Date;
+      
+      if (startDate && endDate) {
+        // Use custom date range
+        periodStart = new Date(startDate);
+        periodEnd = new Date(endDate);
+        periodEnd.setHours(23, 59, 59, 999); // Set to end of day
+      } else {
+        // Determine period range based on selected timeline
+        const getPeriodRange = (date: Date, period: 'weekly' | 'monthly' | 'yearly') => {
+          if (period === 'yearly') {
+            const start = new Date(date.getFullYear(), 0, 1);
+            const end = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
+            return { start, end };
+          }
+          if (period === 'weekly') {
+            // Get the start of the week (Monday)
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+            const start = new Date(date.getFullYear(), date.getMonth(), diff);
+            const end = new Date(date.getFullYear(), date.getMonth(), diff + 6, 23, 59, 59, 999);
+            return { start, end };
+          }
+          const start = new Date(date.getFullYear(), date.getMonth(), 1);
+          const end = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
           return { start, end };
-        }
-        if (period === 'quarterly') {
-          const q = Math.floor(date.getMonth() / 3);
-          const startMonth = q * 3;
-          const start = new Date(date.getFullYear(), startMonth, 1);
-          const end = new Date(date.getFullYear(), startMonth + 3, 0, 23, 59, 59, 999);
-          return { start, end };
-        }
-        const start = new Date(date.getFullYear(), date.getMonth(), 1);
-        const end = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
-        return { start, end };
-      };
+        };
 
-      const { start: periodStart, end: periodEnd } = getPeriodRange(now, selectedPeriod);
+        const range = getPeriodRange(now, selectedPeriod);
+        periodStart = range.start;
+        periodEnd = range.end;
+      }
 
       const isInPeriod = (dateStr: string) => {
         const d = new Date(dateStr);
@@ -130,10 +143,34 @@ export const useRealtimeDashboard = () => {
       const scaleAmount = (
         amount: number,
         from: string | null | undefined,
-        to: 'monthly' | 'quarterly' | 'yearly'
+        to: 'weekly' | 'monthly' | 'yearly'
       ) => {
         const f = (from || 'monthly').toLowerCase();
-        const map: Record<string, number> = { monthly: 1, quarterly: 3, yearly: 12 };
+        
+        // Handle weekly/monthly/yearly periods (from useBudgets)
+        if (f === 'weekly' || f === 'monthly' || f === 'yearly') {
+          if (f === to) return amount;
+          
+          // Convert to monthly first (base unit)
+          let monthlyAmount = amount;
+          if (f === 'weekly') {
+            monthlyAmount = amount * 4; // 4 weeks per month
+          } else if (f === 'yearly') {
+            monthlyAmount = amount / 12; // 12 months per year
+          }
+          
+          // Convert from monthly to target period
+          if (to === 'weekly') {
+            return monthlyAmount / 4; // 4 weeks per month
+          } else if (to === 'yearly') {
+            return monthlyAmount * 12; // 12 months per year
+          }
+          
+          return monthlyAmount; // monthly
+        }
+        
+        // Handle period scaling
+        const map: Record<string, number> = { monthly: 1, yearly: 12 };
         const fromFactor = map[f] ?? 1;
         const toFactor = map[to] ?? 1;
         return amount * (toFactor / fromFactor);
@@ -238,12 +275,7 @@ export const useRealtimeDashboard = () => {
           if (count >= 8) return 'Weekly';
           if (count >= 4) return 'Bi-weekly';
           return 'Monthly';
-        } else if (period === 'quarterly') {
-          if (count >= 90) return 'Daily';
-          if (count >= 45) return 'Bi-weekly';
-          if (count >= 24) return 'Weekly';
-          if (count >= 12) return 'Bi-weekly';
-          return 'Monthly';
+
         } else {
           if (count >= 365) return 'Daily';
           if (count >= 180) return 'Bi-weekly';
@@ -325,7 +357,7 @@ export const useRealtimeDashboard = () => {
       let fixedCostsTotal = 0;
       try {
         const fixedCostsTotalMonthly = (preferences.fixedCosts || []).reduce((s, i) => s + (i.amount || 0), 0);
-        const periodFactor = selectedPeriod === 'monthly' ? 1 : selectedPeriod === 'quarterly' ? 3 : 12;
+        const periodFactor = selectedPeriod === 'monthly' ? 1 : selectedPeriod === 'yearly' ? 12 : 4;
         fixedCostsTotal = fixedCostsTotalMonthly * periodFactor;
       } catch (error) {
         console.warn('Dashboard: Error calculating fixed costs:', error);
@@ -359,7 +391,7 @@ export const useRealtimeDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, selectedPeriod, preferences.fixedCosts]);
+  }, [user, selectedPeriod, preferences.fixedCosts, startDate, endDate]);
 
   // Set up real-time subscription for transactions
   useEffect(() => {

@@ -227,8 +227,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     const dashboardPaths = [
       '/dashboard',
       '/transactions',
-      '/categories',
-      '/reports',
       '/insights',
       '/profile',
       '/settings',
