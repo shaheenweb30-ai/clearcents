@@ -30,6 +30,7 @@ import {
   Heart
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { useTrial } from "@/hooks/useTrial";
 
 interface SubscriptionPlan {
   id: string;
@@ -63,6 +64,7 @@ const Subscription = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { formatCurrency } = useSettings();
+  const { trial, isTrialActive, startTrial, starting, refresh } = useTrial(user);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -97,55 +99,29 @@ const Subscription = () => {
   const fetchSubscriptionData = async () => {
     setLoadingSubscription(true);
     try {
-      // Mock subscription data - replace with actual API calls
-      const mockSubscription: SubscriptionPlan = {
-        id: "sub_123456789",
-        name: "Pro Plan",
-        price: 9.99,
-        interval: 'monthly',
-        features: [
-          "Unlimited transactions",
-          "Advanced analytics",
-          "Export to Excel/PDF",
-          "Priority support",
-          "Custom categories",
-          "Budget templates"
-        ],
-        status: 'active',
-        currentPeriodStart: "2024-01-01T00:00:00Z",
-        currentPeriodEnd: "2024-02-01T00:00:00Z",
-        nextBillingDate: "2024-02-01T00:00:00Z"
-      };
-
-      const mockBillingHistory: BillingHistory[] = [
-        {
-          id: "inv_001",
-          date: "2024-01-01T00:00:00Z",
-          amount: 9.99,
-          status: 'paid',
-          description: "Pro Plan - Monthly",
-          invoiceUrl: "#"
-        },
-        {
-          id: "inv_002",
-          date: "2023-12-01T00:00:00Z",
-          amount: 9.99,
-          status: 'paid',
-          description: "Pro Plan - Monthly",
-          invoiceUrl: "#"
-        },
-        {
-          id: "inv_003",
-          date: "2023-11-01T00:00:00Z",
-          amount: 9.99,
-          status: 'paid',
-          description: "Pro Plan - Monthly",
-          invoiceUrl: "#"
-        }
-      ];
-
-      setSubscription(mockSubscription);
-      setBillingHistory(mockBillingHistory);
+      // Use trial to determine visible state until real billing is wired
+      if (isTrialActive && trial) {
+        const trialSub: SubscriptionPlan = {
+          id: trial.id,
+          name: 'Pro Trial',
+          price: 0,
+          interval: 'monthly',
+          features: [
+            'Pro features unlocked during trial',
+            'Advanced analytics',
+            'Priority support',
+          ],
+          status: 'trial',
+          currentPeriodStart: trial.started_at,
+          currentPeriodEnd: trial.ends_at,
+          nextBillingDate: trial.ends_at,
+        };
+        setSubscription(trialSub);
+      } else {
+        // No active trial or paid subscription → treat as Free plan (no subscription object)
+        setSubscription(null);
+        setBillingHistory([]);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -216,6 +192,29 @@ const Subscription = () => {
     <DashboardLayout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Trial banner */}
+          {trial && (
+            <div className={`mb-6 p-4 rounded-xl border shadow-sm ${isTrialActive ? 'bg-blue-50 border-blue-200 text-blue-900' : 'bg-slate-50 border-slate-200 text-slate-800'}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="h-5 w-5" />
+                  <div>
+                    <p className="font-semibold">{isTrialActive ? 'Your Pro trial is active' : 'Your trial has ended'}</p>
+                    <p className="text-sm opacity-80">
+                      {isTrialActive
+                        ? `Ends ${new Date(trial.ends_at).toLocaleString()}`
+                        : `Trial ended ${new Date(trial.ends_at).toLocaleString()}`}
+                    </p>
+                  </div>
+                </div>
+                {!isTrialActive && (
+                  <Button onClick={() => navigate('/pricing')} variant="default">
+                    Upgrade
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
           {/* Enhanced Header with Gradient Background */}
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 p-8 mb-8 text-white shadow-2xl">
             <div className="absolute inset-0 bg-black/10"></div>
@@ -417,13 +416,13 @@ const Subscription = () => {
                         <Crown className="h-10 w-10 text-white" />
                       </div>
                     </div>
-                    <h3 className="text-2xl font-heading font-bold mb-3 text-slate-800 dark:text-slate-100">No Active Subscription</h3>
+                    <h3 className="text-2xl font-heading font-bold mb-3 text-slate-800 dark:text-slate-100">You’re on the Free plan</h3>
                     <p className="text-muted-foreground text-lg mb-6 max-w-md mx-auto">
-                      You don't have an active subscription. Upgrade to unlock premium features and take control of your finances.
+                      Start a free 1‑day Pro trial to experience premium features, then upgrade if you love it.
                     </p>
-                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-8 py-3 text-lg">
+                    <Button onClick={() => startTrial().then(res => { if (res.ok) navigate('/subscription'); })} disabled={starting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-8 py-3 text-lg">
                       <Star className="h-5 w-5 mr-2" />
-                      View Plans
+                      Start 1‑day Trial
                     </Button>
                   </CardContent>
                 </Card>

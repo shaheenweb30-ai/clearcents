@@ -39,8 +39,14 @@ export const AuthLayout = ({ children, showSidePanel = true }: AuthLayoutProps) 
 
       <div className="flex min-h-screen">
         {/* Form Section */}
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-md">
+        <div className="relative flex-1 flex items-center justify-center p-6 overflow-hidden">
+          {/* Mobile/Tablet decorative background (side panel hidden) */}
+          <div className="lg:hidden absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:46px_46px]" />
+            <div className="absolute top-0 right-8 w-24 h-24 bg-blue-300/10 rounded-full blur-2xl" />
+            <div className="absolute bottom-0 left-8 w-28 h-28 bg-purple-300/10 rounded-full blur-2xl" />
+          </div>
+          <div className="w-full max-w-md relative z-10">
             {children}
           </div>
         </div>
@@ -48,8 +54,18 @@ export const AuthLayout = ({ children, showSidePanel = true }: AuthLayoutProps) 
         {/* Side Panel (Desktop Only) */}
         {showSidePanel && (
           <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary/90 to-primary/70 relative overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+          {/* Enhanced Background */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Grid pattern */}
+            <div className="absolute inset-0 bg-grid-white/[0.04] bg-[size:42px_42px]" />
+            {/* Radial highlights */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.14),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.10),transparent_60%)]" />
+            {/* Soft glow orbs */}
+            <div className="absolute -top-24 -right-16 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -bottom-24 -left-16 h-80 w-80 rounded-full bg-purple-300/10 blur-3xl" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 h-48 w-48 rounded-full bg-blue-300/10 blur-2xl animate-pulse" />
+          </div>
             
             {/* Content */}
             <div className="relative z-10 flex flex-col justify-center px-12 py-16 text-white">

@@ -22,6 +22,7 @@ import Subscription from "./pages/Subscription";
 import Help from "./pages/Help";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
+import Terms from "./pages/Terms";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 
@@ -169,6 +170,7 @@ const AppContent = () => {
                     <Route path="/subscription" element={<Subscription />} />
                     <Route path="/help" element={<Help />} />
                     <Route path="/privacy" element={<Privacy />} />
+                     <Route path="/terms" element={<Terms />} />
                     
                     {/* Admin Routes */}
                     <Route path="/admin/pages" element={<AdminPages />} />

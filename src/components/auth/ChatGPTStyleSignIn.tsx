@@ -49,6 +49,18 @@ export const ChatGPTStyleSignIn = () => {
         });
       } else {
         console.log("Sign in successful:", data);
+        const session = data.session;
+        const emailVerified = session?.user?.email_confirmed_at || session?.user?.confirmed_at;
+        if (!emailVerified) {
+          toast({
+            title: "Please verify your email",
+            description: "Check your inbox for the verification link.",
+          });
+          try { localStorage.setItem('lastEmail', formData.email); } catch {}
+          await supabase.auth.signOut();
+          navigate("/verify-email");
+          return;
+        }
         toast({
           title: "Welcome back!",
           description: "You have been successfully signed in.",

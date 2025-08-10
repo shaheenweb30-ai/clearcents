@@ -4,6 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Sparkles, Crown } from "lucide-react";
 import { BillingState } from "./BillingControls";
 import { useOptimizedPricingContent } from "@/hooks/useOptimizedPricingContent";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTrial } from "@/hooks/useTrial";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface PlansSimpleProps {
   billing: BillingState;
@@ -14,13 +18,17 @@ type PlanKey = 'free' | 'pro' | 'enterprise';
 
 export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
   const { getContentBySection } = useOptimizedPricingContent();
+  const { user } = useAuth();
+  const { startTrial, starting, isTrialActive } = useTrial(user);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const getPlan = (key: PlanKey) => {
     const content = getContentBySection(key);
     return {
       key,
       name: (content?.title || (key.charAt(0).toUpperCase() + key.slice(1))) as string,
-      cta: (content?.button_text || (key === 'enterprise' ? 'Contact sales' : key === 'pro' ? 'Start 14-day trial' : 'Start free')) as string,
+      cta: (content?.button_text || (key === 'enterprise' ? 'Contact sales' : key === 'pro' ? 'Start 1-day trial' : 'Start free')) as string,
       ctaVariant: (key === 'free' ? 'outline' : 'default') as const,
       features: (content?.features || []) as string[],
       smallPrint: (content?.description || '') as string,
@@ -40,6 +48,44 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
   const handleCycleChange = (cycle: 'monthly' | 'yearly') => {
     if (onBillingChange) {
       onBillingChange({ ...billing, cycle });
+    }
+  };
+
+  const handleCtaClick = async (planKey: PlanKey) => {
+    if (planKey === 'pro') {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+      if (isTrialActive) {
+        navigate('/subscription');
+        return;
+      }
+      const result = await startTrial();
+      if (result.ok) {
+        toast({
+          title: result.alreadyExists ? 'Trial already active' : 'Trial started',
+          description: 'You have full Pro access for the next 24 hours.',
+        });
+        navigate('/subscription');
+      } else {
+        toast({
+          title: 'Could not start trial',
+          description: 'Please try again in a moment.',
+          variant: 'destructive',
+        });
+      }
+      return;
+    }
+
+    if (planKey === 'free') {
+      navigate('/');
+      return;
+    }
+
+    if (planKey === 'enterprise') {
+      navigate('/contact');
+      return;
     }
   };
 
@@ -199,6 +245,8 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
                       ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                       : 'border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                   }`}
+                  onClick={() => handleCtaClick((plan as any).key)}
+                  disabled={starting && (plan as any).key === 'pro'}
                 >
                   {plan.cta}
                 </Button>

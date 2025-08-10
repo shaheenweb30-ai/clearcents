@@ -84,6 +84,7 @@ export const SignUpPage = () => {
         email: email,
         password: formData.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/login`,
           data: {
             full_name: formData.fullName,
           }
@@ -100,11 +101,12 @@ export const SignUpPage = () => {
         });
       } else {
         console.log("Sign up successful:", data);
+        try { localStorage.setItem('lastEmail', email); } catch {}
         toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
+          title: "Verify your email",
+          description: "We sent you a verification link. Please verify to continue.",
         });
-        navigate("/login");
+        navigate("/verify-email");
       }
     } catch (error) {
       console.error("Sign up error:", error);

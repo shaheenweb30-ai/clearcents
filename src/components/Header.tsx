@@ -57,15 +57,15 @@ const Header = () => {
   return (
     <header className="bg-white/95 backdrop-blur-xl shadow-xl border-b border-gray-200/50 sticky top-0 z-50 relative overflow-hidden">
       {/* Background decorative elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 right-20 w-16 h-16 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
-        <div className="absolute bottom-0 left-20 w-12 h-12 bg-purple-200 rounded-full opacity-15 animate-bounce"></div>
-        <div className="absolute top-1/2 right-1/3 w-8 h-8 bg-green-200 rounded-full opacity-20 animate-ping"></div>
-        <div className="absolute top-1/4 left-1/4 w-6 h-6 bg-indigo-200 rounded-full opacity-15 animate-pulse"></div>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
+        <div className="absolute bottom-0 left-10 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-purple-200 rounded-full opacity-10 animate-bounce"></div>
+        <div className="absolute top-1/2 right-1/3 w-5 h-5 md:w-7 md:h-7 bg-green-200 rounded-full opacity-20 animate-ping"></div>
+        <div className="absolute top-1/4 left-1/4 w-4 h-4 md:w-5 md:h-5 bg-indigo-200 rounded-full opacity-15 animate-pulse"></div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex justify-between items-center h-24">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="group">
             <Logo size="lg" className="group-hover:scale-105 transition-transform duration-300" />

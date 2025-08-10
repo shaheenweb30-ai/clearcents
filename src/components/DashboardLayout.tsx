@@ -17,6 +17,7 @@ import {
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
+  SidebarMenuBadge,
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
@@ -41,6 +42,7 @@ import {
   Mail,
   Target,
 } from "lucide-react";
+import { useTrial } from "@/hooks/useTrial";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -52,6 +54,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { t } = useTranslation();
   const location = useLocation();
   const { isAdmin } = useUserRole(user);
+  const { isTrialActive, loading: loadingTrial } = useTrial(user);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -165,6 +168,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             <span>{item.name}</span>
                           </Link>
                         </SidebarMenuButton>
+                        {item.href === '/subscription' && !loadingTrial && (
+                          <SidebarMenuBadge className={isTrialActive ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'}>
+                            {isTrialActive ? 'Trial' : 'Free'}
+                          </SidebarMenuBadge>
+                        )}
                       </SidebarMenuItem>
                     );
                   })}
