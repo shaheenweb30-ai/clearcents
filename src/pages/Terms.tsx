@@ -24,9 +24,9 @@ const Terms = () => {
                 responsible for maintaining the confidentiality of your account credentials.
               </p>
 
-              <h3>3. Subscriptions and Trials</h3>
-              <p>
-                We may offer paid subscriptions and free trials. Trial access is time-limited and may be revoked if
+                          <h3>3. Subscriptions</h3>
+            <p>
+              We may offer paid subscriptions. Subscription access may be revoked if
                 abuse is detected. Details of subscription plans are available on the Pricing page.
               </p>
 

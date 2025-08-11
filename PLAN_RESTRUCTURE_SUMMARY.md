@@ -137,9 +137,37 @@ The pricing structure has been restructured so that **all users start with a fre
 - ✅ 14-day trial functionality
 - ✅ Trial-related FAQs and content
 - ✅ Trial-specific button text and logic
+- ✅ Trial-related imports from all components
+- ✅ Trial setup logic in SignUpPage and VerifyEmailPage
+- ✅ Trial references in pricing components (FinalCTA, PricingFAQ, ComparisonSimple, etc.)
+- ✅ Trial references in marketing components (AIInsightSpotlight, UseCases, ComparisonTable)
+- ✅ Trial references in Terms page
 
 ### What Remains
 - ✅ Free plan for all users
 - ✅ Pro plan upgrade option
 - ✅ Clear upgrade messaging
 - ✅ Simple free → Pro user journey
+
+### Files Updated to Remove Trial Functionality
+1. **`src/hooks/useTrial.ts`** - Completely deleted
+2. **`src/components/pricing/PlansSimple.tsx`** - Removed trial imports and logic
+3. **`src/components/DashboardLayout.tsx`** - Removed trial status checks
+4. **`src/pages/Subscription.tsx`** - Removed trial banners and management
+5. **`src/components/profile/SubscriptionCard.tsx`** - Removed trial loading states
+6. **`src/pages/Checkout.tsx`** - Removed trial imports and trial-specific UI
+7. **`src/components/auth/SignUpPage.tsx`** - Removed trial setup logic
+8. **`src/components/auth/VerifyEmailPage.tsx`** - Removed trial setup logic
+9. **`src/components/pricing/FinalCTA.tsx`** - Updated trial references
+10. **`src/components/pricing/PricingFAQ.tsx`** - Updated trial references
+11. **`src/components/pricing/ComparisonSimple.tsx`** - Updated trial references
+12. **`src/components/AIInsightSpotlight.tsx`** - Updated trial references
+13. **`src/components/UseCases.tsx`** - Updated trial references
+14. **`src/components/ComparisonTable.tsx`** - Updated trial references
+15. **`src/pages/Terms.tsx`** - Updated trial references
+
+### Database Changes
+- **Migration `20250805007000_remove_trial_functionality.sql`** - Drops trial table and cleans up all trial-related content
+- All trial-related data, policies, and triggers removed
+- Pricing content updated to remove trial references
+- FAQs updated to reflect no-trial structure
