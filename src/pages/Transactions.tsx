@@ -305,6 +305,8 @@ const Transactions = () => {
   };
 
   const handleCreateCategory = async () => {
+    console.log('handleCreateCategory called with:', newCategory);
+    
     if (!newCategory.name.trim()) {
       toast({
         title: "Error",
@@ -314,20 +316,40 @@ const Transactions = () => {
       return;
     }
 
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "User not authenticated",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
+      console.log('Attempting to create category with data:', {
+        name: newCategory.name.trim(),
+        color: newCategory.color,
+        icon: newCategory.icon,
+        user_id: user.id
+      });
+
       const { data, error } = await supabase
         .from('categories')
         .insert([{
           name: newCategory.name.trim(),
           color: newCategory.color,
           icon: newCategory.icon,
-          user_id: user?.id,
-          is_default: false
+          user_id: user.id
         }])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Category created successfully:', data);
 
       // Add the new category to the list
       setCategories(prev => [...prev, data]);
@@ -338,7 +360,7 @@ const Transactions = () => {
       // Reset the new category form
       setNewCategory({
         name: '',
-        color: '#FF6B6B',
+        color: '#1752F3',
         icon: 'tag'
       });
       
@@ -352,7 +374,7 @@ const Transactions = () => {
       console.error('Error creating category:', error);
       toast({
         title: "Error",
-        description: "Failed to create category",
+        description: error instanceof Error ? error.message : "Failed to create category",
         variant: "destructive"
       });
     }
@@ -539,15 +561,15 @@ const Transactions = () => {
           {/* Filters and Search - Always show */}
           <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg">
             <CardHeader>
-              <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'items-center justify-between'}`}>
+              <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                 <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
                   <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                     <Filter className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <span className="text-sm sm:text-base">Filters & Search</span>
+                  <span className="text-base sm:text-lg">Filters & Search</span>
                 </CardTitle>
-                <div className={`flex ${isMobile ? 'flex-col space-y-2 w-full' : 'items-center space-x-2'}`}>
-                  <div className="text-xs text-slate-500 mr-2">State: {showFilters ? 'true' : 'false'}</div>
+                <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-x-3 sm:space-y-0">
+                  <div className="text-xs text-slate-500 text-center sm:text-left">State: {showFilters ? 'true' : 'false'}</div>
                   <Button
                     variant="outline"
                     size="sm"
@@ -556,7 +578,7 @@ const Transactions = () => {
                       setShowFilters(!showFilters);
                       console.log('Setting showFilters to:', !showFilters);
                     }}
-                    className={`border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
+                    className="w-full sm:w-auto border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200 h-10"
                   >
                     <Filter className="w-4 h-4 mr-2" />
                     {showFilters ? 'Hide' : 'Show'} Filters
@@ -565,7 +587,7 @@ const Transactions = () => {
                     variant="outline"
                     size="sm"
                     onClick={clearFilters}
-                    className={`border-red-200 hover:bg-red-50 text-red-600 dark:border-red-700 dark:hover:bg-red-950/50 dark:text-red-400 transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
+                    className="w-full sm:w-auto border-red-200 hover:bg-red-50 text-red-600 dark:border-red-700 dark:hover:bg-red-950/50 dark:text-red-400 transition-all duration-200 h-10"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Reset Filters
@@ -587,11 +609,7 @@ const Transactions = () => {
 
               {/* Advanced Filters */}
               {showFilters && (
-                <div className={`grid gap-4 pt-4 border-t border-gray-100 ${
-                  isMobile 
-                    ? 'grid-cols-1 sm:grid-cols-2' 
-                    : 'grid-cols-1 md:grid-cols-6'
-                }`}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 pt-4 border-t border-gray-100">
                 {/* Type Filter */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">Transaction Type</Label>
@@ -813,51 +831,51 @@ const Transactions = () => {
                   )}
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {filteredTransactions.map((transaction) => (
-                    <div key={transaction.id} className={`group flex ${isMobile ? 'flex-col space-y-3' : 'items-center justify-between'} p-4 bg-card/70 rounded-xl border border-border hover:bg-card hover:shadow-md transition-all duration-200`}>
-                      <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'items-center space-x-4'}`}>
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    <div key={transaction.id} className="group flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 p-4 bg-card/70 rounded-xl border border-border hover:bg-card hover:shadow-md transition-all duration-200">
+                      <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-x-4">
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
                           transaction.amount >= 0 
                             ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
                             : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
                         }`}>
                           {transaction.amount >= 0 ? (
-                            <TrendingUp className="w-5 h-5" />
+                            <TrendingUp className="w-6 h-6" />
                           ) : (
-                            <TrendingDown className="w-5 h-5" />
+                            <TrendingDown className="w-6 h-6" />
                           )}
                         </div>
-                        <div className={`${isMobile ? 'text-center' : ''}`}>
-                          <p className="font-semibold text-foreground">{transaction.description}</p>
-                          <div className={`flex ${isMobile ? 'flex-col space-y-1' : 'items-center space-x-2'} text-sm text-muted-foreground`}>
-                            <span className="flex items-center gap-1">
+                        <div className="text-center sm:text-left">
+                          <p className="font-semibold text-foreground text-base sm:text-lg">{transaction.description}</p>
+                          <div className="flex flex-col space-y-1 sm:flex-row sm:items-center sm:space-x-2 text-sm text-muted-foreground mt-1">
+                            <span className="flex items-center justify-center sm:justify-start gap-1">
                               <CalendarIcon className="w-3 h-3" />
                               {format(new Date(transaction.transaction_date), 'MMM dd, yyyy')}
                             </span>
-                            {!isMobile && <span>•</span>}
-                            <Badge variant="secondary" className="text-xs font-medium">
+                            <span className="hidden sm:inline">•</span>
+                            <Badge variant="secondary" className="text-xs font-medium w-fit mx-auto sm:mx-0">
                               {transaction.categories?.name || 'Uncategorized'}
                             </Badge>
                           </div>
                         </div>
                       </div>
                       
-                      <div className={`flex ${isMobile ? 'flex-col space-y-3 items-center' : 'items-center space-x-3'}`}>
-                        <div className={`text-right ${isMobile ? 'text-center' : ''}`}>
-                          <p className={`font-bold text-lg ${
+                      <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-x-4">
+                        <div className="text-center sm:text-right">
+                          <p className={`font-bold text-xl sm:text-2xl ${
                             transaction.amount >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                           }`}>
                             {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
                           </p>
                         </div>
                         
-                        <div className={`flex items-center space-x-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
+                        <div className="flex items-center justify-center space-x-2 sm:space-x-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEdit(transaction)}
-                            className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
+                            className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 h-10 w-10 p-0"
                             title="Edit Transaction"
                           >
                             <Edit className="w-4 h-4" />
@@ -868,7 +886,7 @@ const Transactions = () => {
                               <Button 
                                 variant="ghost" 
                                 size="sm"
-                                className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                                className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 h-10 w-10 p-0"
                                 title="Delete Transaction"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -904,7 +922,7 @@ const Transactions = () => {
 
         {/* Add/Edit Transaction Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className={`${isMobile ? 'w-[95vw] max-w-none mx-2' : 'sm:max-w-[480px]'} p-0 border-0 shadow-2xl rounded-2xl overflow-hidden`}>
+          <DialogContent className="w-[95vw] max-w-none mx-2 sm:max-w-[480px] p-0 border-0 shadow-2xl rounded-2xl overflow-hidden">
             {/* Enhanced Header with Gradient */}
             <div className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 p-4 sm:p-6 text-white">
               <div className="flex items-center gap-3 sm:gap-4">
@@ -942,7 +960,7 @@ const Transactions = () => {
                 {/* Enhanced Type Selection */}
                 <div className="space-y-3">
                   <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Transaction Type</Label>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       type="button"
                       variant={formData.type === 'income' ? 'default' : 'outline'}
@@ -1017,7 +1035,7 @@ const Transactions = () => {
                     <SelectTrigger className="h-12 border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200">
                       <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>
-                    <SelectContent className="w-[360px] max-h-[400px] border-0 shadow-2xl rounded-xl">
+                    <SelectContent className="w-[calc(100vw-2rem)] sm:w-[360px] max-h-[400px] border-0 shadow-2xl rounded-xl">
                       {/* Enhanced Header */}
                       <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-blue-50/30 dark:from-slate-800 dark:to-blue-900/20">
                         <div className="flex items-center gap-3">
@@ -1117,7 +1135,7 @@ const Transactions = () => {
                         {formData.transaction_date ? format(formData.transaction_date, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 border-0 shadow-2xl rounded-xl" align="start">
+                    <PopoverContent className="w-[calc(100vw-2rem)] sm:w-auto p-0 border-0 shadow-2xl rounded-xl" align="start">
                       <Calendar
                         mode="single"
                         selected={formData.transaction_date}
@@ -1131,7 +1149,7 @@ const Transactions = () => {
 
                 {/* Enhanced Form Actions */}
                 <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-4 sm:p-6">
-                  <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'justify-end gap-3'}`}>
+                  <div className="flex flex-col space-y-3 sm:flex-row sm:justify-end sm:gap-3 sm:space-y-0">
                     <Button
                       type="button"
                       variant="outline"
@@ -1139,14 +1157,14 @@ const Transactions = () => {
                         setIsDialogOpen(false);
                         resetForm();
                       }}
-                      className={`px-6 py-2 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
+                      className="w-full sm:w-auto px-6 py-2 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200 h-12"
                     >
                       Cancel
                     </Button>
                     <Button 
                       type="submit"
                       disabled={!formData.amount}
-                      className={`px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
+                      className="w-full sm:w-auto px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 h-12"
                     >
                       {editingTransaction ? 'Update' : 'Add'} Transaction
                     </Button>
@@ -1158,7 +1176,7 @@ const Transactions = () => {
 
         {/* Create Category Dialog */}
         <Dialog open={showCategoryDialog} onOpenChange={setShowCategoryDialog}>
-          <DialogContent className={`${isMobile ? 'w-[95vw] max-w-none mx-2' : 'sm:max-w-[420px]'} max-h-[75vh] overflow-hidden p-0 border-0 shadow-2xl`}>
+          <DialogContent className="w-[95vw] max-w-none mx-2 sm:max-w-[420px] max-h-[75vh] overflow-hidden p-0 border-0 shadow-2xl">
             {/* Modern Header */}
             <div className="relative bg-gradient-to-br from-primary via-primary/95 to-primary/90 p-4 sm:p-6 text-white">
               <div className="flex items-center gap-3 sm:gap-4">
@@ -1197,130 +1215,83 @@ const Transactions = () => {
                     placeholder="e.g., Groceries, Bills, Entertainment"
                     value={newCategory.name}
                     onChange={(e) => setNewCategory(prev => ({ ...prev, name: e.target.value }))}
-                    className="h-12 border-2 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="h-12 border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:focus:border-blue-400 transition-all duration-200"
                     required
                   />
                 </div>
 
-                {/* Modern Color Picker */}
+                {/* Color Selection */}
                 <div className="space-y-3">
                   <Label className="text-sm font-medium text-foreground">Color</Label>
-                  <div className={`grid gap-3 ${
-                    isMobile ? 'grid-cols-6' : 'grid-cols-8'
-                  }`}>
-                    {[
-                      '#1752F3', '#4A90E2', '#6BA5F7', '#8BB8FF', '#A8C8FF', '#C5D8FF', '#E2E8FF',
-                      '#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#DBEAFE', '#EFF6FF',
-                      '#1E3A8A', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#DBEAFE',
-                      '#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD'
-                    ].map((color) => (
+                  <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
+                    {['#1752F3', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2'].map((color) => (
                       <button
                         key={color}
                         type="button"
                         onClick={() => setNewCategory(prev => ({ ...prev, color }))}
-                        className={`relative w-10 h-10 rounded-xl border-2 transition-all duration-200 hover:scale-110 ${
+                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 transition-all duration-200 ${
                           newCategory.color === color 
-                            ? 'border-foreground scale-110 shadow-lg' 
-                            : 'border-border hover:border-primary/50'
+                            ? 'border-slate-800 dark:border-slate-200 scale-110 shadow-lg' 
+                            : 'border-slate-300 dark:border-slate-600 hover:scale-105 hover:shadow-md'
                         }`}
                         style={{ backgroundColor: color }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Icon Selection */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium text-foreground">Icon</Label>
+                  <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
+                    {['tag', 'shopping-cart', 'home', 'car', 'plane', 'train', 'bus', 'bike', 'coffee', 'utensils', 'gift', 'heart', 'star', 'book', 'gamepad-2', 'music', 'camera', 'phone', 'laptop', 'tv', 'lightbulb', 'wifi', 'zap', 'droplets', 'sun', 'moon', 'cloud', 'umbrella', 'snowflake', 'leaf', 'tree', 'flower', 'paw-print'].map((icon) => (
+                      <button
+                        key={icon}
+                        type="button"
+                        onClick={() => setNewCategory(prev => ({ ...prev, icon }))}
+                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center ${
+                          newCategory.icon === icon 
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 scale-110 shadow-lg' 
+                            : 'border-slate-300 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-600 hover:scale-105 hover:shadow-md'
+                        }`}
+                        title={icon}
                       >
-                        {newCategory.color === color && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-3 h-3 bg-white rounded-full shadow-sm"></div>
-                          </div>
-                        )}
+                        {/* You can use a simple text representation or import icons */}
+                        <span className="text-xs sm:text-sm font-medium">{icon.charAt(0).toUpperCase()}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Modern Icon Selection */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium text-foreground">Icon</Label>
-                  <Select value={newCategory.icon} onValueChange={(value) => setNewCategory(prev => ({ ...prev, icon: value }))}>
-                    <SelectTrigger className="h-12 border-2 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="w-[300px] max-h-[200px]">
-                      <div className="p-3 border-b bg-muted/30">
-                        <div className="text-sm font-medium text-muted-foreground">Choose an icon</div>
-                      </div>
-                      <div className="max-h-[150px] overflow-y-auto p-3">
-                        <div className={`grid gap-2 ${
-                          isMobile ? 'grid-cols-3' : 'grid-cols-4'
-                        }`}>
-                          {[
-                            'tag', 'shopping-bag', 'coffee', 'car', 'home', 'heart', 'zap', 'book',
-                            'plane', 'gift', 'briefcase', 'graduation-cap', 'gamepad-2', 'music', 
-                            'camera', 'dumbbell', 'utensils', 'wifi', 'phone', 'laptop', 'tv',
-                            'bicycle', 'bus', 'train', 'ship', 'rocket', 'star', 'moon', 'sun'
-                          ].map((icon) => (
-                            <SelectItem 
-                              key={icon} 
-                              value={icon} 
-                              className="flex flex-col items-center p-3 rounded-lg hover:bg-muted/50 transition-colors"
-                            >
-                              <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center mb-1">
-                                <span className="text-xs font-medium">{icon}</span>
-                              </div>
-                              <span className="text-xs text-muted-foreground">{icon}</span>
-                            </SelectItem>
-                          ))}
-                        </div>
-                      </div>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Modern Preview */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium text-foreground">Preview</Label>
-                  <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-muted/30 to-muted/20 rounded-xl border">
-                    <div 
-                      className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-semibold shadow-sm"
-                      style={{ backgroundColor: newCategory.color }}
+                {/* Form Actions */}
+                <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-4 sm:p-6">
+                  <div className="flex flex-col space-y-3 sm:flex-row sm:justify-end sm:gap-3 sm:space-y-0">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowCategoryDialog(false);
+                        setNewCategory({
+                          name: '',
+                          color: '#1752F3',
+                          icon: 'tag'
+                        });
+                      }}
+                      className="w-full sm:w-auto px-6 py-2 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200 h-12"
                     >
-                      {newCategory.icon.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <span className="font-semibold text-foreground">
-                        {newCategory.name || 'Category Name'}
-                      </span>
-                      <p className="text-xs text-muted-foreground">This is how your category will appear</p>
-                    </div>
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit"
+                      className="w-full sm:w-auto px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 h-12"
+                      disabled={!newCategory.name.trim()}
+                    >
+                      Create Category
+                    </Button>
                   </div>
                 </div>
               </form>
-
-              {/* Modern Form Actions */}
-              <div className="border-t bg-muted/20 p-4 sm:p-6">
-                <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'justify-end gap-3'}`}>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setShowCategoryDialog(false);
-                      setNewCategory({
-                        name: '',
-                        color: '#1752F3',
-                        icon: 'tag'
-                      });
-                    }}
-                    className={`px-6 py-2 ${isMobile ? 'w-full' : ''}`}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit"
-                    onClick={handleCreateCategory}
-                    className={`px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
-                    disabled={!newCategory.name.trim()}
-                  >
-                    Create Category
-                  </Button>
-                </div>
-              </div>
             </div>
           </DialogContent>
         </Dialog>

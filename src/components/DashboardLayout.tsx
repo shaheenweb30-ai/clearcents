@@ -21,6 +21,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  SidebarRail,
 } from "@/components/ui/sidebar";
 import {
   BarChart3,
@@ -61,10 +62,37 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { isMobile } = useResponsive();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    // Exact match for main routes
+    if (path === '/dashboard' && location.pathname === '/dashboard') return true;
+    if (path === '/transactions' && location.pathname === '/transactions') return true;
+    if (path === '/categories-budget' && location.pathname === '/categories-budget') return true;
+    if (path === '/reports' && location.pathname === '/reports') return true;
+    if (path === '/profile' && location.pathname === '/profile') return true;
+    if (path === '/settings' && location.pathname === '/settings') return true;
+    if (path === '/subscription' && location.pathname === '/subscription') return true;
+    if (path === '/help' && location.pathname === '/help') return true;
+    
+    // Admin routes - check if current path starts with admin and matches the specific admin section
+    if (path.startsWith('/admin/')) {
+      return location.pathname.startsWith(path);
+    }
+    
+    // Default exact match
+    return location.pathname === path;
+  };
 
   // Apply dark theme class to the dashboard layout
   const dashboardClassName = shouldApplyDarkTheme() ? 'dark' : '';
+
+  // Add a subtle indicator when sidebar is collapsed
+  const sidebarCollapsedClass = "group/sidebar-wrapper";
+
+  // Function to handle sidebar state change
+  const handleSidebarStateChange = (open: boolean) => {
+    // You can add additional logic here if needed
+    console.log('Sidebar state changed:', open ? 'expanded' : 'collapsed');
+  };
 
   const mainNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -105,18 +133,29 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div className={dashboardClassName}>
-      <SidebarProvider>
-        <Sidebar>
-          <SidebarHeader className="border-b border-border">
-            <div className="flex items-center gap-2 px-2 py-2">
-              <Logo size="sm" className="w-8 h-8 sm:w-10 sm:h-10" />
-              <SidebarTrigger className="block" />
+      <SidebarProvider onOpenChange={handleSidebarStateChange}>
+        <Sidebar collapsible="icon">
+          <SidebarHeader className="border-b border-border bg-transparent">
+            <div className="flex items-center justify-between px-2 py-2">
+              <div className="flex items-center gap-2 sidebar-logo-container">
+                <Logo size="sm" className="w-8 h-8 sm:w-10 sm:h-10" />
+              </div>
+              <SidebarTrigger 
+                className="h-8 w-8 p-0" 
+                title="Toggle Sidebar (⌘+B)"
+              />
             </div>
           </SidebarHeader>
-          <SidebarContent className="px-2">
+          <SidebarContent className="px-2 sidebar-content">
             {/* Main Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Main</SidebarGroupLabel>
+              <SidebarGroupLabel className={`text-xs sm:text-sm font-medium px-2 py-1 transition-colors duration-200 ${
+                mainNavigation.some(item => isActive(item.href)) 
+                  ? 'text-primary font-semibold' 
+                  : 'text-muted-foreground'
+              }`}>
+                Main
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {mainNavigation.map((item) => {
@@ -138,7 +177,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {/* Financial Management */}
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Financial</SidebarGroupLabel>
+              <SidebarGroupLabel className={`text-xs sm:text-sm font-medium px-2 py-1 transition-colors duration-200 ${
+                financialNavigation.some(item => isActive(item.href)) 
+                  ? 'text-primary font-semibold' 
+                  : 'text-muted-foreground'
+              }`}>
+                Financial
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {financialNavigation.map((item) => {
@@ -160,7 +205,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {/* Account Management */}
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Account</SidebarGroupLabel>
+              <SidebarGroupLabel className={`text-xs sm:text-sm font-medium px-2 py-1 transition-colors duration-200 ${
+                accountNavigation.some(item => isActive(item.href)) 
+                  ? 'text-primary font-semibold' 
+                  : 'text-muted-foreground'
+              }`}>
+                Account
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {accountNavigation.map((item) => {
@@ -187,7 +238,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {/* Support */}
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Support</SidebarGroupLabel>
+              <SidebarGroupLabel className={`text-xs sm:text-sm font-medium px-2 py-1 transition-colors duration-200 ${
+                supportNavigation.some(item => isActive(item.href)) 
+                  ? 'text-primary font-semibold' 
+                  : 'text-muted-foreground'
+              }`}>
+                Support
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {supportNavigation.map((item) => {
@@ -210,7 +267,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             {/* Administration - Admin Only */}
             {isAdmin && (
               <SidebarGroup>
-                <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Administration</SidebarGroupLabel>
+                <SidebarGroupLabel className={`text-xs sm:text-sm font-medium px-2 py-1 transition-colors duration-200 ${
+                  administrationNavigation.some(item => isActive(item.href)) 
+                    ? 'text-primary font-semibold' 
+                    : 'text-muted-foreground'
+                }`}>
+                  Administration
+                </SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {                    administrationNavigation.map((item) => {
@@ -233,7 +296,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {isAdmin && isAdminPage && (
               <SidebarGroup>
-                <SidebarGroupLabel className="text-xs sm:text-sm font-medium text-muted-foreground px-2 py-1">Admin</SidebarGroupLabel>
+                <SidebarGroupLabel className={`text-xs sm:text-sm font-medium px-2 py-1 transition-colors duration-200 ${
+                  adminNavigation.some(item => isActive(item.href)) 
+                    ? 'text-primary font-semibold' 
+                    : 'text-muted-foreground'
+                }`}>
+                  Admin
+                </SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {                    adminNavigation.map((item) => {
@@ -259,6 +328,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <UserProfileDropdown />
             </div>
           </SidebarFooter>
+          <SidebarRail />
         </Sidebar>
         <SidebarInset>
           {/* Mobile Navigation Header */}

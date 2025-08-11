@@ -494,3 +494,168 @@ All colors MUST be HSL.
     background: white !important;
   }
 }
+
+/* Sidebar collapsed state styling */
+[data-state="collapsed"] .sidebar-content {
+  opacity: 0.7;
+  transition: opacity 0.2s ease-in-out;
+}
+
+[data-state="collapsed"] .sidebar-content:hover {
+  opacity: 1;
+}
+
+/* Enhanced Sidebar Toggle Button Styling */
+.sidebar-toggle-button {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.sidebar-toggle-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-toggle-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Clean sidebar header - no background elements */
+[data-sidebar="header"] {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+[data-sidebar="header"] * {
+  background: transparent !important;
+}
+
+/* Ensure logo area is clean */
+.sidebar-logo-container {
+  background: transparent !important;
+  position: relative;
+  z-index: 10;
+}
+
+/* Remove any default sidebar backgrounds */
+[data-sidebar="sidebar"] {
+  background: hsl(var(--sidebar)) !important;
+}
+
+[data-sidebar="sidebar"] [data-sidebar="header"] {
+  background: transparent !important;
+}
+
+/* Override any default shadcn/ui sidebar header styles */
+.sidebar-header,
+[data-sidebar="header"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Ensure no pseudo-elements have backgrounds */
+[data-sidebar="header"]::before,
+[data-sidebar="header"]::after {
+  display: none !important;
+}
+
+/* Clean up any inherited backgrounds */
+[data-sidebar="header"] > div {
+  background: transparent !important;
+}
+
+/* Enhanced Sidebar Active State Styling */
+[data-sidebar="menu-button"][data-active="true"] {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
+  transform: translateX(4px) !important;
+  position: relative !important;
+}
+
+[data-sidebar="menu-button"][data-active="true"]::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: hsl(var(--primary));
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.5);
+}
+
+[data-sidebar="menu-button"][data-active="true"]:hover {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.9) 100%) !important;
+  transform: translateX(6px) !important;
+  box-shadow: 0 6px 16px hsl(var(--primary) / 0.4) !important;
+}
+
+/* Active state for sidebar menu items */
+[data-sidebar="menu-item"] [data-sidebar="menu-button"][data-active="true"] {
+  border-radius: 8px !important;
+  margin-left: 4px !important;
+  margin-right: 4px !important;
+}
+
+/* Active state icon styling */
+[data-sidebar="menu-button"][data-active="true"] svg {
+  color: hsl(var(--primary-foreground)) !important;
+  filter: drop-shadow(0 0 4px hsl(var(--primary-foreground) / 0.5));
+}
+
+/* Active state text styling */
+[data-sidebar="menu-button"][data-active="true"] span {
+  color: hsl(var(--primary-foreground)) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 8px hsl(var(--primary-foreground) / 0.3);
+}
+
+/* Hover effects for non-active items */
+[data-sidebar="menu-button"]:not([data-active="true"]):hover {
+  background: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+  transform: translateX(2px) !important;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Sidebar group labels with active state context */
+[data-sidebar="menu-button"][data-active="true"] ~ [data-sidebar="group-label"] {
+  color: hsl(var(--primary)) !important;
+  font-weight: 600 !important;
+}
+
+/* Enhanced sidebar menu button transitions */
+[data-sidebar="menu-button"] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Active state ripple effect */
+[data-sidebar="menu-button"][data-active="true"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%);
+  animation: activeRipple 2s ease-in-out infinite;
+}
+
+@keyframes activeRipple {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
