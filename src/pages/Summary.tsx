@@ -266,7 +266,7 @@ const Summary = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'on-track':
-        return 'text-green-600';
+        return 'text-green-700';
       case 'warning':
         return 'text-yellow-600';
       case 'overspent':
@@ -457,7 +457,7 @@ const Summary = () => {
                 <CheckCircle className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">{onTrackCategories.length}</div>
+                <div className="text-2xl font-bold text-green-700">{onTrackCategories.length}</div>
                 <p className="text-xs text-muted-foreground">
                   Categories
                 </p>
@@ -518,7 +518,7 @@ const Summary = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className={`font-bold ${overallPercentage <= 100 ? 'text-green-600' : 'text-red-600'}`}>
+                    <p className={`font-bold ${overallPercentage <= 100 ? 'text-green-700' : 'text-red-600'}`}>
                       {overallPercentage.toFixed(1)}%
                     </p>
                     <p className="text-xs text-muted-foreground">of total budget</p>

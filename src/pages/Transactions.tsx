@@ -491,7 +491,7 @@ const Transactions = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">
+                  <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                     {formatCurrency(totalIncome)}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -819,7 +819,7 @@ const Transactions = () => {
                       <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'items-center space-x-4'}`}>
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                           transaction.amount >= 0 
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
                             : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
                         }`}>
                           {transaction.amount >= 0 ? (
@@ -846,7 +846,7 @@ const Transactions = () => {
                       <div className={`flex ${isMobile ? 'flex-col space-y-3 items-center' : 'items-center space-x-3'}`}>
                         <div className={`text-right ${isMobile ? 'text-center' : ''}`}>
                           <p className={`font-bold text-lg ${
-                            transaction.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                            transaction.amount >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                           }`}>
                             {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
                           </p>

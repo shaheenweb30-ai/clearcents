@@ -577,9 +577,9 @@ const Reports = () => {
 
   const getEmergencyFundColor = (status: string) => {
     switch (status) {
-      case 'excellent': return 'text-green-600 dark:text-green-400';
+      case 'excellent': return 'text-green-700 dark:text-green-400';
       case 'good': return 'text-blue-600 dark:text-blue-400';
-      case 'fair': return 'text-yellow-600 dark:text-yellow-400';
+      case 'fair': return 'text-yellow-700 dark:text-yellow-400';
       case 'poor': return 'text-red-600 dark:text-red-400';
       default: return 'text-slate-600 dark:text-slate-400';
     }
@@ -616,7 +616,7 @@ const Reports = () => {
 
   const getGoalStatusColor = (status: string) => {
     switch (status) {
-      case 'ahead': return 'text-green-600 dark:text-green-400';
+      case 'ahead': return 'text-green-700 dark:text-green-400';
       case 'on-track': return 'text-blue-600 dark:text-blue-400';
       case 'behind': return 'text-red-600 dark:text-red-400';
       default: return 'text-slate-600 dark:text-slate-400';
@@ -634,7 +634,7 @@ const Reports = () => {
 
   const getBudgetStatusColor = (status: string) => {
     switch (status) {
-      case 'under': return 'text-green-600 dark:text-green-400';
+      case 'under': return 'text-green-700 dark:text-green-400';
       case 'over': return 'text-red-600 dark:text-red-400';
       case 'on-track': return 'text-blue-600 dark:text-blue-400';
       default: return 'text-slate-600 dark:text-slate-400';
@@ -872,7 +872,7 @@ const Reports = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                <div className="text-2xl font-bold text-green-700 dark:text-green-400">
                   {formatCurrency(reportsData.totalIncome)}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">

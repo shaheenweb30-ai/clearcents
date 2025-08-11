@@ -463,7 +463,7 @@ export default function Homepage1() {
                   <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <TrendingUp className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-300">Founders</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors duration-300">Founders</h3>
                   <p className="text-gray-600 text-sm mb-4">Scale your business with smart financial insights</p>
                   <div className="flex justify-center">
                     <div className="flex space-x-1">
@@ -567,11 +567,11 @@ export default function Homepage1() {
                 <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <FileText className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-yellow-600 transition-colors duration-300">The time sink</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-yellow-700 transition-colors duration-300">The time sink</h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
                   Manual tracking that never stays up to date, spreadsheets that get forgotten, and insights that come too late.
                 </p>
-                <div className="mt-6 flex items-center text-yellow-600 font-medium">
+                <div className="mt-6 flex items-center text-yellow-700 font-medium">
                   <span className="mr-2">→</span>
                   <span>Automated tracking</span>
                 </div>
@@ -585,11 +585,11 @@ export default function Homepage1() {
                 <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <Zap className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors duration-300">The fix</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-700 transition-colors duration-300">The fix</h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
                   Real-time tracking + AI insights that spot patterns, flag overspend, and give you actionable tips to stay on track.
                 </p>
-                <div className="mt-6 flex items-center text-green-600 font-medium">
+                <div className="mt-6 flex items-center text-green-700 font-medium">
                   <span className="mr-2">→</span>
                   <span>Smart insights</span>
                 </div>
@@ -836,9 +836,9 @@ export default function Homepage1() {
                   <p className="text-gray-600 leading-relaxed text-lg">
                     Monthly, weekly, or custom periods. Auto-refresh and adjust based on your goals.
                   </p>
-                  <div className="mt-6 flex items-center justify-center text-green-600 font-medium">
+                  <div className="mt-6 flex items-center justify-center text-green-700 font-medium">
                     <span className="mr-2">→</span>
-                    <span>Flexible periods</span>
+                    <span>AI-powered insights</span>
                   </div>
                 </div>
               </div>
@@ -1070,7 +1070,7 @@ export default function Homepage1() {
                       <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <div className="text-sm text-green-600 font-medium">$45/month saved</div>
+                  <div className="text-sm text-green-700 font-medium">$45/month saved</div>
                 </div>
               </div>
             </div>
@@ -1107,7 +1107,7 @@ export default function Homepage1() {
           <div className="text-center mt-16">
             <div className="inline-flex items-center space-x-8 bg-white rounded-full px-8 py-4 shadow-lg border border-gray-100">
               <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-600">4.9/5</div>
+                <div className="text-2xl font-bold text-yellow-700">4.9/5</div>
                 <div className="text-sm text-gray-600">Average Rating</div>
               </div>
               <div className="w-px h-8 bg-gray-300"></div>

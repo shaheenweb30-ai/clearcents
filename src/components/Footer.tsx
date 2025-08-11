@@ -412,7 +412,7 @@ const Footer = () => {
               </div>
             </div>
 
-            <p className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded-lg">
+            <p className="text-xs text-gray-700 bg-blue-50 px-2 py-1 rounded-lg">
               <Shield className="w-3 h-3 inline mr-1" />
               Data region configurable on paid plans.
             </p>

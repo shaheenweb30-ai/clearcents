@@ -89,7 +89,7 @@ const Dashboard = () => {
   const getBudgetStatus = (percentage: number) => {
     if (percentage >= 90) return { color: 'text-red-600 dark:text-red-400', icon: AlertCircle };
     if (percentage >= 75) return { color: 'text-yellow-600 dark:text-yellow-400', icon: Clock };
-    return { color: 'text-green-600 dark:text-green-400', icon: CheckCircle };
+    return { color: 'text-green-700 dark:text-green-400', icon: CheckCircle };
   };
 
   if (loading) {
@@ -235,7 +235,7 @@ const Dashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className={`${isMobile ? 'text-xl sm:text-2xl' : 'text-3xl'} font-bold text-green-600 dark:text-green-400`}>
+                <div className={`${isMobile ? 'text-xl sm:text-2xl' : 'text-3xl'} font-bold text-green-700 dark:text-green-400`}>
                   {formatCurrency(safeData.totalIncome)}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
@@ -331,7 +331,7 @@ const Dashboard = () => {
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Income:</span>
-                    <span className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold text-green-600 dark:text-green-400`}>
+                    <span className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold text-green-700 dark:text-green-400`}>
                       {formatCurrency(safeData.periodIncome)}
                     </span>
                   </div>
@@ -344,7 +344,9 @@ const Dashboard = () => {
                   <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                     <div className="flex justify-between items-center">
                       <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Net:</span>
-                      <span className={`${isMobile ? 'text-base' : 'text-lg'} font-bold ${safeData.periodIncome - safeData.periodExpenses >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <span className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold ${
+                        safeData.periodIncome - safeData.periodExpenses >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                      }`}>
                         {formatCurrency(safeData.periodIncome - safeData.periodExpenses)}
                       </span>
                     </div>
@@ -571,7 +573,7 @@ const Dashboard = () => {
                           </div>
                           <div className={`${isMobile ? 'text-center' : 'text-right'}`}>
                             <p className={`font-bold ${isMobile ? 'text-base' : 'text-lg'} ${
-                              isIncome ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                              isIncome ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                             }`}>
                               {isIncome ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
                             </p>

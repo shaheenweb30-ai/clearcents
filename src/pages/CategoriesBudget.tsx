@@ -126,7 +126,7 @@ const CategoriesBudget = () => {
     const percentage = (spent / budget) * 100;
     if (percentage >= 90) return { color: 'text-red-600 dark:text-red-400', icon: AlertCircle, status: 'Over Budget' };
     if (percentage >= 75) return { color: 'text-yellow-600 dark:text-yellow-400', icon: Clock, status: 'Warning' };
-    return { color: 'text-green-600 dark:text-green-400', icon: CheckCircle, status: 'On Track' };
+    return { color: 'text-green-700 dark:text-green-400', icon: CheckCircle, status: 'On Track' };
   };
 
   if (loading) {
@@ -234,7 +234,7 @@ const CategoriesBudget = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                <div className="text-3xl font-bold text-green-700 dark:text-green-400">
                   {formatCurrency(getTotalConvertedBudgetAmount(selectedPeriod))}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
