@@ -50,13 +50,37 @@ export function BrandingProvider({ children }: BrandingProviderProps) {
         .limit(1)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error fetching branding settings:', error);
+        
+        // If it's a 406 error (RLS issue), provide default settings
+        if (error.code === '406') {
+          console.log('RLS error detected, using default branding settings');
+          setSettings({
+            id: 'default',
+            business_name: 'ClearCents',
+            logo_url: null,
+            favicon_url: null,
+            primary_color: '#1752F3',
+            secondary_color: '#F0F0F0',
+            accent_color: '#4A90E2',
+            font_family: 'GT Walsheim Pro',
+            font_weights: '["300", "400", "500", "600", "700"]',
+            typography_settings: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+          return;
+        }
+        
+        // For other errors, still set loading to false
+        setSettings(null);
       } else {
         setSettings(data);
       }
     } catch (error) {
       console.error('Error fetching branding settings:', error);
+      setSettings(null);
     } finally {
       setLoading(false);
     }

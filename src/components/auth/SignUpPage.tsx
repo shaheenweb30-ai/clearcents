@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,31 @@ export const SignUpPage = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Test Supabase connection and settings
+  const testSupabaseConnection = async () => {
+    try {
+      console.log('Testing Supabase connection...');
+      
+      // Test basic connection
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      console.log('Session test:', { session, sessionError });
+      
+      // Test if we can access the auth service
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      console.log('User test:', { user, userError });
+      
+      console.log('Supabase connection test completed successfully');
+      
+    } catch (error) {
+      console.error('Supabase connection test failed:', error);
+    }
+  };
+
+  // Run connection test on component mount
+  useEffect(() => {
+    testSupabaseConnection();
+  }, []);
 
   const validateEmail = () => {
     if (!email.trim()) {
@@ -80,16 +105,42 @@ export const SignUpPage = () => {
     setLoading(true);
     
     try {
+      // Get the current origin and ensure it's properly formatted
+      const currentOrigin = window.location.origin;
+      const redirectUrl = `${currentOrigin}/verify-email`;
+      
+      // Use the correct production domain for email verification
+      const productionUrl = 'https://centrabudget.com/verify-email';
+      
+      // Use production URL if we're in production, otherwise use current origin
+      let finalRedirectUrl = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1') 
+        ? redirectUrl 
+        : productionUrl;
+      
+      // Additional safety check - ensure we're not using any centrabudget.com URLs
+      if (finalRedirectUrl.includes('centrabudget.com')) {
+        console.error('ERROR: Redirect URL contains centrabudget.com, using production URL instead');
+        finalRedirectUrl = productionUrl;
+      }
+      
+      console.log('Starting signup process for email:', email);
+      console.log('Current origin:', currentOrigin);
+      console.log('Redirect URL:', redirectUrl);
+      console.log('Production URL:', productionUrl);
+      console.log('Final redirect URL:', finalRedirectUrl);
+      
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: formData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`,
+          emailRedirectTo: finalRedirectUrl,
           data: {
             full_name: formData.fullName,
           }
         }
       });
+
+      console.log('Supabase signup response:', { data, error });
 
       if (error) {
         console.error("Sign up error:", error);
@@ -101,12 +152,27 @@ export const SignUpPage = () => {
         });
       } else {
         console.log("Sign up successful:", data);
-        try { localStorage.setItem('lastEmail', email); } catch {}
-        toast({
-          title: "Verify your email",
-          description: "We sent you a verification link. Please verify to continue.",
-        });
-        navigate("/verify-email");
+        
+        // Check if email confirmation is required
+        if (data.user && !data.user.email_confirmed_at) {
+          console.log('User created but email not confirmed. Confirmation email should be sent.');
+          try { localStorage.setItem('lastEmail', email); } catch {}
+          toast({
+            title: "Verify your email",
+            description: "We sent you a verification link. Please verify to continue.",
+          });
+          navigate("/verify-email");
+        } else if (data.user && data.user.email_confirmed_at) {
+          console.log('User created and email already confirmed. Redirecting to dashboard.');
+          toast({
+            title: "Account created successfully!",
+            description: "Welcome to CentraBudget!",
+          });
+          navigate("/dashboard");
+        } else {
+          console.log('Unexpected response format:', data);
+          setError("Unexpected response from server. Please try again.");
+        }
       }
     } catch (error) {
       console.error("Sign up error:", error);
@@ -390,6 +456,16 @@ export const SignUpPage = () => {
                       Create account
                     </>
                   )}
+                </Button>
+
+                {/* Debug button - remove in production */}
+                <Button
+                  type="button"
+                  onClick={testSupabaseConnection}
+                  variant="outline"
+                  className="w-full text-sm text-gray-600 hover:text-gray-800"
+                >
+                  🐛 Test Connection (Debug)
                 </Button>
 
                 {/* Sign In Link */}

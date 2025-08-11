@@ -31,10 +31,12 @@ export const AuthLayout = ({ children, showSidePanel = true }: AuthLayoutProps) 
     <div className="min-h-screen bg-background">
       {/* Header with Logo */}
       <header className="absolute top-0 left-0 p-6 z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+        <div className="inline-flex items-center gap-2 text-foreground">
           <Logo size="sm" />
-          <span className="text-sm font-medium">Back to home</span>
-        </Link>
+          <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
+            Back to home
+          </Link>
+        </div>
       </header>
 
       <div className="flex min-h-screen">

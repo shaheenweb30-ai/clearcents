@@ -40,6 +40,7 @@ import AdminFAQ from "./pages/admin/AdminFAQ";
 import AdminPackages from "./pages/admin/AdminPackages";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminComparison from "./pages/admin/AdminComparison";
+import AdminTranslations from "./pages/admin/AdminTranslations";
 
 // Import new auth pages
 import { 
@@ -183,6 +184,7 @@ const AppContent = () => {
                     <Route path="/admin/packages" element={<AdminPackages />} />
                     <Route path="/admin/users" element={<AdminUsers />} />
                     <Route path="/admin/comparison" element={<AdminComparison />} />
+                    <Route path="/admin/translations" element={<AdminTranslations />} />
                     
                     <Route path="*" element={<NotFound />} />
                   </Routes>
