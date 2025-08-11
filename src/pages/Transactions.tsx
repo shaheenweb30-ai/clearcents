@@ -37,6 +37,7 @@ import { useToast } from "@/hooks/use-toast";
 import DashboardLayout from "@/components/DashboardLayout";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useResponsive } from "@/hooks/use-mobile";
 
 interface Transaction {
   id: string;
@@ -90,6 +91,7 @@ interface Filters {
 const Transactions = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isMobile, isSmallMobile } = useResponsive();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -435,24 +437,24 @@ const Transactions = () => {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-6">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-2 sm:p-3 md:p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg mb-4">
-                <Receipt className="w-4 h-4" />
+          <div className={`flex ${isMobile ? 'flex-col space-y-4' : 'items-center justify-between'}`}>
+            <div className={`${isMobile ? 'text-center' : ''}`}>
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold shadow-lg mb-3 sm:mb-4">
+                <Receipt className="w-3 h-3 sm:w-4 sm:h-4" />
                 Transactions
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-3">Track and manage money flow</h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400">Fast entry, powerful filters, real-time totals</p>
+              <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-2 sm:mb-3 ${isMobile ? 'text-center' : ''}`}>Track and manage money flow</h1>
+              <p className={`text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 ${isMobile ? 'text-center' : ''}`}>Fast entry, powerful filters, real-time totals</p>
             </div>
             <Button 
               onClick={() => {
                 resetForm();
                 setIsDialogOpen(true);
               }}
-              className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
+              className={`${isMobile ? 'w-full max-w-sm mx-auto' : ''} rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 h-12 sm:h-auto`}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Transaction
@@ -461,7 +463,11 @@ const Transactions = () => {
 
           {/* Summary Cards - Only show when there are transactions */}
           {transactions.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className={`grid gap-3 sm:gap-4 md:gap-6 ${
+              isMobile 
+                ? 'grid-cols-1 sm:grid-cols-2' 
+                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+            }`}>
               <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">Total Transactions</CardTitle>
@@ -470,7 +476,7 @@ const Transactions = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-slate-900 dark:text-slate-100">{filteredTransactions.length}</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{filteredTransactions.length}</div>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
                     {transactions.length} total
                   </p>
@@ -485,7 +491,7 @@ const Transactions = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                  <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">
                     {formatCurrency(totalIncome)}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -502,7 +508,7 @@ const Transactions = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-red-600 dark:text-red-400">
+                  <div className="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400">
                     {formatCurrency(totalExpenses)}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -519,7 +525,7 @@ const Transactions = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className={`text-3xl font-bold ${totalIncome - totalExpenses >= 0 ? 'text-purple-600 dark:text-purple-400' : 'text-red-600 dark:text-red-400'}`}>
+                  <div className={`text-2xl sm:text-3xl font-bold ${totalIncome - totalExpenses >= 0 ? 'text-purple-600 dark:text-purple-400' : 'text-red-600 dark:text-red-400'}`}>
                     {formatCurrency(totalIncome - totalExpenses)}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -533,14 +539,14 @@ const Transactions = () => {
           {/* Filters and Search - Always show */}
           <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'items-center justify-between'}`}>
                 <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Filter className="w-4 h-4 text-white" />
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <Filter className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  Filters & Search
+                  <span className="text-sm sm:text-base">Filters & Search</span>
                 </CardTitle>
-                <div className="flex items-center space-x-2">
+                <div className={`flex ${isMobile ? 'flex-col space-y-2 w-full' : 'items-center space-x-2'}`}>
                   <div className="text-xs text-slate-500 mr-2">State: {showFilters ? 'true' : 'false'}</div>
                   <Button
                     variant="outline"
@@ -550,7 +556,7 @@ const Transactions = () => {
                       setShowFilters(!showFilters);
                       console.log('Setting showFilters to:', !showFilters);
                     }}
-                    className="border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200"
+                    className={`border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
                   >
                     <Filter className="w-4 h-4 mr-2" />
                     {showFilters ? 'Hide' : 'Show'} Filters
@@ -559,7 +565,7 @@ const Transactions = () => {
                     variant="outline"
                     size="sm"
                     onClick={clearFilters}
-                    className="border-red-200 hover:bg-red-50 text-red-600 dark:border-red-700 dark:hover:bg-red-950/50 dark:text-red-400 transition-all duration-200"
+                    className={`border-red-200 hover:bg-red-50 text-red-600 dark:border-red-700 dark:hover:bg-red-950/50 dark:text-red-400 transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Reset Filters
@@ -581,7 +587,11 @@ const Transactions = () => {
 
               {/* Advanced Filters */}
               {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-4 pt-4 border-t border-gray-100">
+                <div className={`grid gap-4 pt-4 border-t border-gray-100 ${
+                  isMobile 
+                    ? 'grid-cols-1 sm:grid-cols-2' 
+                    : 'grid-cols-1 md:grid-cols-6'
+                }`}>
                 {/* Type Filter */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">Transaction Type</Label>
@@ -805,8 +815,8 @@ const Transactions = () => {
               ) : (
                 <div className="space-y-3">
                   {filteredTransactions.map((transaction) => (
-                    <div key={transaction.id} className="group flex items-center justify-between p-4 bg-card/70 rounded-xl border border-border hover:bg-card hover:shadow-md transition-all duration-200">
-                      <div className="flex items-center space-x-4">
+                    <div key={transaction.id} className={`group flex ${isMobile ? 'flex-col space-y-3' : 'items-center justify-between'} p-4 bg-card/70 rounded-xl border border-border hover:bg-card hover:shadow-md transition-all duration-200`}>
+                      <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'items-center space-x-4'}`}>
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                           transaction.amount >= 0 
                             ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
@@ -818,14 +828,14 @@ const Transactions = () => {
                             <TrendingDown className="w-5 h-5" />
                           )}
                         </div>
-                        <div>
+                        <div className={`${isMobile ? 'text-center' : ''}`}>
                           <p className="font-semibold text-foreground">{transaction.description}</p>
-                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <div className={`flex ${isMobile ? 'flex-col space-y-1' : 'items-center space-x-2'} text-sm text-muted-foreground`}>
                             <span className="flex items-center gap-1">
                               <CalendarIcon className="w-3 h-3" />
                               {format(new Date(transaction.transaction_date), 'MMM dd, yyyy')}
                             </span>
-                            <span>•</span>
+                            {!isMobile && <span>•</span>}
                             <Badge variant="secondary" className="text-xs font-medium">
                               {transaction.categories?.name || 'Uncategorized'}
                             </Badge>
@@ -833,8 +843,8 @@ const Transactions = () => {
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-3">
-                        <div className="text-right">
+                      <div className={`flex ${isMobile ? 'flex-col space-y-3 items-center' : 'items-center space-x-3'}`}>
+                        <div className={`text-right ${isMobile ? 'text-center' : ''}`}>
                           <p className={`font-bold text-lg ${
                             transaction.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                           }`}>
@@ -842,7 +852,7 @@ const Transactions = () => {
                           </p>
                         </div>
                         
-                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className={`flex items-center space-x-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -894,22 +904,22 @@ const Transactions = () => {
 
         {/* Add/Edit Transaction Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[480px] p-0 border-0 shadow-2xl rounded-2xl overflow-hidden">
+          <DialogContent className={`${isMobile ? 'w-[95vw] max-w-none mx-2' : 'sm:max-w-[480px]'} p-0 border-0 shadow-2xl rounded-2xl overflow-hidden`}>
             {/* Enhanced Header with Gradient */}
-            <div className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 p-6 text-white">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+            <div className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 p-4 sm:p-6 text-white">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                   {editingTransaction ? (
-                    <Edit className="h-6 w-6 text-white" />
+                    <Edit className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                   ) : (
-                    <Plus className="h-6 w-6 text-white" />
+                    <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                   )}
                 </div>
                 <div className="flex-1">
-                  <DialogTitle className="text-xl font-bold text-white">
+                  <DialogTitle className="text-lg sm:text-xl font-bold text-white">
                     {editingTransaction ? 'Edit Transaction' : 'New Transaction'}
                   </DialogTitle>
-                  <p className="text-blue-100 text-sm mt-1">
+                  <p className="text-blue-100 text-xs sm:text-sm mt-1">
                     {editingTransaction ? 'Update your transaction details' : 'Record your income or expense'}
                   </p>
                 </div>
@@ -922,13 +932,13 @@ const Transactions = () => {
                   setIsDialogOpen(false);
                   resetForm();
                 }}
-                className="absolute top-4 right-4 h-8 w-8 p-0 bg-white/10 hover:bg-white/20 text-white border-0"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 h-8 w-8 p-0 bg-white/10 hover:bg-white/20 text-white border-0"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Enhanced Type Selection */}
                 <div className="space-y-3">
                   <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Transaction Type</Label>
@@ -1120,8 +1130,8 @@ const Transactions = () => {
                 </div>
 
                 {/* Enhanced Form Actions */}
-                <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-6">
-                  <div className="flex justify-end gap-3">
+                <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-4 sm:p-6">
+                  <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'justify-end gap-3'}`}>
                     <Button
                       type="button"
                       variant="outline"
@@ -1129,14 +1139,14 @@ const Transactions = () => {
                         setIsDialogOpen(false);
                         resetForm();
                       }}
-                      className="px-6 py-2 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200"
+                      className={`px-6 py-2 border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
                     >
                       Cancel
                     </Button>
                     <Button 
                       type="submit"
                       disabled={!formData.amount}
-                      className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                      className={`px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
                     >
                       {editingTransaction ? 'Update' : 'Add'} Transaction
                     </Button>
@@ -1148,16 +1158,16 @@ const Transactions = () => {
 
         {/* Create Category Dialog */}
         <Dialog open={showCategoryDialog} onOpenChange={setShowCategoryDialog}>
-          <DialogContent className="sm:max-w-[420px] max-h-[75vh] overflow-hidden p-0 border-0 shadow-2xl">
+          <DialogContent className={`${isMobile ? 'w-[95vw] max-w-none mx-2' : 'sm:max-w-[420px]'} max-h-[75vh] overflow-hidden p-0 border-0 shadow-2xl`}>
             {/* Modern Header */}
-            <div className="relative bg-gradient-to-br from-primary via-primary/95 to-primary/90 p-6 text-white">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <Plus className="h-5 w-5 text-white" />
+            <div className="relative bg-gradient-to-br from-primary via-primary/95 to-primary/90 p-4 sm:p-6 text-white">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <DialogTitle className="text-xl font-semibold text-white">Create Category</DialogTitle>
-                  <p className="text-white/80 text-sm mt-1">Add a custom category for your transactions</p>
+                  <DialogTitle className="text-lg sm:text-xl font-semibold text-white">Create Category</DialogTitle>
+                  <p className="text-white/80 text-xs sm:text-sm mt-1">Add a custom category for your transactions</p>
                 </div>
               </div>
               {/* Floating close button */}
@@ -1172,14 +1182,14 @@ const Transactions = () => {
                     icon: 'tag'
                   });
                 }}
-                className="absolute top-4 right-4 h-8 w-8 p-0 bg-white/10 hover:bg-white/20 text-white border-0"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 h-8 w-8 p-0 bg-white/10 hover:bg-white/20 text-white border-0"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
             
             <div className="flex flex-col h-[calc(75vh-120px)]">
-              <form onSubmit={(e) => { e.preventDefault(); handleCreateCategory(); }} className="flex-1 overflow-y-auto p-6 space-y-6">
+              <form onSubmit={(e) => { e.preventDefault(); handleCreateCategory(); }} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Category Name */}
                 <div className="space-y-3">
                   <Label className="text-sm font-medium text-foreground">Category Name</Label>
@@ -1195,7 +1205,9 @@ const Transactions = () => {
                 {/* Modern Color Picker */}
                 <div className="space-y-3">
                   <Label className="text-sm font-medium text-foreground">Color</Label>
-                  <div className="grid grid-cols-8 gap-3">
+                  <div className={`grid gap-3 ${
+                    isMobile ? 'grid-cols-6' : 'grid-cols-8'
+                  }`}>
                     {[
                       '#1752F3', '#4A90E2', '#6BA5F7', '#8BB8FF', '#A8C8FF', '#C5D8FF', '#E2E8FF',
                       '#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#DBEAFE', '#EFF6FF',
@@ -1235,7 +1247,9 @@ const Transactions = () => {
                         <div className="text-sm font-medium text-muted-foreground">Choose an icon</div>
                       </div>
                       <div className="max-h-[150px] overflow-y-auto p-3">
-                        <div className="grid grid-cols-4 gap-2">
+                        <div className={`grid gap-2 ${
+                          isMobile ? 'grid-cols-3' : 'grid-cols-4'
+                        }`}>
                           {[
                             'tag', 'shopping-bag', 'coffee', 'car', 'home', 'heart', 'zap', 'book',
                             'plane', 'gift', 'briefcase', 'graduation-cap', 'gamepad-2', 'music', 
@@ -1280,8 +1294,8 @@ const Transactions = () => {
               </form>
 
               {/* Modern Form Actions */}
-              <div className="border-t bg-muted/20 p-6">
-                <div className="flex justify-end gap-3">
+              <div className="border-t bg-muted/20 p-4 sm:p-6">
+                <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'justify-end gap-3'}`}>
                   <Button
                     type="button"
                     variant="outline"
@@ -1293,14 +1307,14 @@ const Transactions = () => {
                         icon: 'tag'
                       });
                     }}
-                    className="px-6 py-2"
+                    className={`px-6 py-2 ${isMobile ? 'w-full' : ''}`}
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit"
                     onClick={handleCreateCategory}
-                    className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                    className={`px-6 py-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 ${isMobile ? 'w-full' : ''}`}
                     disabled={!newCategory.name.trim()}
                   >
                     Create Category

@@ -101,10 +101,10 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h2 className="font-heading font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-4 sm:mb-6">
+          <h2 className="font-nunito font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-4 sm:mb-6">
             Choose Your Plan
           </h2>
-          <p className="font-body text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="font-nunito text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
             Start with our free plan and upgrade as you grow. All plans include core features with no hidden fees.
           </p>
         </div>
@@ -160,7 +160,7 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
                   {plan.key === 'free' && <Sparkles className="w-5 h-5 text-gray-600 mr-2" />}
                   {plan.key === 'pro' && <Crown className="w-5 h-5 text-yellow-600 mr-2" />}
                   {plan.key === 'enterprise' && <Crown className="w-5 h-5 text-purple-600 mr-2" />}
-                  <h3 className="font-heading font-bold text-xl sm:text-2xl lg:text-3xl">
+                  <h3 className="font-nunito font-bold text-xl sm:text-2xl lg:text-3xl">
                     {plan.name}
                   </h3>
                 </div>

@@ -114,6 +114,21 @@ const Header: React.FC = () => {
               })}
             </nav>
           </div>
+
+          {/* Tablet Navigation - Fallback for medium screens */}
+          <div className="hidden md:flex lg:hidden flex-1 justify-center">
+            <nav className="flex items-center space-x-4">
+              {navigation.slice(0, 2).map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => handleNavigation(item.href)}
+                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-all duration-300 rounded-lg hover:bg-gray-100/80 active:bg-gray-200/80"
+                >
+                  {item.name}
+                </button>
+              ))}
+            </nav>
+          </div>
           
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
@@ -134,7 +149,7 @@ const Header: React.FC = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100/80 active:bg-gray-200/80 transition-colors duration-200 touch-target"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100/80 active:bg-gray-200/80 transition-colors duration-200 touch-target"
             aria-label="Toggle mobile menu"
           >
             {isMenuOpen ? (
@@ -148,7 +163,7 @@ const Header: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 bg-white/98 backdrop-blur-xl border-t border-gray-200/50 shadow-2xl z-40">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white/98 backdrop-blur-xl border-t border-gray-200/50 shadow-2xl z-40">
           <div className="px-4 py-6 space-y-4">
             {navigation.map((item) => {
               const isContact = item.href === "#contact";
@@ -184,7 +199,7 @@ const Header: React.FC = () => {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
+          className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
           onClick={() => setIsMenuOpen(false)}
         />
       )}
