@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Shield, 
   Globe, 
@@ -39,6 +40,7 @@ import Layout from "@/components/Layout";
 
 export default function Homepage1() {
   const { toast } = useToast();
+  const { user, session, loading } = useAuth();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -51,6 +53,8 @@ export default function Homepage1() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -154,29 +158,75 @@ export default function Homepage1() {
 
   return (
     <Layout>
-      {/* Announcement Bar */}
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-4 text-center relative overflow-hidden">
-        {/* Background decorative elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-4 w-2 h-2 bg-white/20 rounded-full animate-pulse"></div>
-          <div className="absolute top-1/2 right-4 w-1.5 h-1.5 bg-white/30 rounded-full animate-bounce"></div>
-          <div className="absolute top-1/3 left-1/4 w-1 h-1 bg-white/25 rounded-full animate-ping"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-1.5 h-1.5 bg-white/20 rounded-full animate-pulse"></div>
-        </div>
-        
-        <div className="relative z-10 flex items-center justify-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm font-semibold">Now supporting 100+ currencies</span>
-          </div>
-          <div className="w-px h-4 bg-white/30"></div>
-          <Link to="/signup" className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer">
-            <span className="text-sm font-medium">Try it free for 14 days</span>
-            <span className="text-xs opacity-80">→</span>
-          </Link>
-        </div>
-      </div>
 
+      
+      {/* Personalized Welcome Section for Authenticated Users */}
+      {user && (
+        <section className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white py-16 relative overflow-hidden">
+          {/* Background decorative elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-10 right-20 w-32 h-32 bg-white/10 rounded-full animate-pulse"></div>
+            <div className="absolute bottom-10 left-20 w-24 h-24 bg-white/15 rounded-full animate-bounce"></div>
+          </div>
+          
+          <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+            <div className="text-center space-y-8">
+              {/* Welcome Message */}
+              <div className="space-y-4">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                  Welcome back,{' '}
+                  <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                    {user.email?.split('@')[0]}!
+                  </span>
+                </h1>
+                <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto font-medium leading-relaxed">
+                  Ready to continue managing your finances? Here's what you can do next.
+                </p>
+              </div>
+              
+              {/* Quick Action Buttons */}
+              <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+                <Link to="/dashboard">
+                  <div className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                    <Button className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white px-10 py-5 text-xl font-medium rounded-3xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-500 border-0 min-w-[200px]">
+                      <div className="flex items-center justify-center space-x-3">
+                        <span>Dashboard</span>
+                        <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                      </div>
+                    </Button>
+                  </div>
+                </Link>
+                
+                <Link to="/transactions">
+                  <div className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                    <Button className="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white px-10 py-5 text-xl font-medium rounded-3xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-500 border-0 min-w-[200px]">
+                      <div className="flex items-center justify-center space-x-3">
+                        <span>Transactions</span>
+                        <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                      </div>
+                    </Button>
+                  </div>
+                </Link>
+                
+                <Link to="/settings">
+                  <div className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                    <Button className="relative bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white px-10 py-5 text-xl font-medium rounded-3xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-500 border-0 min-w-[200px]">
+                      <div className="flex items-center justify-center space-x-3">
+                        <span>Settings</span>
+                        <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                      </div>
+                    </Button>
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+      
       {/* Hero Section */}
       <section className="py-24 bg-gradient-to-br from-white via-blue-50/20 to-indigo-50/30 relative overflow-hidden">
         {/* Background decorative elements */}

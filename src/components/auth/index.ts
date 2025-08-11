@@ -15,5 +15,5 @@ export { AuthRouterDemo } from './AuthRouterDemo';
 // Route Protection
 export { ProtectedRoute } from './ProtectedRoute';
 
-// Debug Component
-export { AuthDebug } from './AuthDebug';
+// Authenticated Homepage
+export { AuthenticatedHomepage } from './AuthenticatedHomepage';

@@ -50,8 +50,7 @@ import {
   VerifyEmailPage, 
   TwoFactorPage,
   AuthRouterDemo,
-  ProtectedRoute,
-  AuthDebug
+  ProtectedRoute
 } from "@/components/auth";
 
 
@@ -149,7 +148,6 @@ const AppContent = () => {
                     <Toaster />
                     {import.meta.env.PROD && <Analytics />}
                     <ScrollToTop />
-                    <AuthDebug />
                     <Routes>
                     <Route path="/" element={<Homepage1 />} />
                     <Route path="/features" element={<Features />} />

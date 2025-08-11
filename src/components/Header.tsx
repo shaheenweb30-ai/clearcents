@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, User, Settings, LogOut } from 'lucide-react';
 import { Logo } from './Logo';
 import { useResponsive } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +15,16 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isMobile, isTablet } = useResponsive();
+  const { user, signOut } = useAuth();
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -133,12 +145,36 @@ const Header: React.FC = () => {
           
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
-            <button
-              onClick={() => handleNavigation("/signup")}
-              className="px-3 py-2 text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full transition-all duration-300 hover:bg-gray-100/80 active:bg-gray-200/80"
-            >
-              {t('common.getStarted')}
-            </button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="mr-2 h-4 w-4" />
+                    {t('common.profile')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/settings')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    {t('common.settings')}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {t('common.logout')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={() => handleNavigation("/signup")} className="px-3 py-2 text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full transition-all duration-300 hover:bg-gray-100/80 active:bg-gray-200/80">
+                {t('common.getStarted')}
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -180,12 +216,36 @@ const Header: React.FC = () => {
             
             {/* Mobile CTA Button */}
             <div className="pt-4 border-t border-gray-200/50">
-              <button
-                onClick={() => handleNavigation("/signup")}
-                className="w-full bg-primary text-white py-3 px-6 rounded-lg font-semibold text-base hover:bg-primary/90 active:bg-primary/80 transition-colors duration-200 touch-target shadow-lg"
-              >
-                {t('common.getStarted')}
-              </button>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="w-full">
+                      <User className="mr-2 h-4 w-4" />
+                      {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                      <User className="mr-2 h-4 w-4" />
+                      {t('common.profile')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/settings')}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      {t('common.settings')}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      {t('common.logout')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button onClick={() => handleNavigation("/signup")} className="w-full bg-primary text-white py-3 px-6 rounded-lg font-semibold text-base hover:bg-primary/90 active:bg-primary/80 transition-colors duration-200 touch-target shadow-lg">
+                  {t('common.getStarted')}
+                </Button>
+              )}
             </div>
           </div>
         </div>
