@@ -27,10 +27,15 @@ export const VerifyEmailPage = () => {
       const refreshToken = url.searchParams.get('refresh_token');
       const type = url.searchParams.get('type');
       
-      console.log('Verification URL params:', { accessToken: !!accessToken, refreshToken: !!refreshToken, type });
+      console.log('🔍 DEBUG: Verification URL params:', { 
+        accessToken: !!accessToken, 
+        refreshToken: !!refreshToken, 
+        type,
+        fullUrl: window.location.href 
+      });
       
       if (accessToken && refreshToken) {
-        console.log('Processing verification with tokens...');
+        console.log('🔍 DEBUG: Processing verification with tokens...');
         
         // Set the session with the tokens from the URL
         const { data, error } = await supabase.auth.setSession({
@@ -38,52 +43,85 @@ export const VerifyEmailPage = () => {
           refresh_token: refreshToken,
         });
         
-        console.log('Session set result:', { data, error });
+        console.log('🔍 DEBUG: Session set result:', { 
+          data: !!data, 
+          error: !!error, 
+          session: !!data?.session,
+          user: !!data?.user,
+          userEmail: data?.user?.email,
+          emailConfirmed: data?.user?.email_confirmed_at
+        });
         
         if (error) {
-          console.error('Error setting session:', error);
+          console.error('❌ ERROR: Setting session failed:', error);
           setVerificationStatus('error');
           setErrorMessage(error.message);
           return;
         }
         
         if (data.session && data.user) {
-          console.log('Session set successfully, user:', data.user.email);
+          console.log('✅ SUCCESS: Session set successfully, user:', data.user.email);
           
           // Check if email is verified
           if (data.user.email_confirmed_at) {
-            console.log('Email verified successfully, redirecting to dashboard...');
+            console.log('✅ SUCCESS: Email verified successfully, redirecting to dashboard...');
             setVerificationStatus('success');
             
-            // Refresh the session to ensure it's properly established
-            await supabase.auth.refreshSession();
-            
-            // Show success toast
-            toast({
-              title: "Email verified successfully!",
-              description: "Welcome to CentraBudget! Redirecting to dashboard...",
+            // Force a complete session refresh
+            console.log('🔄 DEBUG: Refreshing session...');
+            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+            console.log('🔄 DEBUG: Session refresh result:', { 
+              success: !refreshError, 
+              error: refreshError?.message 
             });
             
-            // Redirect immediately to dashboard
-            navigate('/dashboard');
+            // Double-check the user is still authenticated
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            console.log('🔍 DEBUG: Current user after refresh:', { 
+              authenticated: !!currentUser, 
+              email: currentUser?.email,
+              emailConfirmed: currentUser?.email_confirmed_at
+            });
+            
+            if (currentUser && currentUser.email_confirmed_at) {
+              console.log('✅ SUCCESS: User confirmed authenticated, redirecting...');
+              
+              // Force refresh the page to ensure AuthContext is updated
+              console.log('🔄 DEBUG: Forcing page refresh to update auth context...');
+              
+              // Show success toast
+              toast({
+                title: "Email verified successfully!",
+                description: "Welcome to CentraBudget! Redirecting to dashboard...",
+              });
+              
+              // Force page refresh then redirect
+              setTimeout(() => {
+                window.location.href = '/dashboard';
+              }, 1000);
+            } else {
+              console.error('❌ ERROR: User not properly authenticated after refresh');
+              setVerificationStatus('error');
+              setErrorMessage('Authentication failed after verification. Please try signing in.');
+            }
           } else {
-            console.log('Email not yet verified, checking status...');
+            console.log('⚠️ WARNING: Email not yet verified, checking status...');
             setVerificationStatus('pending');
           }
         } else {
-          console.log('No session or user in response');
+          console.error('❌ ERROR: No session or user in response');
           setVerificationStatus('error');
           setErrorMessage('Verification failed. Please try again.');
         }
       } else {
-        console.log('No tokens in URL, checking current auth state...');
+        console.log('🔍 DEBUG: No tokens in URL, checking current auth state...');
         
         // Check if user is already authenticated and verified
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
           if (user.email_confirmed_at) {
-            console.log('User already verified, redirecting to dashboard...');
+            console.log('✅ SUCCESS: User already verified, redirecting to dashboard...');
             setVerificationStatus('success');
             
             toast({
@@ -91,19 +129,20 @@ export const VerifyEmailPage = () => {
               description: "Redirecting to dashboard...",
             });
             
-            // Redirect immediately
-            navigate('/dashboard');
+            // Force redirect
+            console.log('🚀 DEBUG: Redirecting to dashboard...');
+            window.location.href = '/dashboard';
           } else {
-            console.log('User not verified yet');
+            console.log('⚠️ WARNING: User not verified yet');
             setVerificationStatus('pending');
           }
         } else {
-          console.log('No user found, showing pending state');
+          console.log('🔍 DEBUG: No user found, showing pending state');
           setVerificationStatus('pending');
         }
       }
     } catch (error) {
-      console.error('Verification error:', error);
+      console.error('❌ ERROR: Verification error:', error);
       setVerificationStatus('error');
       setErrorMessage('An unexpected error occurred during verification.');
     } finally {
@@ -159,6 +198,48 @@ export const VerifyEmailPage = () => {
     } catch (error) {
       console.error('Resend error:', error);
       setErrorMessage('Failed to resend verification email.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleManualVerification = async () => {
+    try {
+      setLoading(true);
+      console.log('🔍 DEBUG: Attempting manual verification...');
+      
+      // Try to get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('🔍 DEBUG: Current user:', { 
+        exists: !!user, 
+        email: user?.email,
+        emailConfirmed: user?.email_confirmed_at 
+      });
+      
+      if (user && user.email_confirmed_at) {
+        console.log('✅ SUCCESS: User is verified, redirecting...');
+        setVerificationStatus('success');
+        
+        toast({
+          title: "Verification successful!",
+          description: "Redirecting to dashboard...",
+        });
+        
+        // Force redirect
+        window.location.href = '/dashboard';
+      } else {
+        console.log('⚠️ WARNING: User not verified or not found');
+        setVerificationStatus('pending');
+        
+        toast({
+          title: "Verification pending",
+          description: "Please check your email and click the verification link.",
+        });
+      }
+    } catch (error) {
+      console.error('❌ ERROR: Manual verification failed:', error);
+      setVerificationStatus('error');
+      setErrorMessage('Manual verification failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -273,6 +354,22 @@ export const VerifyEmailPage = () => {
                   </>
                 ) : (
                   'Resend verification email'
+                )}
+              </Button>
+              
+              <Button
+                onClick={handleManualVerification}
+                disabled={loading}
+                variant="outline"
+                className="w-full"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Checking...
+                  </>
+                ) : (
+                  '🔄 Check Verification Status'
                 )}
               </Button>
               
