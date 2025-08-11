@@ -53,7 +53,7 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth(); // Add authLoading
   const { shouldApplyDarkTheme } = useSettings();
   const { t } = useTranslation();
   const location = useLocation();
@@ -61,6 +61,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { isTrialActive, loading: loadingTrial } = useTrial(user);
   const { isMobile } = useResponsive();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Show loading state while auth is initializing
+  if (authLoading) {
+    return <div>Loading...</div>;
+  }
 
   const isActive = (path: string) => {
     // Exact match for main routes

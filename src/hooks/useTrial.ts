@@ -20,6 +20,7 @@ export function useTrial(user: User | null) {
   const fetchTrial = useCallback(async () => {
     if (!user) {
       setTrial(null);
+      setLoading(false); // Set loading to false when no user
       return;
     }
     setLoading(true);
@@ -32,7 +33,6 @@ export function useTrial(user: User | null) {
         .single();
 
       if (error && (error as any).code !== 'PGRST116') {
-        // PGRST116: No rows found
         throw error;
       }
 
@@ -46,8 +46,13 @@ export function useTrial(user: User | null) {
   }, [user]);
 
   useEffect(() => {
-    fetchTrial();
-  }, [fetchTrial]);
+    if (user) {
+      fetchTrial();
+    } else {
+      setLoading(false);
+      setTrial(null);
+    }
+  }, [user, fetchTrial]);
 
   const isTrialActive = useMemo(() => {
     if (!trial) return false;

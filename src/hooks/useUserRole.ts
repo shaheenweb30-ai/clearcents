@@ -4,7 +4,7 @@ import { User } from '@supabase/supabase-js';
 
 export function useUserRole(user: User | null) {
   const [role, setRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start with false
 
   useEffect(() => {
     async function fetchUserRole() {
@@ -14,6 +14,8 @@ export function useUserRole(user: User | null) {
         return;
       }
 
+      setLoading(true); // Only set loading when we actually have a user to fetch for
+      
       try {
         const { data, error } = await supabase
           .from('user_roles')
@@ -25,7 +27,6 @@ export function useUserRole(user: User | null) {
           setRole(null);
         } else {
           const roles = (data || []).map(r => r.role as string);
-          // Prioritize highest privilege
           const resolvedRole = roles.includes('admin')
             ? 'admin'
             : roles.includes('moderator')

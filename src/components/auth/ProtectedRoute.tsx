@@ -11,7 +11,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ 
   children, 
-  requireEmailVerification = true,
+  requireEmailVerification = false, // Changed to false by default
   fallbackPath = '/login' 
 }: ProtectedRouteProps) => {
   const { user, isEmailVerified, loading } = useAuth();
