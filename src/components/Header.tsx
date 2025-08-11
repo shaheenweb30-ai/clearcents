@@ -133,12 +133,6 @@ const Header: React.FC = () => {
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
             <button
-              onClick={() => handleNavigation("/login")}
-              className="px-3 py-2 text-sm sm:text-base font-medium text-gray-700 hover:text-primary transition-all duration-300 rounded-lg hover:bg-gray-100/80 active:bg-gray-200/80"
-            >
-              {t('common.login')}
-            </button>
-            <button
               onClick={() => handleNavigation("/signup")}
               className="px-3 py-2 text-sm sm:text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full transition-all duration-300 hover:bg-gray-100/80 active:bg-gray-200/80"
             >
