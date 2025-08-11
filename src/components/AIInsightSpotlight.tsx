@@ -174,7 +174,7 @@ export function AIInsightSpotlight() {
             <Link to="/signup">
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 <Sparkles className="w-5 h-5 mr-2" />
-                Start Free Trial
+                Get Started Free
               </Button>
             </Link>
           </div>
