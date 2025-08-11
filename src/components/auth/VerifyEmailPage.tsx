@@ -21,23 +21,29 @@ export const VerifyEmailPage = () => {
       setLoading(true);
       setVerificationStatus('checking');
       
-      // Get the current URL and search params
+      // Get the current URL and extract tokens from hash fragment
       const url = new URL(window.location.href);
-      const accessToken = url.searchParams.get('access_token');
-      const refreshToken = url.searchParams.get('refresh_token');
-      const type = url.searchParams.get('type');
+      const hash = window.location.hash;
+      
+      // Parse hash fragment for tokens (Supabase sends tokens in hash, not query params)
+      const hashParams = new URLSearchParams(hash.substring(1)); // Remove the # and parse
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+      const type = hashParams.get('type');
       
       console.log('🔍 DEBUG: Verification URL params:', { 
         accessToken: !!accessToken, 
         refreshToken: !!refreshToken, 
         type,
-        fullUrl: window.location.href 
+        fullUrl: window.location.href,
+        hash: hash,
+        hashParams: Object.fromEntries(hashParams.entries())
       });
       
       if (accessToken && refreshToken) {
         console.log('🔍 DEBUG: Processing verification with tokens...');
         
-        // Set the session with the tokens from the URL
+        // Set the session with the tokens from the hash
         const { data, error } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
@@ -109,12 +115,12 @@ export const VerifyEmailPage = () => {
             setVerificationStatus('pending');
           }
         } else {
-          console.error('❌ ERROR: No session or user in response');
+          console.log('❌ ERROR: No session or user in response');
           setVerificationStatus('error');
           setErrorMessage('Verification failed. Please try again.');
         }
       } else {
-        console.log('🔍 DEBUG: No tokens in URL, checking current auth state...');
+        console.log('🔍 DEBUG: No tokens in hash, checking current auth state...');
         
         // Check if user is already authenticated and verified
         const { data: { user } } = await supabase.auth.getUser();
@@ -151,7 +157,12 @@ export const VerifyEmailPage = () => {
   };
 
   useEffect(() => {
-    handleVerification();
+    // Add a small delay to ensure hash is available
+    const timer = setTimeout(() => {
+      handleVerification();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [navigate, toast]);
 
   const handleResendVerification = async () => {
@@ -173,7 +184,7 @@ export const VerifyEmailPage = () => {
         type: 'signup',
         email: email,
         options: {
-          emailRedirectTo: `${window.location.origin}/verify-email`,
+          emailRedirectTo: 'https://www.centrabudget.com/verify-email',
         }
       });
 
@@ -240,6 +251,67 @@ export const VerifyEmailPage = () => {
       console.error('❌ ERROR: Manual verification failed:', error);
       setVerificationStatus('error');
       setErrorMessage('Manual verification failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDirectVerification = async () => {
+    try {
+      setLoading(true);
+      console.log('🔍 DEBUG: Attempting direct email verification check...');
+      
+      // Get the email from localStorage or prompt user
+      const email = localStorage.getItem('lastEmail');
+      
+      if (!email) {
+        setErrorMessage('No email found. Please enter your email address.');
+        return;
+      }
+      
+      console.log('🔍 DEBUG: Checking verification for email:', email);
+      
+      // Try to sign in with the email to check if it's verified
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          emailRedirectTo: 'https://www.centrabudget.com/verify-email',
+        }
+      });
+      
+      if (error) {
+        console.error('❌ ERROR: OTP signin failed:', error);
+        
+        // If OTP fails, try to check the user directly
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user && user.email === email && user.email_confirmed_at) {
+          console.log('✅ SUCCESS: User is verified via direct check!');
+          setVerificationStatus('success');
+          
+          toast({
+            title: "Email verified!",
+            description: "Redirecting to dashboard...",
+          });
+          
+          // Force redirect
+          window.location.href = '/dashboard';
+          return;
+        }
+        
+        setErrorMessage('Could not verify email. Please try signing in directly.');
+        return;
+      }
+      
+      console.log('✅ SUCCESS: OTP sent, user should check email');
+      toast({
+        title: "Check your email",
+        description: "We've sent you a new verification link.",
+      });
+      
+    } catch (error) {
+      console.error('❌ ERROR: Direct verification failed:', error);
+      setErrorMessage('Direct verification failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -370,6 +442,22 @@ export const VerifyEmailPage = () => {
                   </>
                 ) : (
                   '🔄 Check Verification Status'
+                )}
+              </Button>
+              
+              <Button
+                onClick={handleDirectVerification}
+                disabled={loading}
+                variant="outline"
+                className="w-full"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  '📧 Verify Email Directly'
                 )}
               </Button>
               

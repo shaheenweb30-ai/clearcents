@@ -110,7 +110,7 @@ export const SignUpPage = () => {
       const redirectUrl = `${currentOrigin}/verify-email`;
       
       // Use the correct production domain for email verification
-      const productionUrl = 'https://centrabudget.com/verify-email';
+      const productionUrl = 'https://www.centrabudget.com/verify-email';
       
       // Use production URL if we're in production, otherwise use current origin
       let finalRedirectUrl = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1') 
