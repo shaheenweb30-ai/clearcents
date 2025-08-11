@@ -21,15 +21,38 @@ export const VerifyEmailPage = () => {
       setLoading(true);
       setVerificationStatus('checking');
       
+      console.log('🔍 DEBUG: Starting verification process...');
+      console.log('🔍 DEBUG: Current URL:', window.location.href);
+      console.log('🔍 DEBUG: Current hash:', window.location.hash);
+      console.log('🔍 DEBUG: Current search params:', window.location.search);
+      
       // Get the current URL and extract tokens from hash fragment
       const url = new URL(window.location.href);
       const hash = window.location.hash;
       
+      console.log('🔍 DEBUG: Parsed URL:', url.toString());
+      console.log('🔍 DEBUG: Hash length:', hash.length);
+      
       // Parse hash fragment for tokens (Supabase sends tokens in hash, not query params)
-      const hashParams = new URLSearchParams(hash.substring(1)); // Remove the # and parse
-      const accessToken = hashParams.get('access_token');
-      const refreshToken = hashParams.get('refresh_token');
-      const type = hashParams.get('type');
+      let hashParams;
+      let accessToken = null;
+      let refreshToken = null;
+      let type = null;
+      
+      if (hash && hash.length > 1) {
+        try {
+          hashParams = new URLSearchParams(hash.substring(1)); // Remove the # and parse
+          accessToken = hashParams.get('access_token');
+          refreshToken = hashParams.get('refresh_token');
+          type = hashParams.get('type');
+          
+          console.log('🔍 DEBUG: Hash parsing successful');
+        } catch (hashError) {
+          console.error('❌ ERROR: Failed to parse hash:', hashError);
+        }
+      } else {
+        console.log('⚠️ WARNING: No hash found in URL');
+      }
       
       console.log('🔍 DEBUG: Verification URL params:', { 
         accessToken: !!accessToken, 
@@ -37,11 +60,13 @@ export const VerifyEmailPage = () => {
         type,
         fullUrl: window.location.href,
         hash: hash,
-        hashParams: Object.fromEntries(hashParams.entries())
+        hashParams: hashParams ? Object.fromEntries(hashParams.entries()) : null
       });
       
       if (accessToken && refreshToken) {
         console.log('🔍 DEBUG: Processing verification with tokens...');
+        console.log('🔍 DEBUG: Access token length:', accessToken.length);
+        console.log('🔍 DEBUG: Refresh token length:', refreshToken.length);
         
         // Set the session with the tokens from the hash
         const { data, error } = await supabase.auth.setSession({
@@ -55,13 +80,14 @@ export const VerifyEmailPage = () => {
           session: !!data?.session,
           user: !!data?.user,
           userEmail: data?.user?.email,
-          emailConfirmed: data?.user?.email_confirmed_at
+          emailConfirmed: data?.user?.email_confirmed_at,
+          errorMessage: error?.message
         });
         
         if (error) {
           console.error('❌ ERROR: Setting session failed:', error);
           setVerificationStatus('error');
-          setErrorMessage(error.message);
+          setErrorMessage(`Session error: ${error.message}`);
           return;
         }
         
@@ -103,6 +129,7 @@ export const VerifyEmailPage = () => {
               
               // Force page refresh then redirect
               setTimeout(() => {
+                console.log('🚀 DEBUG: Executing redirect to dashboard...');
                 window.location.href = '/dashboard';
               }, 1000);
             } else {
@@ -143,6 +170,52 @@ export const VerifyEmailPage = () => {
             setVerificationStatus('pending');
           }
         } else {
+          console.log('🔍 DEBUG: No user found, checking if we can verify by email...');
+          
+          // Try to get the email from localStorage (set during signup)
+          const lastEmail = localStorage.getItem('lastEmail');
+          
+          if (lastEmail) {
+            console.log('🔍 DEBUG: Found email in localStorage:', lastEmail);
+            
+            // Try to check if this email is already verified by attempting a sign-in
+            try {
+              const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                email: lastEmail,
+                password: 'dummy-password-to-check-status' // This will fail but we can check the error
+              });
+              
+              if (signInError && signInError.message.includes('Invalid login credentials')) {
+                // This means the email exists but password is wrong
+                // Let's try to get user info another way
+                console.log('🔍 DEBUG: Email exists, checking verification status...');
+                
+                // Try to send a password reset to check if email is verified
+                const { error: resetError } = await supabase.auth.resetPasswordForEmail(lastEmail, {
+                  redirectTo: `${window.location.origin}/verify-email`
+                });
+                
+                if (!resetError) {
+                  console.log('✅ SUCCESS: Password reset email sent, user likely verified');
+                  setVerificationStatus('success');
+                  
+                  toast({
+                    title: "Email verified!",
+                    description: "You can now sign in with your password.",
+                  });
+                  
+                  // Redirect to login
+                  setTimeout(() => {
+                    window.location.href = '/login';
+                  }, 2000);
+                  return;
+                }
+              }
+            } catch (checkError) {
+              console.log('🔍 DEBUG: Could not check email status:', checkError);
+            }
+          }
+          
           console.log('🔍 DEBUG: No user found, showing pending state');
           setVerificationStatus('pending');
         }
@@ -150,7 +223,7 @@ export const VerifyEmailPage = () => {
     } catch (error) {
       console.error('❌ ERROR: Verification error:', error);
       setVerificationStatus('error');
-      setErrorMessage('An unexpected error occurred during verification.');
+      setErrorMessage(`Unexpected error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -317,6 +390,70 @@ export const VerifyEmailPage = () => {
     }
   };
 
+  const handleCheckVerificationStatus = async () => {
+    try {
+      setLoading(true);
+      console.log('🔍 DEBUG: Checking verification status...');
+      
+      const email = localStorage.getItem('lastEmail');
+      if (!email) {
+        setErrorMessage('No email found. Please try signing up again.');
+        return;
+      }
+      
+      // Try to get user info by attempting to sign in
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: 'dummy-password-to-check-status'
+      });
+      
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          // Email exists, now check if it's verified
+          console.log('🔍 DEBUG: Email exists, checking verification...');
+          
+          // Try to get user info another way
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (user && user.email === email) {
+            if (user.email_confirmed_at) {
+              console.log('✅ SUCCESS: User is verified!');
+              setVerificationStatus('success');
+              
+              toast({
+                title: "Email verified!",
+                description: "You can now sign in with your password.",
+              });
+              
+              setTimeout(() => {
+                window.location.href = '/login';
+              }, 2000);
+            } else {
+              console.log('⚠️ WARNING: Email not verified yet');
+              setVerificationStatus('pending');
+              toast({
+                title: "Email not verified",
+                description: "Please check your email and click the verification link.",
+              });
+            }
+          } else {
+            setErrorMessage('Could not determine verification status. Please try signing in.');
+          }
+        } else {
+          setErrorMessage(`Error: ${error.message}`);
+        }
+      } else {
+        // This shouldn't happen with dummy password
+        setErrorMessage('Unexpected response. Please try again.');
+      }
+    } catch (error) {
+      console.error('❌ ERROR: Status check failed:', error);
+      setErrorMessage('Status check failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -458,6 +595,22 @@ export const VerifyEmailPage = () => {
                   </>
                 ) : (
                   '📧 Verify Email Directly'
+                )}
+              </Button>
+              
+              <Button
+                onClick={handleCheckVerificationStatus}
+                disabled={loading}
+                variant="outline"
+                className="w-full"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Checking...
+                  </>
+                ) : (
+                  '🔍 Check Verification Status'
                 )}
               </Button>
               
