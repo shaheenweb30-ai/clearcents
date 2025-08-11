@@ -13,6 +13,7 @@ const Header: React.FC = () => {
   const { t } = useTranslation();
   const { isMobile, isTablet } = useResponsive();
 
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
