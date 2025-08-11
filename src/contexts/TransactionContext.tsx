@@ -110,7 +110,7 @@ const generateCategoriesFromTransactions = (transactions: Transaction[]): Catego
 export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     // Load from localStorage if available
-    const saved = localStorage.getItem('clearcents_transactions');
+    const saved = localStorage.getItem('centrabudget_transactions');
     return saved ? JSON.parse(saved) : initialTransactions;
   });
   
@@ -125,7 +125,7 @@ export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ childre
     setCategories(newCategories);
     
     // Save to localStorage
-    localStorage.setItem('clearcents_transactions', JSON.stringify(transactions));
+          localStorage.setItem('centrabudget_transactions', JSON.stringify(transactions));
   }, [transactions]);
 
   const addTransaction = (transactionData: Omit<Transaction, 'id' | 'created_at'>) => {

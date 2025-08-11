@@ -2,7 +2,7 @@
 
 ## Overview
 
-All components in the ClearCents application have been enhanced for optimal dark theme compatibility. The improvements ensure excellent readability, proper contrast ratios, and a consistent visual experience across all pages.
+All components in the CentraBudget application have been enhanced for optimal dark theme compatibility. The improvements ensure excellent readability, proper contrast ratios, and a consistent visual experience across all pages.
 
 ## 🎯 Component Fixes
 

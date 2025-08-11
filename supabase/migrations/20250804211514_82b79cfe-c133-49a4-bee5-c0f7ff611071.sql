@@ -60,4 +60,4 @@ USING (bucket_id = 'content-images' AND auth.uid() IS NOT NULL);
 
 -- Insert default branding settings
 INSERT INTO public.branding_settings (business_name, logo_url, primary_color, secondary_color, accent_color, font_family)
-VALUES ('ClearCents', NULL, '#1752F3', '#F0F0F0', '#4A90E2', 'GT Walsheim Pro');
+VALUES ('CentraBudget', NULL, '#1752F3', '#F0F0F0', '#4A90E2', 'GT Walsheim Pro');

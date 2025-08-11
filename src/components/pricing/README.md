@@ -1,6 +1,6 @@
 # Pricing Components (Simplified)
 
-This directory contains simplified pricing page components for ClearCents, featuring just two plans: **Free** and **Pro**.
+This directory contains simplified pricing page components for CentraBudget, featuring just two plans: **Free** and **Pro**.
 
 ## Components
 
@@ -130,5 +130,5 @@ src/components/pricing/
 ## SEO
 
 The pricing page includes proper SEO metadata:
-- Title: "Pricing | ClearCents — Free and Pro"
-- Description: "ClearCents pricing: start free, then upgrade to Pro when you're ready. One paid plan, all features. 14-day trial available."
+- Title: "Pricing | CentraBudget — Free and Pro"
+- Description: "CentraBudget pricing: start free, then upgrade to Pro when you're ready. One paid plan, all features. 14-day trial available."

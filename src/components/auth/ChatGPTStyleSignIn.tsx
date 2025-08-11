@@ -34,17 +34,7 @@ export const ChatGPTStyleSignIn = () => {
 
   // Test Supabase connection on component mount
   useEffect(() => {
-    const testConnection = async () => {
-      try {
-        console.log('🔍 DEBUG: Testing Supabase connection...');
-        const { data: { session }, error } = await supabase.auth.getSession();
-        console.log('🔍 DEBUG: Supabase connection test:', { session: !!session, error });
-      } catch (err) {
-        console.error('🔍 DEBUG: Supabase connection error:', err);
-      }
-    };
-    
-    testConnection();
+    // Connection test removed for production
   }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -63,22 +53,11 @@ export const ChatGPTStyleSignIn = () => {
     // Set signing in state to prevent AuthContext interference
     setSigningInState(true);
     
-    console.log('🔍 DEBUG: Starting password submission in ChatGPTStyleSignIn...');
-    console.log('🔍 DEBUG: Email:', formData.email);
-    console.log('🔍 DEBUG: Password length:', formData.password.length);
-    
     try {
-      console.log('🔍 DEBUG: Calling supabase.auth.signInWithPassword...');
-      
-      console.log('🔍 DEBUG: Attempting Supabase sign in...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
-
-      console.log('🔍 DEBUG: Supabase response:', { data, error });
-      console.log('🔍 DEBUG: Session data:', data?.session);
-      console.log('🔍 DEBUG: User data:', data?.user);
 
       if (error) {
         console.error("Sign in error:", error);
@@ -89,26 +68,17 @@ export const ChatGPTStyleSignIn = () => {
           variant: "destructive",
         });
       } else {
-        console.log("Sign in successful:", data);
         const session = data.session;
         const user = session?.user;
         
         // Check multiple possible email verification fields
         const emailVerified = user?.email_confirmed_at || user?.confirmed_at;
         
-        console.log('🔍 DEBUG: User object:', user);
-        console.log('🔍 DEBUG: Email verification fields:', {
-          email_confirmed_at: user?.email_confirmed_at,
-          confirmed_at: user?.confirmed_at
-        });
-        console.log('🔍 DEBUG: Final email verified status:', emailVerified);
-        
         // Check if user has any verification fields set
         const hasVerificationFields = user?.email_confirmed_at || user?.confirmed_at;
         const shouldProceed = hasVerificationFields || true; // Allow if verified or assume verified
         
         if (!shouldProceed) {
-          console.log('🔍 DEBUG: Email not verified, redirecting to verification...');
           toast({
             title: "Please verify your email",
             description: "Check your inbox for the verification link.",
@@ -123,41 +93,17 @@ export const ChatGPTStyleSignIn = () => {
         setEmailVerificationStatus(true);
         setSignInCompleted(true);
         
-        console.log('🔍 DEBUG: Email verified, showing success toast...');
         toast({
           title: "Welcome back!",
           description: "You have been successfully signed in.",
         });
         
-        console.log('🔍 DEBUG: Navigating to dashboard...');
-        console.log('🔍 DEBUG: Current location before navigation:', window.location.pathname);
-        
-        // Try immediate navigation first
-        try {
-          console.log('🔍 DEBUG: About to call navigate("/dashboard")');
-          navigate("/dashboard");
-          console.log('🔍 DEBUG: Navigation called successfully');
-          
-          // Check if navigation actually happened
-          setTimeout(() => {
-            console.log('🔍 DEBUG: Location after navigation:', window.location.pathname);
-            if (window.location.pathname !== '/dashboard') {
-              console.log('🔍 DEBUG: Navigation failed, trying window.location...');
-              try {
-                window.location.href = '/dashboard';
-              } catch (windowError) {
-                console.error('🔍 DEBUG: Window location error:', windowError);
-              }
-            }
-          }, 100);
-        } catch (navError) {
-          console.error('🔍 DEBUG: Navigation error:', navError);
-        }
+        // Navigate to dashboard
+        navigate("/dashboard");
         
         // Reset signing in state after navigation attempt
         setTimeout(() => {
           setSigningInState(false);
-          console.log('🔍 DEBUG: Signing in state reset');
         }, 500);
       }
           } catch (error) {
@@ -196,7 +142,7 @@ export const ChatGPTStyleSignIn = () => {
           variant: "destructive",
         });
       } else {
-        console.log("OAuth sign in initiated:", data);
+        // OAuth sign in initiated successfully
       }
     } catch (error) {
       console.error("OAuth sign in error:", error);
@@ -442,18 +388,6 @@ export const ChatGPTStyleSignIn = () => {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               Continue with Google
-            </Button>
-            
-            {/* Test Login Button - Remove this in production */}
-            <Button
-              variant="outline"
-              onClick={() => {
-                console.log('🔍 DEBUG: Test login clicked in ChatGPTStyleSignIn - navigating directly to dashboard');
-                navigate("/dashboard");
-              }}
-              className="w-full h-14 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-            >
-              🧪 Test Login (Skip Auth)
             </Button>
           </div>
         </div>

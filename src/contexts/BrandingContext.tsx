@@ -58,7 +58,7 @@ export function BrandingProvider({ children }: BrandingProviderProps) {
           console.log('RLS error detected, using default branding settings');
           setSettings({
             id: 'default',
-            business_name: 'ClearCents',
+            business_name: 'CentraBudget',
             logo_url: null,
             favicon_url: null,
             primary_color: '#1752F3',

@@ -1,4 +1,4 @@
--- Revert Branding Settings to Original ClearCents Branding
+-- Revert Branding Settings to Original CentraBudget Branding
 -- Run this in your Supabase SQL Editor to restore original branding
 
 -- First, let's check if branding_settings table exists and has data
@@ -6,10 +6,10 @@ DO $$
 BEGIN
     -- Check if table exists
     IF EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'branding_settings') THEN
-        -- Update existing branding settings to original ClearCents values
+        -- Update existing branding settings to original CentraBudget values
         UPDATE public.branding_settings 
         SET 
-            business_name = 'ClearCents',
+            business_name = 'CentraBudget',
             logo_url = NULL,
             favicon_url = NULL,
             primary_color = '#1752F3',
@@ -34,7 +34,7 @@ BEGIN
                 font_weights,
                 typography_settings
             ) VALUES (
-                'ClearCents',
+                'CentraBudget',
                 NULL,
                 NULL,
                 '#1752F3',
@@ -46,13 +46,13 @@ BEGIN
             );
         END IF;
         
-        RAISE NOTICE 'Branding settings reverted to ClearCents successfully!';
+        RAISE NOTICE 'Branding settings reverted to CentraBudget successfully!';
     ELSE
         RAISE NOTICE 'Branding settings table does not exist. Please run the full database setup first.';
     END IF;
 END $$;
 
--- Also revert homepage content to original ClearCents branding
+        -- Also revert homepage content to original CentraBudget branding
 UPDATE public.homepage_content 
 SET 
     title = CASE 
@@ -78,10 +78,10 @@ SET
         WHEN section_id = 'send-money' THEN 'Transfer money instantly to anywhere in the world with our secure and reliable global payment system.'
         WHEN section_id = 'achieve-excellence' THEN 'Take control of your financial future with our comprehensive suite of tools designed for success.'
         WHEN section_id = 'integrations' THEN 'Connect with all your favorite financial tools and platforms for a seamless experience.'
-        WHEN section_id = 'final-cta' THEN 'Join thousands of users who are already managing their money better with ClearCents.'
-        WHEN section_id = 'main-cta' THEN 'Welcome to ClearCents, where financial management meets simplicity and efficiency.'
+        WHEN section_id = 'final-cta' THEN 'Join thousands of users who are already managing their money better with CentraBudget.'
+        WHEN section_id = 'main-cta' THEN 'Welcome to CentraBudget, where financial management meets simplicity and efficiency.'
         WHEN section_id = 'live-chat' THEN 'Get instant help from our financial experts.'
-        WHEN section_id = 'watch-demo' THEN 'See how ClearCents can transform your financial management.'
+        WHEN section_id = 'watch-demo' THEN 'See how CentraBudget can transform your financial management.'
         ELSE description
     END,
     button_text = CASE 
@@ -108,7 +108,7 @@ SET
     updated_at = now()
 WHERE section_id IN ('hero', 'empower', 'track-expenses', 'send-money', 'achieve-excellence', 'integrations', 'final-cta', 'main-cta', 'live-chat', 'watch-demo');
 
--- Update translations to ClearCents branding
+-- Update translations to CentraBudget branding
 UPDATE public.translations 
 SET 
     en = CASE 

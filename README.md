@@ -76,7 +76,7 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-trick
 
 ### **Step 1: Check Current Status**
 ```bash
-cd clearcents-main
+cd centrabudget-main
 git status
 ```
 

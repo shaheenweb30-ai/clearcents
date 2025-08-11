@@ -1,8 +1,8 @@
-# ClearCents Features Page
+# CentraBudget Features Page
 
 ## Overview
 
-A comprehensive Features page for ClearCents, an AI-powered budgeting micro SaaS. Built with React + TypeScript + TailwindCSS, featuring British English copy, full accessibility support, and dark mode compatibility.
+A comprehensive Features page for CentraBudget, an AI-powered budgeting micro SaaS. Built with React + TypeScript + TailwindCSS, featuring British English copy, full accessibility support, and dark mode compatibility.
 
 ## Page Structure
 
@@ -57,7 +57,7 @@ The Features page is composed of 11 main components:
   - Hover animations
 
 ### 7. ComparisonTable
-- **Purpose**: ClearCents vs Spreadsheets comparison
+- **Purpose**: CentraBudget vs Spreadsheets comparison
 - **Features**:
   - Desktop table view
   - Mobile accordion view
@@ -171,8 +171,8 @@ import { NewSection } from "@/components/NewSection";
 ## SEO Optimization
 
 ### Meta Tags
-- **Title**: "Features | ClearCents — AI budgeting that does the hard work"
-- **Description**: "Explore ClearCents features: real-time tracking, smart budgets, multi-currency, and AI insights that save you money. Start free—no card."
+- **Title**: "Features | CentraBudget — AI budgeting that does the hard work"
+- **Description**: "Explore CentraBudget features: real-time tracking, smart budgets, multi-currency, and AI insights that save you money. Start free—no card."
 
 ### Semantic HTML
 - Proper heading hierarchy (h1, h2, h3)
@@ -246,7 +246,7 @@ npm test
 
 ## Deployment
 
-The Features page is ready for deployment and will work with the existing ClearCents infrastructure. No additional configuration is required beyond the standard build process.
+The Features page is ready for deployment and will work with the existing CentraBudget infrastructure. No additional configuration is required beyond the standard build process.
 
 ## Support
 

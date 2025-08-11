@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ClearCents application now features a **visually appealing and modern dark theme** with enhanced user experience, better contrast, and smooth transitions. The dark theme is designed to be easier on the eyes and provide a premium feel.
+The CentraBudget application now features a **visually appealing and modern dark theme** with enhanced user experience, better contrast, and smooth transitions. The dark theme is designed to be easier on the eyes and provide a premium feel.
 
 ## 🎨 Visual Enhancements
 

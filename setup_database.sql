@@ -1,4 +1,4 @@
--- ClearCents Database Setup Script
+-- CentraBudget Database Setup Script
 -- Run this in your Supabase SQL Editor to set up all tables and data
 
 -- Create role enum

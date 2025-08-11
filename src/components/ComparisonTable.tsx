@@ -6,37 +6,37 @@ import { Button } from "@/components/ui/button";
 const COMPARISON_ROWS = [
   {
     feature: 'Real-time totals',
-    clearCents: true,
+    centraBudget: true,
     spreadsheets: false,
     description: 'Instant updates vs. manual calculations'
   },
   {
     feature: 'AI recommendations',
-    clearCents: true,
+    centraBudget: true,
     spreadsheets: false,
     description: 'Smart insights vs. no automation'
   },
   {
     feature: 'Recurring detection',
-    clearCents: true,
+    centraBudget: true,
     spreadsheets: 'Manual formulas',
     description: 'Automatic vs. complex setup'
   },
   {
     feature: 'Multi-currency with live FX',
-    clearCents: true,
+    centraBudget: true,
     spreadsheets: 'Manual conversions',
     description: 'Real-time rates vs. manual updates'
   },
   {
     feature: 'Secure sharing',
-    clearCents: true,
+    centraBudget: true,
     spreadsheets: 'Error-prone links',
     description: 'Role-based access vs. basic sharing'
   },
   {
     feature: 'Changelog & status page',
-    clearCents: true,
+    centraBudget: true,
     spreadsheets: false,
     description: 'Transparent updates vs. no visibility'
   }

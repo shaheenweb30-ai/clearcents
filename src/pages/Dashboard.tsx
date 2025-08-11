@@ -14,9 +14,65 @@ import {
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
+import { useTransactions } from "@/contexts/TransactionContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { transactions, categories } = useTransactions();
+  
+  // Calculate financial metrics
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+    
+  const totalExpenses = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+    
+  const totalBalance = totalIncome - totalExpenses;
+  
+  // Calculate monthly metrics
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
+  const monthlyIncome = transactions
+    .filter(t => {
+      const transactionDate = new Date(t.date);
+      return t.type === 'income' && 
+             transactionDate.getMonth() === currentMonth && 
+             transactionDate.getFullYear() === currentYear;
+    })
+    .reduce((sum, t) => sum + t.amount, 0);
+    
+  const monthlyExpenses = transactions
+    .filter(t => {
+      const transactionDate = new Date(t.date);
+      return t.type === 'expense' && 
+             transactionDate.getMonth() === currentMonth && 
+             transactionDate.getFullYear() === currentYear;
+    })
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  // Calculate budget metrics
+  const totalBudget = categories.reduce((sum, cat) => sum + cat.budget, 0);
+  const totalSpent = categories.reduce((sum, cat) => sum + cat.spent, 0);
+  const budgetProgress = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+  
+  // Get top spending categories
+  const topCategories = categories
+    .filter(cat => cat.spent > 0)
+    .sort((a, b) => b.spent - a.spent)
+    .slice(0, 3);
+  
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
   
   return (
     <DashboardLayout>
@@ -66,12 +122,12 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                  $0.00
+                  {formatCurrency(totalBalance)}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="inline-flex items-center gap-1 text-xs sm:text-sm text-green-600 dark:text-green-400">
                     <TrendingUp className="w-2 h-2 sm:w-3 sm:h-3" />
-                    $0.00 this month
+                    {formatCurrency(monthlyIncome - monthlyExpenses)} this month
                   </span>
                 </div>
               </CardContent>
@@ -87,7 +143,7 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-700 dark:text-green-400">
-                  $0.00
+                  {formatCurrency(totalIncome)}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
                   Lifetime earnings
@@ -105,7 +161,7 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-red-600 dark:text-red-400">
-                  $0.00
+                  {formatCurrency(totalExpenses)}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
                   Lifetime spending
@@ -123,19 +179,133 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-slate-100">
-                  $0.00 / $0.00
+                  {formatCurrency(totalBudget)} / {formatCurrency(totalSpent)}
                 </div>
                 <div className="mt-3">
                   <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700">
                     <div
                       className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600"
-                      style={{ width: '0%' }}
+                      style={{ width: `${budgetProgress}%` }}
                     />
                   </div>
                   <div className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                    No budgets set
+                    {budgetProgress.toFixed(0)}% of budget spent
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Top Spending Categories & Recent Activity */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top Spending Categories */}
+            <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-purple-600" />
+                  Top Spending Categories
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {topCategories.length > 0 ? (
+                  <div className="space-y-4">
+                    {topCategories.map((category, index) => (
+                      <div key={category.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg">
+                            {category.icon}
+                          </div>
+                          <div>
+                            <div className="font-medium text-slate-800 dark:text-slate-200">
+                              {category.name}
+                            </div>
+                            <div className="text-xs text-slate-600 dark:text-slate-400">
+                              {category.transactionCount} transactions
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-slate-800 dark:text-slate-200">
+                            {formatCurrency(category.spent)}
+                          </div>
+                          {category.budget > 0 && (
+                            <div className="text-xs text-slate-600 dark:text-slate-400">
+                              of {formatCurrency(category.budget)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                    <Target className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>No spending data yet</p>
+                    <p className="text-sm">Add transactions to see your spending patterns</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Recent Transactions */}
+            <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-blue-600" />
+                  Recent Transactions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {transactions.length > 0 ? (
+                  <div className="space-y-3">
+                    {transactions.slice(0, 5).map((transaction) => (
+                      <div key={transaction.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                            transaction.type === 'income' 
+                              ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
+                              : 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400'
+                          }`}>
+                            {transaction.type === 'income' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                          </div>
+                          <div>
+                            <div className="font-medium text-slate-800 dark:text-slate-200">
+                              {transaction.description}
+                            </div>
+                            <div className="text-xs text-slate-600 dark:text-slate-400">
+                              {transaction.category} • {new Date(transaction.date).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`font-semibold ${
+                          transaction.type === 'income' 
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}>
+                          {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                        </div>
+                      </div>
+                    ))}
+                    {transactions.length > 5 && (
+                      <div className="text-center pt-3">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate('/transactions')}
+                          className="rounded-full"
+                        >
+                          View All Transactions
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                    <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>No transactions yet</p>
+                    <p className="text-sm">Add your first transaction to get started</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -149,10 +319,13 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-slate-200">
-                    Welcome to Your Dashboard
+                    {transactions.length > 0 ? 'Your Financial Overview' : 'Welcome to Your Dashboard'}
                   </CardTitle>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Start by adding your first transaction or setting up budgets
+                    {transactions.length > 0 
+                      ? `You have ${transactions.length} transaction${transactions.length !== 1 ? 's' : ''} and ${categories.filter(c => c.budget > 0).length} budget${categories.filter(c => c.budget > 0).length !== 1 ? 's' : ''} set up`
+                      : 'Start by adding your first transaction or setting up budgets'
+                    }
                   </p>
                 </div>
               </div>
@@ -163,11 +336,13 @@ const Dashboard = () => {
                   <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 font-medium mb-2">
-                      Getting Started
+                      {transactions.length > 0 ? 'Quick Actions' : 'Getting Started'}
                     </p>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                      Your dashboard is ready! Add transactions, set up budgets, and start tracking your finances. 
-                      The sidebar navigation will help you move between different sections.
+                      {transactions.length > 0 
+                        ? 'Keep track of your finances by adding new transactions, updating budgets, and reviewing your spending patterns.'
+                        : 'Your dashboard is ready! Add transactions, set up budgets, and start tracking your finances. The sidebar navigation will help you move between different sections.'
+                      }
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2 mt-3">
                       <Button 
@@ -176,7 +351,7 @@ const Dashboard = () => {
                         onClick={() => navigate('/transactions')}
                         className="rounded-full border-purple-200 text-purple-600 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-400 dark:hover:bg-purple-950/50"
                       >
-                        Add Transaction
+                        {transactions.length > 0 ? 'Add Transaction' : 'Add Transaction'}
                       </Button>
                       <Button 
                         variant="outline" 
@@ -184,7 +359,7 @@ const Dashboard = () => {
                         onClick={() => navigate('/categories-budget')}
                         className="rounded-full border-purple-200 text-purple-600 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-400 dark:hover:bg-purple-950/50"
                       >
-                        Set Up Budgets
+                        {transactions.length > 0 ? 'Manage Budgets' : 'Set Up Budgets'}
                       </Button>
                     </div>
                   </div>

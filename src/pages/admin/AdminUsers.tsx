@@ -155,7 +155,7 @@ const AdminUsers = () => {
         const sampleUsers: User[] = [
           {
             id: 'sample-1',
-            email: 'admin@clearcents.com',
+            email: 'admin@centrabudget.com',
             full_name: 'Admin User',
             avatar_url: null,
             created_at: new Date().toISOString(),

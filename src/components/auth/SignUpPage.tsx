@@ -26,31 +26,6 @@ export const SignUpPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Test Supabase connection and settings
-  const testSupabaseConnection = async () => {
-    try {
-      console.log('Testing Supabase connection...');
-      
-      // Test basic connection
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      console.log('Session test:', { session, sessionError });
-      
-      // Test if we can access the auth service
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      console.log('User test:', { user, userError });
-      
-      console.log('Supabase connection test completed successfully');
-      
-    } catch (error) {
-      console.error('Supabase connection test failed:', error);
-    }
-  };
-
-  // Run connection test on component mount
-  useEffect(() => {
-    testSupabaseConnection();
-  }, []);
-
   const validateEmail = () => {
     if (!email.trim()) {
       setError("Email is required");
@@ -524,16 +499,6 @@ export const SignUpPage = () => {
                       Create account
                     </>
                   )}
-                </Button>
-
-                {/* Debug button - remove in production */}
-                <Button
-                  type="button"
-                  onClick={testSupabaseConnection}
-                  variant="outline"
-                  className="w-full text-sm text-gray-600 hover:text-gray-800"
-                >
-                  🐛 Test Connection (Debug)
                 </Button>
 
                 {/* Divider */}

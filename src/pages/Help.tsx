@@ -129,7 +129,7 @@ const Help = () => {
   // Mock help articles
   const helpArticles: HelpArticle[] = [
     {
-      title: "Getting Started with ClearCents",
+              title: "Getting Started with CentraBudget",
       description: "Learn the basics of setting up your account and tracking your first transactions. This guide covers everything from initial setup to your first budget.",
       category: "getting-started",
       difficulty: "beginner",
@@ -178,7 +178,7 @@ const Help = () => {
     },
     {
       title: "Mobile App Guide",
-      description: "Complete guide to using ClearCents on your mobile device. Learn about mobile-specific features and optimizations.",
+              description: "Complete guide to using CentraBudget on your mobile device. Learn about mobile-specific features and optimizations.",
       category: "mobile",
       difficulty: "beginner",
       readTime: "7 min read",
@@ -186,7 +186,7 @@ const Help = () => {
     },
     {
       title: "API Integration for Developers",
-      description: "Advanced guide for developers who want to integrate ClearCents with other applications. Learn about our REST API and webhooks.",
+              description: "Advanced guide for developers who want to integrate CentraBudget with other applications. Learn about our REST API and webhooks.",
       category: "developers",
       difficulty: "advanced",
       readTime: "15 min read",
@@ -437,7 +437,7 @@ const Help = () => {
                 <TabsContent value="faq" className="p-6 space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">Frequently Asked Questions</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Find quick answers to common questions about ClearCents</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Find quick answers to common questions about CentraBudget</p>
                   </div>
 
                   {filteredFAQs.length > 0 ? (
@@ -473,7 +473,7 @@ const Help = () => {
                 <TabsContent value="articles" className="p-6 space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">Help Articles & Guides</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Comprehensive guides and tutorials to help you master ClearCents</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Comprehensive guides and tutorials to help you master CentraBudget</p>
                   </div>
 
                   {filteredArticles.length > 0 ? (
@@ -614,7 +614,7 @@ const Help = () => {
                           </div>
                           <div>
                             <h4 className="font-medium text-slate-800 dark:text-slate-200">Email Support</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">support@clearcents.com</p>
+                            <p className="text-sm text-slate-600 dark:text-slate-400">support@centrabudget.com</p>
                           </div>
                         </div>
                         

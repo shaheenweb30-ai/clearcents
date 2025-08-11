@@ -1,7 +1,7 @@
 -- Update existing branding settings with new GT Walsheim Pro branding
 UPDATE public.branding_settings 
 SET 
-  business_name = 'ClearCents',
+  business_name = 'CentraBudget',
   primary_color = '#1752F3',
   secondary_color = '#F0F0F0',
   accent_color = '#1A1A1A',

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -41,6 +41,7 @@ import Layout from "@/components/Layout";
 export default function Homepage1() {
   const { toast } = useToast();
   const { user, session, loading } = useAuth();
+  const navigate = useNavigate();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -53,6 +54,17 @@ export default function Homepage1() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Function to handle button clicks - redirect signed-in users to dashboard
+  const handleButtonClick = (targetPath: string) => {
+    if (user && !loading) {
+      // User is signed in, redirect to dashboard
+      navigate('/dashboard');
+    } else {
+      // User is not signed in, go to the original target path
+      navigate(targetPath);
+    }
+  };
 
 
 
@@ -262,13 +274,15 @@ export default function Homepage1() {
               {/* CTA Buttons */}
               <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/signup">
-                    <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group">
-                      <span className="mr-2">🚀</span>
-                      Start free — no card
-                      <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
-                    </Button>
-                  </Link>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group"
+                    onClick={() => handleButtonClick('/signup')}
+                  >
+                    <span className="mr-2">🚀</span>
+                    Start free — no card
+                    <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
+                  </Button>
                 </div>
                 <div className="flex items-center space-x-6 text-sm text-gray-500">
                   <div className="flex items-center">
@@ -651,11 +665,12 @@ export default function Homepage1() {
           <div className="text-center mt-16">
             <div className="inline-flex items-center space-x-4 bg-white rounded-full px-8 py-4 shadow-lg">
               <span className="text-gray-600 font-medium">Ready to take control?</span>
-              <Link to="/signup">
-                <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
-                  Get Started Free
-                </button>
-              </Link>
+              <button 
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
+                onClick={() => handleButtonClick('/signup')}
+              >
+                Get Started Free
+              </button>
             </div>
           </div>
         </div>
@@ -921,13 +936,15 @@ export default function Homepage1() {
           <div className="text-center">
             <div className="inline-flex items-center space-x-4 bg-white rounded-full px-8 py-4 shadow-lg border border-gray-100">
               <span className="text-gray-600 font-medium">Ready to get started?</span>
-              <Link to="/signup">
-                <Button size="lg" className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  <span className="mr-2">⚡</span>
-                  Start free — be done in 2 minutes
-                  <span className="ml-2">→</span>
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                onClick={() => handleButtonClick('/signup')}
+              >
+                <span className="mr-2">⚡</span>
+                Start free — be done in 2 minutes
+                <span className="ml-2">→</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -1356,7 +1373,7 @@ export default function Homepage1() {
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900 mb-1">Email Support</h4>
-                          <p className="text-gray-600 text-sm">support@clearcents.com</p>
+                          <p className="text-gray-600 text-sm">support@centrabudget.com</p>
                           <p className="text-xs text-gray-500">We respond within 24 hours</p>
                         </div>
                       </div>
@@ -1378,7 +1395,7 @@ export default function Homepage1() {
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900 mb-1">Help Center</h4>
-                          <p className="text-gray-600 text-sm">help.clearcents.com</p>
+                          <p className="text-gray-600 text-sm">help.centrabudget.com</p>
                           <p className="text-xs text-gray-500">Guides and tutorials</p>
                         </div>
                       </div>

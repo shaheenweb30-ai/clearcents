@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ClearCents application now supports **100+ world currencies** with automatic symbol mapping and proper formatting across all pages. The currency system is centralized through the `SettingsContext` and automatically reflects changes throughout the application.
+The CentraBudget application now supports **100+ world currencies** with automatic symbol mapping and proper formatting across all pages. The currency system is centralized through the `SettingsContext` and automatically reflects changes throughout the application.
 
 ## 🎯 Features
 
@@ -292,4 +292,4 @@ The global currency system provides:
 - **⚡ High Performance** with efficient caching
 - **🛡️ Error Handling** with graceful fallbacks
 
-This system ensures that ClearCents can serve users worldwide with their preferred currency, providing a truly global financial management experience! 🌟
+This system ensures that CentraBudget can serve users worldwide with their preferred currency, providing a truly global financial management experience! 🌟

@@ -1,6 +1,6 @@
 # Authentication Components
 
-This directory contains comprehensive authentication flows for ClearCents, featuring sign up, sign in, password reset, email verification, and 2FA components.
+This directory contains comprehensive authentication flows for CentraBudget, featuring sign up, sign in, password reset, email verification, and 2FA components.
 
 ## Components
 

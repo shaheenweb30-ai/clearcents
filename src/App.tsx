@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
 import { ContentUpdateIndicator } from "@/components/ContentUpdateIndicator";
-import { OnboardingProvider } from "@/components";
+
 import { ScrollToTop } from "@/components/ScrollToTop";
 import './i18n';
 import Homepage1 from "./pages/Homepage1";
@@ -143,85 +143,83 @@ const AppContent = () => {
           <BrowserRouter>
             <SettingsProvider>
               <TransactionProvider>
-                <OnboardingProvider>
-                  <TooltipProvider>
-                    <Toaster />
-                    {import.meta.env.PROD && <Analytics />}
-                    <ScrollToTop />
-                    <Routes>
-                    <Route path="/" element={<Homepage1 />} />
-                    <Route path="/features" element={<Features />} />
-                    <Route path="/pricing" element={<Pricing />} />
-                    <Route path="/contact" element={<Contact />} />
-                    
-                    {/* Authentication Routes */}
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/signin" element={<Login />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/reset-password" element={<ResetPasswordPage />} />
-                    <Route path="/verify-email" element={<VerifyEmailPage />} />
-                    <Route path="/two-factor" element={<TwoFactorPage />} />
-                    <Route path="/auth-demo" element={<AuthRouterDemo />} />
-                    
-                    <Route path="/dashboard" element={
-                      <ProtectedRoute>
-                        <Dashboard />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/transactions" element={
-                      <ProtectedRoute>
-                        <Transactions />
-                      </ProtectedRoute>
-                    } />
+                <TooltipProvider>
+                  <Toaster />
+                  {import.meta.env.PROD && <Analytics />}
+                  <ScrollToTop />
+                  <Routes>
+                  <Route path="/" element={<Homepage1 />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/contact" element={<Contact />} />
+                  
+                  {/* Authentication Routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/signin" element={<Login />} />
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage />} />
+                  <Route path="/verify-email" element={<VerifyEmailPage />} />
+                  <Route path="/two-factor" element={<TwoFactorPage />} />
+                  <Route path="/auth-demo" element={<AuthRouterDemo />} />
+                  
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/transactions" element={
+                    <ProtectedRoute>
+                      <Transactions />
+                    </ProtectedRoute>
+                  } />
 
-                    <Route path="/categories-budget" element={
-                      <ProtectedRoute>
-                        <CategoriesBudget />
-                      </ProtectedRoute>
-                    } />
+                  <Route path="/categories-budget" element={
+                    <ProtectedRoute>
+                      <CategoriesBudget />
+                    </ProtectedRoute>
+                  } />
 
-            
-                    <Route path="/reports" element={
-                      <ProtectedRoute>
-                        <Reports />
-                      </ProtectedRoute>
-                    } />
+          
+                  <Route path="/reports" element={
+                    <ProtectedRoute>
+                      <Reports />
+                    </ProtectedRoute>
+                  } />
 
-                    <Route path="/settings" element={
-                      <ProtectedRoute>
-                        <Settings />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/profile" element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/subscription" element={
-                      <ProtectedRoute>
-                        <Subscription />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/help" element={<Help />} />
-                    <Route path="/privacy" element={<Privacy />} />
-                     <Route path="/terms" element={<Terms />} />
-                    
-                    {/* Admin Routes */}
-                    <Route path="/admin/pages" element={<AdminPages />} />
-                    <Route path="/admin/branding" element={<AdminBranding />} />
-                    <Route path="/admin/images" element={<AdminImages />} />
-                    <Route path="/admin/footer" element={<AdminFooter />} />
-                    <Route path="/admin/faq" element={<AdminFAQ />} />
-                    <Route path="/admin/packages" element={<AdminPackages />} />
-                    <Route path="/admin/users" element={<AdminUsers />} />
-                    <Route path="/admin/comparison" element={<AdminComparison />} />
-                    <Route path="/admin/translations" element={<AdminTranslations />} />
-                    
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </TooltipProvider>
-              </OnboardingProvider>
+                  <Route path="/settings" element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/subscription" element={
+                    <ProtectedRoute>
+                      <Subscription />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                   <Route path="/terms" element={<Terms />} />
+                  
+                  {/* Admin Routes */}
+                  <Route path="/admin/pages" element={<AdminPages />} />
+                  <Route path="/admin/branding" element={<AdminBranding />} />
+                  <Route path="/admin/images" element={<AdminImages />} />
+                  <Route path="/admin/footer" element={<AdminFooter />} />
+                  <Route path="/admin/faq" element={<AdminFAQ />} />
+                  <Route path="/admin/packages" element={<AdminPackages />} />
+                  <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route path="/admin/comparison" element={<AdminComparison />} />
+                  <Route path="/admin/translations" element={<AdminTranslations />} />
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </TooltipProvider>
             </TransactionProvider>
             </SettingsProvider>
           </BrowserRouter>

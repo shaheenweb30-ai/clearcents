@@ -14,7 +14,7 @@ const Terms = () => {
             <CardContent className="prose prose-slate dark:prose-invert max-w-none">
               <h3>1. Introduction</h3>
               <p>
-                Welcome to ClearCents. By accessing or using our services, you agree to be bound by these
+                Welcome to CentraBudget. By accessing or using our services, you agree to be bound by these
                 Terms of Service. If you do not agree to these terms, please do not use the service.
               </p>
 

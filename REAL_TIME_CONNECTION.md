@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ClearCents application now features a real-time connection between the Transactions page and the Dashboard, ensuring that all financial data is automatically synchronized and up-to-date.
+The CentraBudget application now features a real-time connection between the Transactions page and the Dashboard, ensuring that all financial data is automatically synchronized and up-to-date.
 
 ## How It Works
 

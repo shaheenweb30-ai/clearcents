@@ -245,14 +245,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
       try {
         const parsed = JSON.parse(savedPreferences);
         const merged = { ...defaultPreferences, ...parsed } as UserPreferences;
-        // Also merge fixed costs from onboarding storage if present and not already in preferences
-        try {
-          const fixedCostsRaw = localStorage.getItem('cc_fixed_costs_v1');
-          if (fixedCostsRaw && (!merged.fixedCosts || merged.fixedCosts.length === 0)) {
-            const fixedCosts = JSON.parse(fixedCostsRaw);
-            if (Array.isArray(fixedCosts)) merged.fixedCosts = fixedCosts;
-          }
-        } catch {}
+
         setPreferences(merged);
       } catch (error) {
         console.error('Error parsing saved preferences:', error);
