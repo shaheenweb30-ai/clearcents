@@ -80,34 +80,99 @@ export const SignInPage = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      console.log('🔍 DEBUG: Starting Google OAuth sign in...');
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://www.centrabudget.com/dashboard',
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+            // You can add additional scopes if needed
+            scope: 'email profile'
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Google OAuth sign in error:', error);
+        setError(error.message);
+        toast({
+          title: "Google sign in failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        console.log('Google OAuth sign in initiated:', data);
+        
+        // Show success message
+        toast({
+          title: "Google sign in initiated",
+          description: "Redirecting to Google authentication...",
+        });
+      }
+    } catch (error) {
+      console.error('Google OAuth sign in error:', error);
+      setError("An unexpected error occurred. Please try again.");
+      toast({
+        title: "Google sign in failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleOAuthSignIn = async (provider: 'google' | 'github' | 'discord') => {
     setLoading(true);
     setError("");
     
     try {
+      console.log(`🔍 DEBUG: Starting ${provider} OAuth sign in...`);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: 'https://www.centrabudget.com/dashboard',
+          queryParams: {
+            // For Google OAuth, you can add additional scopes if needed
+            ...(provider === 'google' && {
+              access_type: 'offline',
+              prompt: 'consent'
+            })
+          }
         }
       });
 
       if (error) {
-        console.error("OAuth sign in error:", error);
+        console.error(`${provider} OAuth sign in error:`, error);
         setError(error.message);
         toast({
-          title: "OAuth sign in failed",
+          title: `${provider} sign in failed`,
           description: error.message,
           variant: "destructive",
         });
       } else {
-        console.log("OAuth sign in initiated:", data);
+        console.log(`${provider} OAuth sign in initiated:`, data);
+        
+        // Show success message
+        toast({
+          title: `${provider} sign in initiated`,
+          description: "Redirecting to authentication...",
+        });
       }
     } catch (error) {
-      console.error("OAuth sign in error:", error);
+      console.error(`${provider} OAuth sign in error:`, error);
       setError("An unexpected error occurred. Please try again.");
       toast({
-        title: "OAuth sign in failed",
+        title: `${provider} sign in failed`,
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
@@ -254,7 +319,7 @@ export const SignInPage = () => {
           <div className="space-y-3">
             <Button
               variant="outline"
-              onClick={() => handleOAuthSignIn("google")}
+              onClick={handleGoogleSignIn}
               disabled={loading}
               className="w-full h-12 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full font-medium"
             >
