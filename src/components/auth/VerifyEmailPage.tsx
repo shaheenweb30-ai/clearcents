@@ -16,92 +16,104 @@ export const VerifyEmailPage = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const handleVerification = async () => {
-      try {
-        setLoading(true);
-        setVerificationStatus('checking');
+  const handleVerification = async () => {
+    try {
+      setLoading(true);
+      setVerificationStatus('checking');
+      
+      // Get the current URL and search params
+      const url = new URL(window.location.href);
+      const accessToken = url.searchParams.get('access_token');
+      const refreshToken = url.searchParams.get('refresh_token');
+      const type = url.searchParams.get('type');
+      
+      console.log('Verification URL params:', { accessToken: !!accessToken, refreshToken: !!refreshToken, type });
+      
+      if (accessToken && refreshToken) {
+        console.log('Processing verification with tokens...');
         
-        // Get the current URL and search params
-        const url = new URL(window.location.href);
-        const accessToken = url.searchParams.get('access_token');
-        const refreshToken = url.searchParams.get('refresh_token');
-        const type = url.searchParams.get('type');
+        // Set the session with the tokens from the URL
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
         
-        console.log('Verification URL params:', { accessToken: !!accessToken, refreshToken: !!refreshToken, type });
+        console.log('Session set result:', { data, error });
         
-        if (accessToken && refreshToken) {
-          console.log('Processing verification with tokens...');
+        if (error) {
+          console.error('Error setting session:', error);
+          setVerificationStatus('error');
+          setErrorMessage(error.message);
+          return;
+        }
+        
+        if (data.session && data.user) {
+          console.log('Session set successfully, user:', data.user.email);
           
-          // Set the session with the tokens from the URL
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-          
-          console.log('Session set result:', { data, error });
-          
-          if (error) {
-            console.error('Error setting session:', error);
-            setVerificationStatus('error');
-            setErrorMessage(error.message);
-            return;
-          }
-          
-          if (data.session && data.user) {
-            console.log('Session set successfully, user:', data.user.email);
+          // Check if email is verified
+          if (data.user.email_confirmed_at) {
+            console.log('Email verified successfully, redirecting to dashboard...');
+            setVerificationStatus('success');
             
-            // Check if email is verified
-            if (data.user.email_confirmed_at) {
-              console.log('Email verified successfully, redirecting to dashboard...');
-              setVerificationStatus('success');
-              
-              // Wait a moment to show success state
-              setTimeout(() => {
-                navigate('/dashboard');
-              }, 2000);
-            } else {
-              console.log('Email not yet verified, checking status...');
-              setVerificationStatus('pending');
-            }
+            // Refresh the session to ensure it's properly established
+            await supabase.auth.refreshSession();
+            
+            // Show success toast
+            toast({
+              title: "Email verified successfully!",
+              description: "Welcome to CentraBudget! Redirecting to dashboard...",
+            });
+            
+            // Redirect immediately to dashboard
+            navigate('/dashboard');
           } else {
-            console.log('No session or user in response');
-            setVerificationStatus('error');
-            setErrorMessage('Verification failed. Please try again.');
-          }
-        } else {
-          console.log('No tokens in URL, checking current auth state...');
-          
-          // Check if user is already authenticated and verified
-          const { data: { user } } = await supabase.auth.getUser();
-          
-          if (user) {
-            if (user.email_confirmed_at) {
-              console.log('User already verified, redirecting to dashboard...');
-              setVerificationStatus('success');
-              setTimeout(() => {
-                navigate('/dashboard');
-              }, 2000);
-            } else {
-              console.log('User not verified yet');
-              setVerificationStatus('pending');
-            }
-          } else {
-            console.log('No user found, showing pending state');
+            console.log('Email not yet verified, checking status...');
             setVerificationStatus('pending');
           }
+        } else {
+          console.log('No session or user in response');
+          setVerificationStatus('error');
+          setErrorMessage('Verification failed. Please try again.');
         }
-      } catch (error) {
-        console.error('Verification error:', error);
-        setVerificationStatus('error');
-        setErrorMessage('An unexpected error occurred during verification.');
-      } finally {
-        setLoading(false);
+      } else {
+        console.log('No tokens in URL, checking current auth state...');
+        
+        // Check if user is already authenticated and verified
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          if (user.email_confirmed_at) {
+            console.log('User already verified, redirecting to dashboard...');
+            setVerificationStatus('success');
+            
+            toast({
+              title: "Already verified!",
+              description: "Redirecting to dashboard...",
+            });
+            
+            // Redirect immediately
+            navigate('/dashboard');
+          } else {
+            console.log('User not verified yet');
+            setVerificationStatus('pending');
+          }
+        } else {
+          console.log('No user found, showing pending state');
+          setVerificationStatus('pending');
+        }
       }
-    };
+    } catch (error) {
+      console.error('Verification error:', error);
+      setVerificationStatus('error');
+      setErrorMessage('An unexpected error occurred during verification.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     handleVerification();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   const handleResendVerification = async () => {
     try {
