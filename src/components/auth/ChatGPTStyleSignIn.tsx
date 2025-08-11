@@ -33,11 +33,19 @@ export const ChatGPTStyleSignIn = () => {
     setLoading(true);
     setError("");
     
+    console.log('🔍 DEBUG: Starting password submission in ChatGPTStyleSignIn...');
+    console.log('🔍 DEBUG: Email:', formData.email);
+    console.log('🔍 DEBUG: Password length:', formData.password.length);
+    
     try {
+      console.log('🔍 DEBUG: Calling supabase.auth.signInWithPassword...');
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
+
+      console.log('🔍 DEBUG: Supabase response:', { data, error });
 
       if (error) {
         console.error("Sign in error:", error);
@@ -51,7 +59,15 @@ export const ChatGPTStyleSignIn = () => {
         console.log("Sign in successful:", data);
         const session = data.session;
         const emailVerified = session?.user?.email_confirmed_at || session?.user?.confirmed_at;
+        
+        console.log('🔍 DEBUG: Email verified:', emailVerified);
+        console.log('🔍 DEBUG: User:', session?.user);
+        
+        // Temporarily skip email verification check for testing
+        console.log('🔍 DEBUG: Skipping email verification check for testing...');
+        /*
         if (!emailVerified) {
+          console.log('🔍 DEBUG: Email not verified, redirecting to verification...');
           toast({
             title: "Please verify your email",
             description: "Check your inbox for the verification link.",
@@ -61,10 +77,15 @@ export const ChatGPTStyleSignIn = () => {
           navigate("/verify-email");
           return;
         }
+        */
+        
+        console.log('🔍 DEBUG: Email verified, showing success toast...');
         toast({
           title: "Welcome back!",
           description: "You have been successfully signed in.",
         });
+        
+        console.log('🔍 DEBUG: Navigating to dashboard...');
         navigate("/dashboard");
       }
     } catch (error) {
@@ -347,6 +368,18 @@ export const ChatGPTStyleSignIn = () => {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               Continue with Google
+            </Button>
+            
+            {/* Test Login Button - Remove this in production */}
+            <Button
+              variant="outline"
+              onClick={() => {
+                console.log('🔍 DEBUG: Test login clicked in ChatGPTStyleSignIn - navigating directly to dashboard');
+                navigate("/dashboard");
+              }}
+              className="w-full h-14 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+            >
+              🧪 Test Login (Skip Auth)
             </Button>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BrandingProvider } from "@/contexts/BrandingContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
+import { TransactionProvider } from "@/contexts/TransactionContext";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
@@ -140,12 +141,13 @@ const AppContent = () => {
         <BrandingProvider>
           <BrowserRouter>
             <SettingsProvider>
-              <OnboardingProvider>
-                <TooltipProvider>
-                  <Toaster />
-                  {import.meta.env.PROD && <Analytics />}
-                  <ScrollToTop />
-                  <Routes>
+              <TransactionProvider>
+                <OnboardingProvider>
+                  <TooltipProvider>
+                    <Toaster />
+                    {import.meta.env.PROD && <Analytics />}
+                    <ScrollToTop />
+                    <Routes>
                     <Route path="/" element={<Homepage1 />} />
                     <Route path="/features" element={<Features />} />
                     <Route path="/pricing" element={<Pricing />} />
@@ -191,6 +193,7 @@ const AppContent = () => {
                   </Routes>
                 </TooltipProvider>
               </OnboardingProvider>
+            </TransactionProvider>
             </SettingsProvider>
           </BrowserRouter>
         </BrandingProvider>

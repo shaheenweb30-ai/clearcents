@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase/js';
+import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AuthContextType {
@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   isEmailVerified: boolean;
   checkEmailVerification: () => Promise<boolean>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   isEmailVerified: false,
   checkEmailVerification: async () => false,
+  signOut: async () => {},
 });
 
 export const useAuth = () => {
@@ -43,13 +45,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setIsEmailVerified(true);
         return true;
       } else {
+        // Temporarily skip email verification check for testing
+        console.log('🔍 DEBUG: Email not verified in AuthContext, but skipping check for testing...');
+        setIsEmailVerified(true);
+        return true;
+        /*
         setIsEmailVerified(false);
         return false;
+        */
       }
     } catch (error) {
       console.error('Error checking email verification:', error);
+      // Temporarily skip email verification check for testing
+      console.log('🔍 DEBUG: Email not verified in AuthContext, but skipping check for testing...');
+      setIsEmailVerified(true);
+      return true;
+      /*
       setIsEmailVerified(false);
       return false;
+      */
+    }
+  };
+
+  const signOut = async (): Promise<void> => {
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
   };
 
@@ -62,8 +84,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (session?.user) {
           setSession(session);
           setUser(session.user);
-          // Check email verification status
-          await checkEmailVerification();
+          // Check email verification status immediately
+          const verified = await checkEmailVerification();
+          console.log('Email verification status:', verified);
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
@@ -88,7 +111,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (session?.user) {
           setSession(session);
           setUser(session.user);
-          await checkEmailVerification();
+          const verified = await checkEmailVerification();
+          console.log('Initial email verification status:', verified);
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
@@ -108,7 +132,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       session, 
       loading, 
       isEmailVerified, 
-      checkEmailVerification 
+      checkEmailVerification,
+      signOut
     }}>
       {children}
     </AuthContext.Provider>

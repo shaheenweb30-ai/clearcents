@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { User, Session } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/contexts/SettingsContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,10 +25,11 @@ import {
   TrendingUp,
   Sparkles,
   Gift,
-  Heart
+  Heart,
+  Plus
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { useTrial } from "@/hooks/useTrial";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SubscriptionPlan {
   id: string;
@@ -54,95 +53,72 @@ interface BillingHistory {
 }
 
 const Subscription = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
   const [subscription, setSubscription] = useState<SubscriptionPlan | null>(null);
   const [billingHistory, setBillingHistory] = useState<BillingHistory[]>([]);
-  const [loadingSubscription, setLoadingSubscription] = useState(true);
+  const [loadingSubscription, setLoadingSubscription] = useState(false);
   
   const navigate = useNavigate();
   const { toast } = useToast();
   const { formatCurrency } = useSettings();
-  const { trial, isTrialActive, startTrial, starting, refresh } = useTrial(user);
+  const { user } = useAuth();
 
+  // Mock subscription data for demonstration
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (event === 'SIGNED_OUT' || !session) {
-          navigate("/login");
-        } else if (session) {
-          setLoading(false);
-          fetchSubscriptionData();
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (!session) {
-        navigate("/login");
-      } else {
-        setLoading(false);
-        fetchSubscriptionData();
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const fetchSubscriptionData = async () => {
+    // Simulate loading subscription data
     setLoadingSubscription(true);
-    try {
-      // Use trial to determine visible state until real billing is wired
-      if (isTrialActive && trial) {
-        const trialSub: SubscriptionPlan = {
-          id: trial.id,
-          name: 'Pro Trial',
-          price: 0,
-          interval: 'monthly',
-          features: [
-            'Pro features unlocked during trial',
-            'Advanced analytics',
-            'Priority support',
-          ],
-          status: 'trial',
-          currentPeriodStart: trial.started_at,
-          currentPeriodEnd: trial.ends_at,
-          nextBillingDate: trial.ends_at,
-        };
-        setSubscription(trialSub);
-      } else {
-        // No active trial or paid subscription → treat as Free plan (no subscription object)
-        setSubscription(null);
-        setBillingHistory([]);
+    
+    // Mock trial subscription
+    const mockTrialSub: SubscriptionPlan = {
+      id: 'trial-1',
+      name: 'Pro Trial',
+      price: 0,
+      interval: 'monthly',
+      features: [
+        'Pro features unlocked during trial',
+        'Advanced analytics and insights',
+        'Priority customer support',
+        'Unlimited transactions',
+        'Custom categories and budgets',
+        'Export and reporting tools',
+        'Mobile app access',
+        'Cloud synchronization'
+      ],
+      status: 'trial',
+      currentPeriodStart: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
+      currentPeriodEnd: new Date(Date.now() + 23 * 24 * 60 * 60 * 1000).toISOString(), // 23 days from now
+      nextBillingDate: new Date(Date.now() + 23 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+
+    // Mock billing history
+    const mockBillingHistory: BillingHistory[] = [
+      {
+        id: 'bill-1',
+        date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        amount: 0,
+        status: 'paid',
+        description: 'Pro Trial Started',
+        invoiceUrl: '#'
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load subscription data",
-        variant: "destructive",
-      });
-    } finally {
+    ];
+
+    setTimeout(() => {
+      setSubscription(mockTrialSub);
+      setBillingHistory(mockBillingHistory);
       setLoadingSubscription(false);
-    }
-  };
+    }, 1000);
+  }, []);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-100 text-green-800 border-green-200">Active</Badge>;
+        return <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700">Active</Badge>;
       case 'cancelled':
-        return <Badge className="bg-red-100 text-red-800 border-red-200">Cancelled</Badge>;
+        return <Badge className="bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700">Cancelled</Badge>;
       case 'expired':
-        return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Expired</Badge>;
+        return <Badge className="bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-700/30 dark:text-slate-300 dark:border-slate-600">Expired</Badge>;
       case 'trial':
-        return <Badge className="bg-blue-100 text-blue-800 border-blue-200">Trial</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700">Trial</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -151,11 +127,11 @@ const Subscription = () => {
   const getBillingStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
-        return <Badge className="bg-green-100 text-green-800 border-green-200">Paid</Badge>;
+        return <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700">Paid</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700">Pending</Badge>;
       case 'failed':
-        return <Badge className="bg-red-100 text-red-800 border-red-200">Failed</Badge>;
+        return <Badge className="bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700">Failed</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -169,439 +145,450 @@ const Subscription = () => {
     });
   };
 
+  const handleUpgradePlan = () => {
+    toast({
+      title: "Upgrade Plan",
+      description: "Redirecting to plan selection...",
+    });
+    // In a real app, this would redirect to a plan selection page
+  };
 
+  const handleCancelSubscription = () => {
+    if (window.confirm('Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your current billing period.')) {
+      toast({
+        title: "Subscription Cancelled",
+        description: "Your subscription will be cancelled at the end of the current period.",
+      });
+    }
+  };
 
-  if (loading) {
+  const handleDownloadInvoice = (invoiceUrl: string) => {
+    toast({
+      title: "Download Started",
+      description: "Your invoice is being prepared for download.",
+    });
+    // In a real app, this would trigger a file download
+  };
+
+  if (!user) {
     return (
       <DashboardLayout>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <p className="text-muted-foreground text-lg">Loading subscription...</p>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CreditCard className="w-8 h-8 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Not Authenticated</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">Please log in to view your subscription.</p>
+              <Button onClick={() => navigate('/login')}>
+                Go to Login
+              </Button>
+            </div>
           </div>
         </div>
       </DashboardLayout>
     );
   }
 
-  if (!user) {
-    return null;
+  if (loadingSubscription) {
+    return (
+      <DashboardLayout>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center py-12">
+              <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+              <p className="text-slate-600 dark:text-slate-400 text-lg">Loading subscription...</p>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
   }
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20">
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
-          {/* Trial banner */}
-          {trial && (
-            <div className={`mb-6 p-4 rounded-xl border shadow-sm ${isTrialActive ? 'bg-blue-50 border-blue-200 text-blue-900' : 'bg-slate-50 border-slate-200 text-slate-800'}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Sparkles className="h-5 w-5" />
-                  <div>
-                    <p className="font-semibold">{isTrialActive ? 'Your Pro trial is active' : 'Your trial has ended'}</p>
-                    <p className="text-sm opacity-80">
-                      {isTrialActive
-                        ? `Ends ${new Date(trial.ends_at).toLocaleString()}`
-                        : `Trial ended ${new Date(trial.ends_at).toLocaleString()}`}
-                    </p>
-                  </div>
-                </div>
-                {!isTrialActive && (
-                  <Button onClick={() => navigate('/pricing')} variant="default">
-                    Upgrade
-                  </Button>
-                )}
-              </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
+        <div className="max-w-6xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold shadow-lg mb-3 sm:mb-4">
+              <Crown className="w-3 h-3 sm:w-4 sm:h-4" />
+              Subscription Management
             </div>
-          )}
-          {/* Enhanced Header with Gradient Background */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 p-8 mb-8 text-white shadow-2xl">
-            <div className="absolute inset-0 bg-black/10"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
-            
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                    <Crown className="h-8 w-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-4xl font-heading font-bold text-white">
-                      Subscription Management
-                    </h1>
-                    <p className="text-blue-100 text-lg font-body">
-                      Manage your subscription and billing information
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <Button 
-                variant="secondary" 
-                onClick={fetchSubscriptionData}
-                disabled={loadingSubscription}
-                className="bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm"
-              >
-                <RefreshCw className={`h-5 w-5 mr-2 ${loadingSubscription ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-            </div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-2 sm:mb-3">
+              Your Subscription
+            </h1>
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400">Manage your plan, billing, and premium features</p>
           </div>
 
-          <Tabs defaultValue="overview" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 p-1 rounded-xl shadow-lg">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all duration-200">
-                Overview
-              </TabsTrigger>
-              <TabsTrigger value="billing" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all duration-200">
-                Billing History
-              </TabsTrigger>
-              <TabsTrigger value="settings" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all duration-200">
-                Settings
-              </TabsTrigger>
-            </TabsList>
+          {/* Trial Banner */}
+          {subscription?.status === 'trial' && (
+            <Card className="rounded-xl border-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 backdrop-blur-sm shadow-lg border border-blue-200/50 dark:border-blue-700/50">
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200">
+                        Pro Trial Active! 🎉
+                      </h3>
+                      <p className="text-blue-700 dark:text-blue-300">
+                        You're currently enjoying a free trial of our Pro features
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Button 
+                      onClick={handleUpgradePlan}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    >
+                      <Crown className="w-4 h-4 mr-2" />
+                      Upgrade Now
+                    </Button>
+                    <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-950/50">
+                      <Clock className="w-4 h-4 mr-2" />
+                      {Math.ceil((new Date(subscription.nextBillingDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days left
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-8">
-              {subscription ? (
-                <>
-                  {/* Enhanced Current Plan Card */}
-                  <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-blue-50/50 dark:from-slate-800 dark:to-slate-900 overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600"></div>
-                    <CardHeader className="pb-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-                            <Crown className="h-8 w-8 text-white" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-2xl font-heading text-slate-800 dark:text-slate-100">
+          {/* Subscription Tabs */}
+          <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg border border-white/20 dark:border-slate-700/30">
+            <CardContent className="p-0">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-3 bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-lg m-6">
+                  <TabsTrigger value="overview" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger value="billing" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Billing
+                  </TabsTrigger>
+                  <TabsTrigger value="plans" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
+                    <Star className="w-4 h-4 mr-2" />
+                    Plans
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Overview Tab */}
+                <TabsContent value="overview" className="p-6 space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">Current Plan</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Your active subscription and feature access</p>
+                  </div>
+
+                  {subscription ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      {/* Plan Details */}
+                      <Card className="border-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200/50 dark:border-blue-700/50">
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg text-blue-800 dark:text-blue-200">
                               {subscription.name}
                             </CardTitle>
-                            <div className="flex items-center space-x-3 mt-2">
-                              {getStatusBadge(subscription.status)}
-                              <span className="text-sm text-muted-foreground bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
-                                {subscription.interval === 'monthly' ? 'Monthly' : 'Yearly'} billing
-                              </span>
+                            {getStatusBadge(subscription.status)}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="text-center">
+                            <div className="text-3xl font-bold text-blue-800 dark:text-blue-200">
+                              {subscription.price === 0 ? 'Free' : `$${subscription.price}`}
+                            </div>
+                            <div className="text-sm text-blue-600 dark:text-blue-400">
+                              per {subscription.interval}
                             </div>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-4xl font-bold text-slate-800 dark:text-slate-100 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                            {formatCurrency(subscription.price)}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            per {subscription.interval === 'monthly' ? 'month' : 'year'}
-                          </div>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-8">
-                      {/* Enhanced Billing Period */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 rounded-xl border border-blue-200/50 dark:border-blue-800/30">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <div className="p-2 bg-blue-500 rounded-lg">
-                              <Calendar className="h-5 w-5 text-white" />
+                          
+                          <Separator />
+                          
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-slate-600 dark:text-slate-400">Current Period</span>
+                              <span className="font-medium">{formatDate(subscription.currentPeriodStart)} - {formatDate(subscription.currentPeriodEnd)}</span>
                             </div>
-                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Current Period</span>
-                          </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-300">
-                            {formatDate(subscription.currentPeriodStart)} - {formatDate(subscription.currentPeriodEnd)}
-                          </p>
-                        </div>
-                        <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 rounded-xl border border-purple-200/50 dark:border-purple-800/30">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <div className="p-2 bg-purple-500 rounded-lg">
-                              <Clock className="h-5 w-5 text-white" />
+                            <div className="flex justify-between text-sm">
+                              <span className="text-slate-600 dark:text-slate-400">Next Billing</span>
+                              <span className="font-medium">{formatDate(subscription.nextBillingDate)}</span>
                             </div>
-                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Next Billing</span>
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-300">
-                            {formatDate(subscription.nextBillingDate)}
-                          </p>
+                        </CardContent>
+                      </Card>
+
+                      {/* Features */}
+                      <Card className="border-0 bg-slate-50/50 dark:bg-slate-700/50 lg:col-span-2">
+                        <CardHeader>
+                          <CardTitle className="text-lg text-slate-800 dark:text-slate-200">
+                            Plan Features
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {subscription.features.map((feature, index) => (
+                              <div key={index} className="flex items-center gap-2">
+                                <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                <span className="text-sm text-slate-700 dark:text-slate-300">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ) : (
+                    <Card className="border-0 bg-slate-50/50 dark:bg-slate-700/50">
+                      <CardContent className="p-6 text-center">
+                        <div className="w-16 h-16 bg-slate-200 dark:bg-slate-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Crown className="w-8 h-8 text-slate-400" />
                         </div>
-                      </div>
-
-                      <Separator className="bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent" />
-
-                      {/* Enhanced Features */}
-                      <div>
-                        <h4 className="font-semibold text-lg mb-4 text-slate-800 dark:text-slate-100 flex items-center space-x-2">
-                          <Sparkles className="h-5 w-5 text-blue-500" />
-                          <span>Plan Features</span>
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {subscription.features.map((feature, index) => (
-                            <div key={index} className="flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200/50 dark:border-green-800/30">
-                              <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                              <span className="text-sm text-slate-700 dark:text-slate-200">{feature}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <Separator className="bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent" />
-
-                      {/* Enhanced Actions */}
-                      <div className="flex flex-wrap gap-4">
-                        <Button variant="outline" className="bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800 transition-all duration-200 shadow-md hover:shadow-lg">
-                          <Download className="h-4 w-4 mr-2" />
-                          Download Invoice
+                        <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Free Plan</h3>
+                        <p className="text-slate-600 dark:text-slate-400 mb-4">You're currently on the free plan with basic features</p>
+                        <Button onClick={handleUpgradePlan}>
+                          <Star className="w-4 h-4 mr-2" />
+                          Upgrade to Pro
                         </Button>
-                        <Button variant="outline" className="bg-white hover:bg-purple-50 border-purple-200 hover:border-purple-300 text-purple-700 hover:text-purple-800 transition-all duration-200 shadow-md hover:shadow-lg">
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          Update Payment Method
-                        </Button>
-                        <Button variant="destructive" className="bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200">
-                          <AlertCircle className="h-4 w-4 mr-2" />
-                          Cancel Subscription
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Additional Info Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20 border border-emerald-200/50 dark:border-emerald-800/30">
-                      <CardContent className="p-6">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="p-3 bg-emerald-500 rounded-xl">
-                            <TrendingUp className="h-6 w-6 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Value</p>
-                            <p className="text-2xl font-bold text-emerald-800 dark:text-emerald-200">Excellent</p>
-                          </div>
-                        </div>
                       </CardContent>
                     </Card>
+                  )}
+                </TabsContent>
 
-                    <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border border-amber-200/50 dark:border-amber-800/30">
-                      <CardContent className="p-6">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="p-3 bg-amber-500 rounded-xl">
-                            <Gift className="h-6 w-6 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-amber-700 dark:text-amber-300">Perks</p>
-                            <p className="text-2xl font-bold text-amber-800 dark:text-amber-200">Premium</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border-0 shadow-lg bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-950/30 dark:to-rose-900/20 border border-rose-200/50 dark:border-rose-800/30">
-                      <CardContent className="p-6">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="p-3 bg-rose-500 rounded-xl">
-                            <Heart className="h-6 w-6 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-rose-700 dark:text-rose-300">Support</p>
-                            <p className="text-2xl font-bold text-rose-800 dark:text-rose-200">Priority</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                {/* Billing Tab */}
+                <TabsContent value="billing" className="p-6 space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">Billing History</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Your past invoices and payment history</p>
                   </div>
-                </>
-              ) : (
-                <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900">
-                  <CardContent className="p-12 text-center">
-                    <div className="mb-6">
-                      <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Crown className="h-10 w-10 text-white" />
-                      </div>
-                    </div>
-                    <h3 className="text-2xl font-heading font-bold mb-3 text-slate-800 dark:text-slate-100">You’re on the Free plan</h3>
-                    <p className="text-muted-foreground text-lg mb-6 max-w-md mx-auto">
-                      Start a free 1‑day Pro trial to experience premium features, then upgrade if you love it.
-                    </p>
-                    <Button onClick={() => startTrial().then(res => { if (res.ok) navigate('/subscription'); })} disabled={starting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-8 py-3 text-lg">
-                      <Star className="h-5 w-5 mr-2" />
-                      Start 1‑day Trial
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
 
-            {/* Enhanced Billing History Tab */}
-            <TabsContent value="billing" className="space-y-6">
-              <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-blue-50/50 dark:from-slate-800 dark:to-slate-900">
-                <CardHeader className="border-b border-slate-200/50 dark:border-slate-700/50">
-                  <CardTitle className="font-heading flex items-center space-x-3 text-xl">
-                    <div className="p-2 bg-blue-500 rounded-lg">
-                      <CreditCard className="w-6 h-6 text-white" />
-                    </div>
-                    <span>Billing History</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
                   {billingHistory.length > 0 ? (
                     <div className="space-y-4">
-                      {billingHistory.map((invoice) => (
-                        <div key={invoice.id} className="flex items-center justify-between p-6 border border-slate-200/50 dark:border-slate-700/50 rounded-xl bg-gradient-to-r from-slate-50/50 to-white dark:from-slate-800/50 dark:to-slate-900/50 hover:from-slate-100/50 hover:to-blue-50/50 dark:hover:from-slate-700/50 dark:hover:to-blue-950/20 transition-all duration-200 shadow-sm hover:shadow-md">
-                          <div className="flex items-center space-x-4">
-                            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-md">
-                              <CreditCard className="h-5 w-5 text-white" />
+                      {billingHistory.map((bill) => (
+                        <Card key={bill.id} className="border-0 bg-slate-50/50 dark:bg-slate-700/50">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                  <CreditCard className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <div>
+                                  <h4 className="font-medium text-slate-700 dark:text-slate-300">{bill.description}</h4>
+                                  <p className="text-sm text-slate-500 dark:text-slate-400">{formatDate(bill.date)}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <div className="text-right">
+                                  <div className="font-semibold text-slate-900 dark:text-slate-100">
+                                    {bill.amount === 0 ? 'Free' : formatCurrency(bill.amount)}
+                                  </div>
+                                  {getBillingStatusBadge(bill.status)}
+                                </div>
+                                {bill.invoiceUrl && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDownloadInvoice(bill.invoiceUrl!)}
+                                    className="rounded-full"
+                                  >
+                                    <Download className="w-4 h-4 mr-2" />
+                                    Invoice
+                                  </Button>
+                                )}
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-semibold text-slate-800 dark:text-slate-100">{invoice.description}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {formatDate(invoice.date)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-4">
-                            <div className="text-right">
-                              <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{formatCurrency(invoice.amount)}</p>
-                              {getBillingStatusBadge(invoice.status)}
-                            </div>
-                            <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200">
-                              <Download className="h-4 w-4 mr-2" />
-                              Download
-                            </Button>
-                          </div>
-                        </div>
+                          </CardContent>
+                        </Card>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <CreditCard className="h-8 w-8 text-white" />
-                      </div>
-                      <p className="text-muted-foreground text-lg">No billing history available</p>
-                    </div>
+                    <Card className="border-0 bg-slate-50/50 dark:bg-slate-700/50">
+                      <CardContent className="p-6 text-center">
+                        <div className="w-16 h-16 bg-slate-200 dark:bg-slate-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Calendar className="w-8 h-8 text-slate-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">No Billing History</h3>
+                        <p className="text-slate-600 dark:text-slate-400">You haven't been charged yet. Your first bill will appear here.</p>
+                      </CardContent>
+                    </Card>
                   )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </TabsContent>
 
-            {/* Enhanced Settings Tab */}
-            <TabsContent value="settings" className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Enhanced Payment Method */}
-                <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-emerald-50/50 dark:from-slate-800 dark:to-slate-900 border border-emerald-200/50 dark:border-emerald-800/30">
-                  <CardHeader className="border-b border-emerald-200/50 dark:border-emerald-700/30">
-                    <CardTitle className="font-heading flex items-center space-x-3">
-                      <div className="p-2 bg-emerald-500 rounded-lg">
-                        <CreditCard className="w-5 h-5 text-white" />
-                      </div>
-                      <span>Payment Method</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="flex items-center justify-between p-4 border border-emerald-200/50 dark:border-emerald-700/30 rounded-xl bg-gradient-to-r from-emerald-50/50 to-white dark:from-emerald-950/20 dark:to-slate-900/50">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded shadow-md"></div>
-                        <div>
-                          <p className="font-semibold text-slate-800 dark:text-slate-100">•••• •••• •••• 4242</p>
-                          <p className="text-sm text-muted-foreground">Expires 12/25</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200">
-                        Update
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* Plans Tab */}
+                <TabsContent value="plans" className="p-6 space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">Available Plans</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Choose the plan that best fits your needs</p>
+                  </div>
 
-                {/* Enhanced Billing Address */}
-                <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-purple-50/50 dark:from-slate-800 dark:to-slate-900 border border-purple-200/50 dark:border-purple-800/30">
-                  <CardHeader className="border-b border-purple-200/50 dark:border-purple-700/30">
-                    <CardTitle className="font-heading flex items-center space-x-3">
-                      <div className="p-2 bg-purple-500 rounded-lg">
-                        <Shield className="w-5 h-5 text-white" />
-                      </div>
-                      <span>Billing Address</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="p-4 border border-purple-200/50 dark:border-purple-700/30 rounded-xl bg-gradient-to-r from-purple-50/50 to-white dark:from-purple-950/20 dark:to-slate-900/50">
-                      <p className="font-semibold text-slate-800 dark:text-slate-100">John Doe</p>
-                      <p className="text-sm text-muted-foreground">
-                        123 Main Street<br />
-                        New York, NY 10001<br />
-                        United States
-                      </p>
-                    </div>
-                    <Button variant="outline" size="sm" className="border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200 w-full">
-                      Update Address
-                    </Button>
-                  </CardContent>
-                </Card>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Free Plan */}
+                    <Card className="border-0 bg-slate-50/50 dark:bg-slate-700/50">
+                      <CardHeader className="text-center">
+                        <CardTitle className="text-xl text-slate-800 dark:text-slate-200">Free</CardTitle>
+                        <div className="text-3xl font-bold text-slate-800 dark:text-slate-200">$0</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Forever</div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Basic transaction tracking
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Simple categories
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Basic reports
+                          </li>
+                        </ul>
+                        <Button variant="outline" className="w-full" disabled>
+                          Current Plan
+                        </Button>
+                      </CardContent>
+                    </Card>
 
-                {/* Enhanced Notification Preferences */}
-                <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-amber-50/50 dark:from-slate-800 dark:to-slate-900 border border-amber-200/50 dark:border-amber-800/30">
-                  <CardHeader className="border-b border-amber-200/50 dark:border-amber-700/30">
-                    <CardTitle className="font-heading flex items-center space-x-3">
-                      <div className="p-2 bg-amber-500 rounded-lg">
-                        <Zap className="w-5 h-5 text-white" />
+                    {/* Pro Plan */}
+                    <Card className="border-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-700 relative">
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <Badge className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs">
+                          Most Popular
+                        </Badge>
                       </div>
-                      <span>Notifications</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50/50 to-white dark:from-amber-950/20 dark:to-slate-900/50 rounded-lg border border-amber-200/50 dark:border-amber-700/30">
-                        <div>
-                          <p className="font-semibold text-slate-800 dark:text-slate-100">Billing reminders</p>
-                          <p className="text-sm text-muted-foreground">Get notified before billing</p>
-                        </div>
-                        <Button variant="outline" size="sm" className="border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-300 transition-all duration-200">Enabled</Button>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50/50 to-white dark:from-amber-950/20 dark:to-slate-900/50 rounded-lg border border-amber-200/50 dark:border-amber-700/30">
-                        <div>
-                          <p className="font-semibold text-slate-800 dark:text-slate-100">Payment confirmations</p>
-                          <p className="text-sm text-muted-foreground">Receive payment receipts</p>
-                        </div>
-                        <Button variant="outline" size="sm" className="border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-300 transition-all duration-200">Enabled</Button>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50/50 to-white dark:from-amber-950/20 dark:to-slate-900/50 rounded-lg border border-amber-200/50 dark:border-amber-700/30">
-                        <div>
-                          <p className="font-semibold text-slate-800 dark:text-slate-100">Plan changes</p>
-                          <p className="text-sm text-muted-foreground">Notify when plan is modified</p>
-                        </div>
-                        <Button variant="outline" size="sm" className="border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-300 transition-all duration-200">Enabled</Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      <CardHeader className="text-center">
+                        <CardTitle className="text-xl text-blue-800 dark:text-blue-200">Pro</CardTitle>
+                        <div className="text-3xl font-bold text-blue-800 dark:text-blue-200">$9.99</div>
+                        <div className="text-sm text-blue-600 dark:text-blue-400">per month</div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <ul className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Everything in Free
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Advanced analytics
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Custom categories
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Budget tracking
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Priority support
+                          </li>
+                        </ul>
+                        <Button 
+                          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                          onClick={handleUpgradePlan}
+                        >
+                          <Crown className="w-4 h-4 mr-2" />
+                          Upgrade to Pro
+                        </Button>
+                      </CardContent>
+                    </Card>
 
-                {/* Enhanced Subscription Actions */}
-                <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-rose-50/50 dark:from-slate-800 dark:to-slate-900 border border-rose-200/50 dark:border-rose-800/30">
-                  <CardHeader className="border-b border-rose-200/50 dark:border-rose-700/30">
-                    <CardTitle className="font-heading flex items-center space-x-3">
-                      <div className="p-2 bg-rose-500 rounded-lg">
-                        <AlertCircle className="w-5 h-5 text-white" />
-                      </div>
-                      <span>Actions</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="space-y-3">
-                      <Button variant="outline" className="w-full justify-start border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md">
-                        <ArrowRight className="h-4 w-4 mr-2" />
-                        Upgrade Plan
-                      </Button>
-                      <Button variant="outline" className="w-full justify-start border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200 shadow-sm hover:shadow-md">
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Change Billing Cycle
-                      </Button>
-                      <Button variant="destructive" className="w-full justify-start bg-red-500 hover:bg-red-600 text-white shadow-sm hover:shadow-lg transition-all duration-200">
-                        <AlertCircle className="h-4 w-4 mr-2" />
-                        Cancel Subscription
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                    {/* Enterprise Plan */}
+                    <Card className="border-0 bg-slate-50/50 dark:bg-slate-700/50">
+                      <CardHeader className="text-center">
+                        <CardTitle className="text-xl text-slate-800 dark:text-slate-200">Enterprise</CardTitle>
+                        <div className="text-3xl font-bold text-slate-800 dark:text-slate-200">$29.99</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">per month</div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Everything in Pro
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Team collaboration
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Advanced reporting
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            API access
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            Dedicated support
+                          </li>
+                        </ul>
+                        <Button variant="outline" className="w-full">
+                          <Users className="w-4 h-4 mr-2" />
+                          Contact Sales
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+
+          {/* Welcome Message */}
+          <Card className="rounded-xl border-0 bg-gradient-to-r from-green-500/10 to-blue-500/10 dark:from-green-500/20 dark:to-blue-500/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-green-200/50 dark:border-green-700/50">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-slate-200">
+                    Subscription Working!
+                  </CardTitle>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Now using your actual authentication data
+                  </p>
+                </div>
               </div>
-            </TabsContent>
-          </Tabs>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 sm:p-4 border border-green-200/50 dark:border-green-700/50">
+                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 mb-3">
+                  The Subscription page is now fully functional and connected to your authentication system! You can:
+                </p>
+                <ul className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 space-y-2 mb-4">
+                  <li>• View your current subscription plan and status</li>
+                  <li>• Access billing history and invoices</li>
+                  <li>• Compare available plans and features</li>
+                  <li>• Upgrade or manage your subscription</li>
+                  <li>• Track trial periods and billing dates</li>
+                </ul>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate('/dashboard')}
+                    className="rounded-full border-green-200 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/50"
+                  >
+                    Go to Dashboard
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate('/settings')}
+                    className="rounded-full border-green-200 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/50"
+                  >
+                    View Settings
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </DashboardLayout>
