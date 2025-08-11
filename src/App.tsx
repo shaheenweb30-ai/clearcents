@@ -27,6 +27,10 @@ import NotFound from "./pages/NotFound";
 import Terms from "./pages/Terms";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
+import Checkout from "./pages/Checkout";
+
+console.log('App.tsx: Checkout component imported:', Checkout);
+console.log('App.tsx: Checkout component type:', typeof Checkout);
 
 import CategoriesBudget from "./pages/CategoriesBudget";
 
@@ -202,6 +206,21 @@ const AppContent = () => {
                       <Subscription />
                     </ProtectedRoute>
                   } />
+                  <Route path="/checkout" element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/test-checkout" element={
+                    <div className="min-h-screen flex items-center justify-center">
+                      <div className="text-center">
+                        <h1 className="text-2xl font-bold mb-4">Test Checkout Route Working!</h1>
+                        <p>If you can see this, routing is working.</p>
+                        <a href="/checkout?plan=pro" className="text-blue-600 underline">Try going to checkout</a>
+                      </div>
+                    </div>
+                  } />
+                  <Route path="/checkout-test" element={<Checkout />} />
                   <Route path="/help" element={<Help />} />
                   <Route path="/privacy" element={<Privacy />} />
                    <Route path="/terms" element={<Terms />} />

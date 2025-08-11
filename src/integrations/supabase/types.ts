@@ -641,6 +641,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_trials: {
+        Row: {
+          id: string
+          user_id: string
+          plan_type: string
+          started_at: string
+          ends_at: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          plan_type?: string
+          started_at?: string
+          ends_at?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          plan_type?: string
+          started_at?: string
+          ends_at?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

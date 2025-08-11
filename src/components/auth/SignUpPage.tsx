@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,8 @@ export const SignUpPage = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
 
   const validateEmail = () => {
     if (!email.trim()) {
@@ -133,13 +135,15 @@ export const SignUpPage = () => {
         if (data.user && !data.user.email_confirmed_at) {
           console.log('User created but email not confirmed. Confirmation email should be sent.');
           try { localStorage.setItem('lastEmail', email); } catch {}
+          
           toast({
             title: "Verify your email",
             description: "We sent you a verification link. Please verify to continue.",
           });
           navigate("/verify-email");
         } else if (data.user && data.user.email_confirmed_at) {
-          console.log('User created and email already confirmed. Redirecting to dashboard.');
+          console.log('User created and email already confirmed.');
+          
           toast({
             title: "Account created successfully!",
             description: "Welcome to CentraBudget!",

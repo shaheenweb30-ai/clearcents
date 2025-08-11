@@ -49,7 +49,7 @@ export const FinalCTA = () => {
           </div>
           <div className="flex items-center gap-2 text-white/80 text-sm">
             <CheckCircle className="w-4 h-4 text-green-400" />
-            <span>14-day free trial on Pro</span>
+                            <span>30-day money-back guarantee</span>
           </div>
           <div className="flex items-center gap-2 text-white/80 text-sm">
             <CheckCircle className="w-4 h-4 text-green-400" />

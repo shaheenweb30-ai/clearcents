@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,21 +27,22 @@ import {
   Sparkles,
   Gift,
   Heart,
-  Plus
+  Plus,
+  Database
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SubscriptionPlan {
   id: string;
   name: string;
   price: number;
-  interval: 'monthly' | 'yearly';
+  interval: 'monthly' | 'yearly' | 'forever';
   features: string[];
-  status: 'active' | 'cancelled' | 'expired' | 'trial';
+  status: 'active' | 'cancelled' | 'expired';
   currentPeriodStart: string;
-  currentPeriodEnd: string;
-  nextBillingDate: string;
+  currentPeriodEnd: string | null;
+  nextBillingDate: string | null;
 }
 
 interface BillingHistory {
@@ -63,51 +65,40 @@ const Subscription = () => {
   const { formatCurrency } = useSettings();
   const { user } = useAuth();
 
-  // Mock subscription data for demonstration
+  // Load subscription data - all users start with free plan
   useEffect(() => {
-    // Simulate loading subscription data
+    if (!user) return;
+    
+    console.log('Subscription useEffect - user:', user);
+    
     setLoadingSubscription(true);
     
-    // Mock trial subscription
-    const mockTrialSub: SubscriptionPlan = {
-      id: 'trial-1',
-      name: 'Pro Trial',
+    // All users start with free plan
+    const freePlan: SubscriptionPlan = {
+      id: 'free-1',
+      name: 'Free Plan',
       price: 0,
-      interval: 'monthly',
+      interval: 'forever',
       features: [
-        'Pro features unlocked during trial',
-        'Advanced analytics and insights',
-        'Priority customer support',
-        'Unlimited transactions',
-        'Custom categories and budgets',
-        'Export and reporting tools',
-        'Mobile app access',
-        'Cloud synchronization'
+        'Real-time expense tracking',
+        'Up to 10 categories',
+        '1 budget',
+        'AI insights (lite: 5 tips/mo)',
+        'CSV import & export',
+        'Multi-currency viewer',
+        'Community support'
       ],
-      status: 'trial',
-      currentPeriodStart: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
-      currentPeriodEnd: new Date(Date.now() + 23 * 24 * 60 * 60 * 1000).toISOString(), // 23 days from now
-      nextBillingDate: new Date(Date.now() + 23 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'active',
+      currentPeriodStart: new Date().toISOString(),
+      currentPeriodEnd: null,
+      nextBillingDate: null,
     };
 
-    // Mock billing history
-    const mockBillingHistory: BillingHistory[] = [
-      {
-        id: 'bill-1',
-        date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        amount: 0,
-        status: 'paid',
-        description: 'Pro Trial Started',
-        invoiceUrl: '#'
-      }
-    ];
-
-    setTimeout(() => {
-      setSubscription(mockTrialSub);
-      setBillingHistory(mockBillingHistory);
-      setLoadingSubscription(false);
-    }, 1000);
-  }, []);
+    setSubscription(freePlan);
+    setBillingHistory([]);
+    
+    setLoadingSubscription(false);
+  }, [user]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -117,8 +108,6 @@ const Subscription = () => {
         return <Badge className="bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700">Cancelled</Badge>;
       case 'expired':
         return <Badge className="bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-700/30 dark:text-slate-300 dark:border-slate-600">Expired</Badge>;
-      case 'trial':
-        return <Badge className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700">Trial</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -129,7 +118,7 @@ const Subscription = () => {
       case 'paid':
         return <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700">Paid</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700">Pending</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-red-900/30 dark:text-yellow-300 dark:border-yellow-700">Pending</Badge>;
       case 'failed':
         return <Badge className="bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700">Failed</Badge>;
       default:
@@ -146,28 +135,27 @@ const Subscription = () => {
   };
 
   const handleUpgradePlan = () => {
-    toast({
-      title: "Upgrade Plan",
-      description: "Redirecting to plan selection...",
-    });
-    // In a real app, this would redirect to a plan selection page
-  };
-
-  const handleCancelSubscription = () => {
-    if (window.confirm('Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your current billing period.')) {
-      toast({
-        title: "Subscription Cancelled",
-        description: "Your subscription will be cancelled at the end of the current period.",
-      });
+    console.log('=== handleUpgradePlan called ===');
+    console.log('subscription:', subscription);
+    console.log('navigate function:', typeof navigate);
+    
+    // Redirect to checkout for Pro upgrade
+    console.log('Redirecting to checkout...');
+    try {
+      navigate('/checkout?plan=pro');
+      console.log('Navigation called successfully');
+    } catch (error) {
+      console.error('Navigation error:', error);
     }
   };
 
   const handleDownloadInvoice = (invoiceUrl: string) => {
+    // In a real app, this would download the invoice
+    console.log('Downloading invoice from:', invoiceUrl);
     toast({
-      title: "Download Started",
-      description: "Your invoice is being prepared for download.",
+      title: "Invoice Download",
+      description: "Invoice download functionality would be implemented here.",
     });
-    // In a real app, this would trigger a file download
   };
 
   if (!user) {
@@ -222,42 +210,6 @@ const Subscription = () => {
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400">Manage your plan, billing, and premium features</p>
           </div>
 
-          {/* Trial Banner */}
-          {subscription?.status === 'trial' && (
-            <Card className="rounded-xl border-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 backdrop-blur-sm shadow-lg border border-blue-200/50 dark:border-blue-700/50">
-              <CardContent className="p-6">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200">
-                        Pro Trial Active! 🎉
-                      </h3>
-                      <p className="text-blue-700 dark:text-blue-300">
-                        You're currently enjoying a free trial of our Pro features
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Button 
-                      onClick={handleUpgradePlan}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    >
-                      <Crown className="w-4 h-4 mr-2" />
-                      Upgrade Now
-                    </Button>
-                    <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-950/50">
-                      <Clock className="w-4 h-4 mr-2" />
-                      {Math.ceil((new Date(subscription.nextBillingDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days left
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
           {/* Subscription Tabs */}
           <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg border border-white/20 dark:border-slate-700/30">
             <CardContent className="p-0">
@@ -311,13 +263,36 @@ const Subscription = () => {
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
                               <span className="text-slate-600 dark:text-slate-400">Current Period</span>
-                              <span className="font-medium">{formatDate(subscription.currentPeriodStart)} - {formatDate(subscription.currentPeriodEnd)}</span>
+                              <span className="font-medium">
+                                {subscription.interval === 'forever' 
+                                  ? 'Forever' 
+                                  : `${formatDate(subscription.currentPeriodStart)} - ${subscription.currentPeriodEnd ? formatDate(subscription.currentPeriodEnd) : 'Ongoing'}`
+                                }
+                              </span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-slate-600 dark:text-slate-400">Next Billing</span>
-                              <span className="font-medium">{formatDate(subscription.nextBillingDate)}</span>
-                            </div>
+                            {subscription.interval !== 'forever' && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-600 dark:text-slate-400">Next Billing</span>
+                                <span className="font-medium">{subscription.nextBillingDate ? formatDate(subscription.nextBillingDate) : 'N/A'}</span>
+                              </div>
+                            )}
                           </div>
+                          
+                          {/* Upgrade button for free plan users */}
+                          {subscription.price === 0 && subscription.status === 'active' && (
+                            <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                              <Button 
+                                onClick={handleUpgradePlan}
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0"
+                              >
+                                <Crown className="w-4 h-4 mr-2" />
+                                Upgrade to Pro
+                              </Button>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-2">
+                                Get unlimited access to all features
+                              </p>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
 
@@ -566,7 +541,7 @@ const Subscription = () => {
                   <li>• Access billing history and invoices</li>
                   <li>• Compare available plans and features</li>
                   <li>• Upgrade or manage your subscription</li>
-                  <li>• Track trial periods and billing dates</li>
+                  <li>• Track subscription periods and billing dates</li>
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Button 

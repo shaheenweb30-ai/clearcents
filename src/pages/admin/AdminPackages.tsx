@@ -36,7 +36,7 @@ export default function AdminPackages() {
         'Multi-currency viewer',
         'Community support'
       ] as string[],
-      buttonText: 'Start free',
+      buttonText: 'Current Plan',
       isPopular: false,
     },
     {
@@ -53,30 +53,32 @@ export default function AdminPackages() {
         'Receipt attachments (email-in beta)',
         'Priority email support',
         'Advanced analytics & reports',
-        'Team collaboration (up to 5 users)'
+        'Team collaboration features',
+        'API access',
+        'White-label options'
       ] as string[],
-      buttonText: 'Start 14-day trial',
+      buttonText: 'Upgrade to Pro',
       isPopular: true,
     },
     {
       key: 'enterprise',
       label: 'Enterprise',
       title: '',
-      description: 'For large organizations.',
+      description: 'Custom solutions for large teams.',
       price: '29',
       features: [
         'Everything in Pro',
-        'Unlimited team members',
-        'Advanced security & compliance',
-        'Custom integrations & API access',
+        'Custom integrations',
         'Dedicated account manager',
-        'Custom reporting & analytics',
-        'White-label options',
-        '24/7 priority support'
+        'SLA guarantees',
+        'Advanced security features',
+        'Custom reporting',
+        'On-premise deployment',
+        'Training & onboarding'
       ] as string[],
-      buttonText: 'Contact sales',
+      buttonText: 'Contact Sales',
       isPopular: false,
-    },
+    }
   ]);
 
   const [saving, setSaving] = useState(false);

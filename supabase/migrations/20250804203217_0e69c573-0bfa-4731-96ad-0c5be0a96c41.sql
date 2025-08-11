@@ -45,7 +45,7 @@ EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Insert default pricing content
 INSERT INTO public.pricing_content (section_id, title, subtitle, description, button_text, background_color) VALUES
-('hero', 'Choose Your Plan', 'Simple, transparent pricing for every budget', 'Start with our free plan and upgrade as you grow. No hidden fees, no surprises.', 'Start Free Trial', '#1a1a1a'),
-('starter', 'Starter', 'Perfect for individuals', 'Everything you need to get started with financial management.', 'Start Free', '#FFFFFF'),
-('pro', 'Pro', 'Best for small teams', 'Advanced features for growing businesses and teams.', 'Upgrade to Pro', '#FFFFFF'),
+('hero', 'Choose Your Plan', 'Start free, upgrade when you need more', 'Everyone starts with our free plan. Upgrade to Pro when you need advanced features and unlimited access.', 'Start Free', '#1a1a1a'),
+('free', 'Free', 'Perfect for getting started', 'Everything you need to begin your financial journey. No credit card required.', 'Current Plan', '#FFFFFF'),
+('pro', 'Pro', 'Best for growing users', 'Advanced features for users who need more power and flexibility.', 'Upgrade to Pro', '#FFFFFF'),
 ('enterprise', 'Enterprise', 'For large organizations', 'Custom solutions with dedicated support and advanced security.', 'Contact Sales', '#FFFFFF');

@@ -1,23 +1,26 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, ExternalLink } from "lucide-react";
+import { CreditCard, ExternalLink, Crown, Sparkles } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const SubscriptionCard = () => {
-  // Mock subscription data - in a real app, this would come from your subscription service
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Default to free plan for all users
   const subscription = {
-    planName: "CentraBudget Monthly",
+    planName: "Free Plan",
     status: "active" as const,
-    renewalDate: "2024-09-04",
-    price: "$9.99/month"
+    renewalDate: "Forever",
+    price: "Free"
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
         return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">Active</Badge>;
-      case 'trial':
-        return <Badge variant="secondary">Trial</Badge>;
       case 'expired':
         return <Badge variant="destructive">Expired</Badge>;
       default:
@@ -25,67 +28,65 @@ const SubscriptionCard = () => {
     }
   };
 
-  const handleUpdatePayment = () => {
-    // In a real app, this would redirect to Stripe billing portal
-    console.log("Redirecting to billing portal...");
+  const handleUpgrade = () => {
+    navigate('/checkout?plan=pro');
   };
 
   const handleManageSubscription = () => {
-    // In a real app, this would open subscription management
-    console.log("Opening subscription management...");
+    navigate('/subscription');
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Subscription & Billing</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-green-600" />
+          Subscription
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Subscription Details */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-foreground">{subscription.planName}</h3>
-              <p className="text-sm text-muted-foreground">{subscription.price}</p>
-            </div>
-            {getStatusBadge(subscription.status)}
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-medium text-sm text-gray-900 dark:text-gray-100">
+              {subscription.planName}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Current Plan
+            </p>
           </div>
-
-          {subscription.status === 'active' && (
-            <div className="bg-muted/50 p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">Next Billing Date</span>
-                <span className="text-sm text-muted-foreground">
-                  {new Date(subscription.renewalDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </span>
-              </div>
+          <div className="text-right">
+            <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {subscription.price}
             </div>
-          )}
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {subscription.renewalDate}
+            </div>
+          </div>
         </div>
 
-        {/* Management Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-4">
-          <Button variant="outline" onClick={handleUpdatePayment} className="flex items-center">
-            <CreditCard className="w-4 h-4 mr-2" />
-            Update Payment Method
-            <ExternalLink className="w-3 h-3 ml-2" />
+        {getStatusBadge(subscription.status)}
+
+        <div className="space-y-2">
+          <Button 
+            onClick={handleUpgrade}
+            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0"
+          >
+            <Crown className="h-4 w-4 mr-2" />
+            Upgrade to Pro
           </Button>
-          <Button onClick={handleManageSubscription}>
-            Manage Subscription
+          <Button 
+            onClick={handleManageSubscription}
+            variant="outline" 
+            className="w-full"
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            View Details
           </Button>
         </div>
 
-        {/* Billing History Link */}
-        <div className="pt-2 border-t border-border">
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-            View Billing History
-            <ExternalLink className="w-3 h-3 ml-2" />
-          </Button>
-        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+          Enjoy your free features. Upgrade to Pro when you need more.
+        </p>
       </CardContent>
     </Card>
   );

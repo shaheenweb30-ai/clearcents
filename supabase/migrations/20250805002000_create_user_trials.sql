@@ -1,9 +1,10 @@
--- Create user_trials table to support 1-day free trials
+-- Create user_trials table to support 14-day free trials
 create table if not exists public.user_trials (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
+  plan_type text not null default 'pro' check (plan_type in ('pro', 'enterprise')),
   started_at timestamptz not null default now(),
-  ends_at timestamptz not null default (now() + interval '1 day'),
+  ends_at timestamptz not null default (now() + interval '14 days'),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique(user_id)

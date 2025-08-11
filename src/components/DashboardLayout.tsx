@@ -44,8 +44,8 @@ import {
   Target,
   Menu,
   X,
+  Crown,
 } from "lucide-react";
-import { useTrial } from "@/hooks/useTrial";
 import { useResponsive } from "@/hooks/use-mobile";
 
 interface DashboardLayoutProps {
@@ -53,12 +53,11 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const { user, loading: authLoading } = useAuth(); // Add authLoading
+  const { user, loading: authLoading } = useAuth();
   const { shouldApplyDarkTheme } = useSettings();
   const { t } = useTranslation();
   const location = useLocation();
   const { isAdmin } = useUserRole(user);
-  const { isTrialActive, loading: loadingTrial } = useTrial(user);
   const { isMobile } = useResponsive();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -114,6 +113,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Settings", href: "/settings", icon: Settings },
     { name: "Subscription", href: "/subscription", icon: Package },
   ];
+
+  // Add upgrade option for free plan users
+  const upgradeNavigation = user ? [
+    { name: "Upgrade to Pro", href: "/checkout?plan=pro", icon: Crown, highlight: true }
+  ] : [];
 
   const supportNavigation = [
     { name: "Help & Support", href: "/help", icon: HelpCircle },
@@ -229,9 +233,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                             <span className="inline">{item.name}</span>
                           </Link>
                         </SidebarMenuButton>
-                        {item.href === '/subscription' && !loadingTrial && (
-                          <SidebarMenuBadge className={`text-xs px-2 py-1 ${isTrialActive ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'}`}>
-                            {isTrialActive ? 'Trial' : 'Free'}
+                        {item.href === '/subscription' && user && (
+                          <SidebarMenuBadge className={`text-xs px-2 py-1 bg-slate-200 text-slate-700`}>
+                            Free Plan
                           </SidebarMenuBadge>
                         )}
                       </SidebarMenuItem>
@@ -240,6 +244,35 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+
+            {/* Upgrade to Pro - Only show for free plan users */}
+            {upgradeNavigation.length > 0 && (
+              <SidebarGroup>
+                <SidebarGroupLabel className="text-xs sm:text-sm font-medium px-2 py-1 text-amber-600 font-semibold">
+                  Upgrade
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {upgradeNavigation.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <SidebarMenuItem key={item.name}>
+                          <SidebarMenuButton 
+                            asChild 
+                            className="text-sm sm:text-base bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 border-0"
+                          >
+                            <Link to={item.href}>
+                              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                              <span className="inline">{item.name}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
 
             {/* Support */}
             <SidebarGroup>
@@ -417,16 +450,32 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                         >
                           <item.icon className="h-4 w-4" />
                           {item.name}
-                          {item.href === '/subscription' && !loadingTrial && (
-                            <span className={`ml-auto text-xs px-2 py-1 rounded-full ${
-                              isTrialActive ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
-                            }`}>
-                              {isTrialActive ? 'Trial' : 'Free'}
+                          {item.href === '/subscription' && user && (
+                            <span className={`ml-auto text-xs px-2 py-1 rounded-full bg-slate-200 text-slate-700`}>
+                              Free Plan
                             </span>
                           )}
                         </Link>
                       ))}
                     </div>
+                    
+                    {/* Upgrade to Pro - Only show for free plan users */}
+                    {upgradeNavigation.length > 0 && (
+                      <div className="space-y-1">
+                        <div className="text-xs font-medium text-amber-600 uppercase tracking-wider px-2 py-1 font-semibold">Upgrade</div>
+                        {upgradeNavigation.map((item) => (
+                          <Link
+                            key={item.name}
+                            to={item.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
+                          >
+                            <item.icon className="h-4 w-4" />
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                     
                     {/* Support */}
                     <div className="space-y-1">

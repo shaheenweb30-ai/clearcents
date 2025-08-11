@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const faqs = [
   {
     question: "Do I need a card to start?",
-    answer: "No—Free plan requires no card. Pro trial may require a card depending on region."
+            answer: "No—Free plan requires no card. Pro subscription requires a card for billing."
   },
   {
     question: "Can I cancel anytime?",

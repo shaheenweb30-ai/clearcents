@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Sparkles, Crown } from "lucide-react";
+import { CheckCircle, Crown, Sparkles } from "lucide-react";
 import { BillingState } from "./BillingControls";
 import { useOptimizedPricingContent } from "@/hooks/useOptimizedPricingContent";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTrial } from "@/hooks/useTrial";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -19,17 +18,26 @@ type PlanKey = 'free' | 'pro' | 'enterprise';
 export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
   const { getContentBySection } = useOptimizedPricingContent();
   const { user } = useAuth();
-  const { startTrial, starting, isTrialActive } = useTrial(user);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const getPlan = (key: PlanKey) => {
     const content = getContentBySection(key);
+    
+    let buttonText = content?.button_text || 'Start Free';
+    
+    // Customize button text based on user state and plan type
+    if (key === 'free') {
+      buttonText = user ? 'Current Plan' : 'Get Started Free';
+    } else if (key === 'pro' && user) {
+      buttonText = 'Upgrade to Pro';
+    }
+    
     return {
       key,
       name: (content?.title || (key.charAt(0).toUpperCase() + key.slice(1))) as string,
-      cta: (content?.button_text || (key === 'enterprise' ? 'Contact sales' : key === 'pro' ? 'Start 1-day trial' : 'Start free')) as string,
-      ctaVariant: (key === 'free' ? 'outline' : 'default') as const,
+      cta: buttonText,
+      ctaVariant: (key === 'free' ? 'outline' : 'default') as 'outline' | 'default',
       features: (content?.features || []) as string[],
       smallPrint: (content?.description || '') as string,
       popular: Boolean(content?.is_popular),
@@ -52,34 +60,29 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
   };
 
   const handleCtaClick = async (planKey: PlanKey) => {
-    if (planKey === 'pro') {
+    if (planKey === 'free') {
       if (!user) {
-        navigate('/login');
+        // Redirect unauthenticated users to sign-up
+        navigate('/signup');
         return;
       }
-      if (isTrialActive) {
-        navigate('/subscription');
-        return;
-      }
-      const result = await startTrial();
-      if (result.ok) {
-        toast({
-          title: result.alreadyExists ? 'Trial already active' : 'Trial started',
-          description: 'You have full Pro access for the next 24 hours.',
-        });
-        navigate('/subscription');
-      } else {
-        toast({
-          title: 'Could not start trial',
-          description: 'Please try again in a moment.',
-          variant: 'destructive',
-        });
-      }
+      // If user is already signed in, they're already on the free plan
+      toast({
+        title: "You're already on the free plan!",
+        description: "Enjoy your free features. Upgrade to Pro when you need more.",
+      });
       return;
     }
 
-    if (planKey === 'free') {
-      navigate('/');
+    if (planKey === 'pro') {
+      if (!user) {
+        // Redirect unauthenticated users to sign-up
+        navigate('/signup');
+        return;
+      }
+      
+      // For authenticated users, redirect directly to checkout
+      navigate('/checkout?plan=pro');
       return;
     }
 
@@ -105,11 +108,11 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
             Choose Your Plan
           </h2>
           <p className="font-nunito text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            Start with our free plan and upgrade as you grow. All plans include core features with no hidden fees.
+            Start with our free plan and upgrade to Pro when you need more features. No hidden fees, no surprises.
           </p>
         </div>
 
-        {/* Billing Toggle */}
+        {/* Billing Toggle - Only show for Pro plan */}
         <div className="flex justify-center mb-8 sm:mb-12">
           <div className="bg-white rounded-full p-1 shadow-lg border border-gray-200">
             <div className="flex space-x-1">
@@ -139,7 +142,7 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
         </div>
 
         {/* Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 max-w-5xl mx-auto">
           {plans.map((plan) => (
             <Card 
               key={plan.key} 
@@ -147,7 +150,7 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
                 plan.popular 
                   ? 'ring-2 ring-blue-500 shadow-xl' 
                   : 'shadow-lg hover:shadow-xl'
-              }`}
+              } ${plan.key === 'free' && !!user ? 'ring-2 ring-green-500 bg-green-50/30' : ''}`}
             >
               {plan.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-2 text-sm font-semibold">
@@ -155,9 +158,15 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
                 </div>
               )}
               
-              <CardHeader className={`text-center pb-4 ${plan.popular ? 'pt-12' : 'pt-6'}`}>
+              {plan.key === 'free' && !!user && (
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-center py-2 text-sm font-semibold">
+                  Your Current Plan
+                </div>
+              )}
+              
+              <CardHeader className={`text-center pb-4 ${plan.popular || (plan.key === 'free' && !!user) ? 'pt-12' : 'pt-6'}`}>
                 <div className="flex items-center justify-center mb-2">
-                  {plan.key === 'free' && <Sparkles className="w-5 h-5 text-gray-600 mr-2" />}
+                  {plan.key === 'free' && <Sparkles className="w-5 h-5 text-green-600 mr-2" />}
                   {plan.key === 'pro' && <Crown className="w-5 h-5 text-yellow-600 mr-2" />}
                   {plan.key === 'enterprise' && <Crown className="w-5 h-5 text-purple-600 mr-2" />}
                   <h3 className="font-nunito font-bold text-xl sm:text-2xl lg:text-3xl">
@@ -172,9 +181,14 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
                   <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
                     {plan.key === 'enterprise' ? 'Contact us' : getDisplayPrice(plan.price)}
                   </span>
-                  {plan.key !== 'enterprise' && (
+                  {plan.key !== 'enterprise' && plan.key !== 'free' && (
                     <span className="text-lg sm:text-xl text-gray-600 ml-1">
                       /{billing.cycle === 'yearly' ? 'year' : 'month'}
+                    </span>
+                  )}
+                  {plan.key === 'free' && (
+                    <span className="text-lg sm:text-xl text-gray-600 ml-1">
+                      /forever
                     </span>
                   )}
                 </div>
@@ -201,9 +215,17 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
                   size="lg"
                   className="w-full font-semibold text-sm sm:text-base"
                   onClick={() => handleCtaClick(plan.key)}
+                  disabled={plan.key === 'free' && !!user}
                 >
                   {plan.cta}
                 </Button>
+                
+                {/* Additional info for free plan */}
+                {plan.key === 'free' && !!user && (
+                  <p className="text-xs text-green-600 text-center mt-2">
+                    ✓ You're currently on the free plan
+                  </p>
+                )}
               </CardContent>
             </Card>
           ))}

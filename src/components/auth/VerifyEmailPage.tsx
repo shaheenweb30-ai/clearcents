@@ -127,11 +127,8 @@ export const VerifyEmailPage = () => {
                 description: "Welcome to CentraBudget! Redirecting to dashboard...",
               });
               
-              // Force page refresh then redirect
-              setTimeout(() => {
-                console.log('🚀 DEBUG: Executing redirect to dashboard...');
-                window.location.href = '/dashboard';
-              }, 1000);
+              // Redirect to dashboard
+              navigate("/dashboard");
             } else {
               console.error('❌ ERROR: User not properly authenticated after refresh');
               setVerificationStatus('error');
@@ -162,9 +159,8 @@ export const VerifyEmailPage = () => {
               description: "Redirecting to dashboard...",
             });
             
-            // Force redirect
-            console.log('🚀 DEBUG: Redirecting to dashboard...');
-            window.location.href = '/dashboard';
+            // Redirect to dashboard
+            navigate("/dashboard");
           } else {
             console.log('⚠️ WARNING: User not verified yet');
             setVerificationStatus('pending');
