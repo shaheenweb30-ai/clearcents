@@ -11,3 +11,6 @@ export { TwoFactorPage } from './TwoFactorPage';
 
 // Demo Router
 export { AuthRouterDemo } from './AuthRouterDemo';
+
+// Route Protection
+export { ProtectedRoute } from './ProtectedRoute';

@@ -49,7 +49,8 @@ import {
   ResetPasswordPage, 
   VerifyEmailPage, 
   TwoFactorPage,
-  AuthRouterDemo 
+  AuthRouterDemo,
+  ProtectedRoute
 } from "@/components/auth";
 
 
@@ -163,17 +164,45 @@ const AppContent = () => {
                     <Route path="/two-factor" element={<TwoFactorPage />} />
                     <Route path="/auth-demo" element={<AuthRouterDemo />} />
                     
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/transactions" element={<Transactions />} />
+                    <Route path="/dashboard" element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/transactions" element={
+                      <ProtectedRoute>
+                        <Transactions />
+                      </ProtectedRoute>
+                    } />
 
-                    <Route path="/categories-budget" element={<CategoriesBudget />} />
+                    <Route path="/categories-budget" element={
+                      <ProtectedRoute>
+                        <CategoriesBudget />
+                      </ProtectedRoute>
+                    } />
 
             
-                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/reports" element={
+                      <ProtectedRoute>
+                        <Reports />
+                      </ProtectedRoute>
+                    } />
 
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/subscription" element={<Subscription />} />
+                    <Route path="/settings" element={
+                      <ProtectedRoute>
+                        <Settings />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/profile" element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/subscription" element={
+                      <ProtectedRoute>
+                        <Subscription />
+                      </ProtectedRoute>
+                    } />
                     <Route path="/help" element={<Help />} />
                     <Route path="/privacy" element={<Privacy />} />
                      <Route path="/terms" element={<Terms />} />

@@ -300,7 +300,7 @@ const Help = () => {
               </div>
               <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Not Authenticated</h3>
               <p className="text-slate-600 dark:text-slate-400 mb-4">Please log in to access help and support.</p>
-              <Button onClick={() => navigate('/login')}>
+              <Button onClick={() => navigate('/login')} className="rounded-full">
                 Go to Login
               </Button>
             </div>

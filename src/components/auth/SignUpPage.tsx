@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Sparkles, User, Mail, Lock, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getAuthRedirectUrl, getEmailRedirectUrl } from "@/lib/auth-utils";
 
 export const SignUpPage = () => {
   const [step, setStep] = useState(1);
@@ -133,7 +134,7 @@ export const SignUpPage = () => {
         email: email,
         password: formData.password,
         options: {
-          emailRedirectTo: finalRedirectUrl,
+          emailRedirectTo: getEmailRedirectUrl(),
           data: {
             full_name: formData.fullName,
           }
@@ -198,7 +199,7 @@ export const SignUpPage = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://www.centrabudget.com/dashboard',
+          redirectTo: getAuthRedirectUrl('/dashboard'),
         },
       });
       if (error) {

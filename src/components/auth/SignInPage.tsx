@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getAuthRedirectUrl } from "@/lib/auth-utils";
 
 export const SignInPage = () => {
   const [formData, setFormData] = useState({
@@ -111,7 +112,7 @@ export const SignInPage = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          // Remove redirectTo - let the app handle the callback
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -122,27 +123,14 @@ export const SignInPage = () => {
       if (error) {
         console.error('Google OAuth sign in error:', error);
         setError(error.message);
-        toast({
-          title: 'Google sign in failed',
-          description: error.message,
-          variant: "destructive",
-        });
       } else {
         console.log('Google OAuth sign in initiated:', data);
-        
-        toast({
-          title: 'Google sign in initiated',
-          description: "Redirecting to authentication...",
-        });
+        // The user will be redirected back to your app
+        // Your AuthContext will handle the session automatically
       }
     } catch (error) {
       console.error('Google OAuth sign in error:', error);
       setError("An unexpected error occurred. Please try again.");
-      toast({
-        title: 'Google sign in failed',
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setLoading(false);
     }

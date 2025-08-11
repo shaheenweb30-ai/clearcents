@@ -18,6 +18,9 @@ export const ProtectedRoute = ({
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Add debugging
+  console.log('🔍 DEBUG: ProtectedRoute - User:', !!user, 'EmailVerified:', isEmailVerified, 'Loading:', loading);
+
   useEffect(() => {
     // Don't redirect while loading
     if (loading) return;
@@ -35,6 +38,7 @@ export const ProtectedRoute = ({
 
     // If email verification is required and user is not verified, redirect to verification
     if (requireEmailVerification && !isEmailVerified) {
+      console.log('🔍 DEBUG: ProtectedRoute - Email not verified, redirecting to verification');
       toast({
         title: "Email verification required",
         description: "Please verify your email address to access this page.",
