@@ -27,7 +27,7 @@ const Terms = () => {
                           <h3>3. Subscriptions</h3>
             <p>
               We may offer paid subscriptions. Subscription access may be revoked if
-                abuse is detected. Details of subscription plans are available on the Pricing page.
+                abuse is detected.
               </p>
 
               <h3>4. Privacy</h3>

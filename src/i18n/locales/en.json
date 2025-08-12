@@ -30,6 +30,7 @@
     "contact": "Contact",
     "features": "Features",
     "pricing": "Pricing",
+
     "home": "Home"
   },
   "navigation": {
@@ -211,7 +212,7 @@
     "pageManagement": "Page Management",
     "footerManagement": "Footer Management",
     "faqManagement": "FAQ Management",
-    "pricingManagement": "Pricing Management",
+
     "adminSetup": "Admin Setup",
     "resetData": "Reset All Data",
     "resetDataDescription": "Permanently delete all transactions and budgets",

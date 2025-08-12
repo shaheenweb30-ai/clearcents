@@ -15,22 +15,22 @@ import './i18n';
 import Homepage1 from "./pages/Homepage1";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
+
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
-import Subscription from "./pages/Subscription";
+
 import Help from "./pages/Help";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import Terms from "./pages/Terms";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
-import Checkout from "./pages/Checkout";
 
-console.log('App.tsx: Checkout component imported:', Checkout);
-console.log('App.tsx: Checkout component type:', typeof Checkout);
+
+
 
 import CategoriesBudget from "./pages/CategoriesBudget";
 
@@ -42,9 +42,7 @@ import AdminBranding from "./pages/admin/AdminBranding";
 import AdminImages from "./pages/admin/AdminImages";
 import AdminFooter from "./pages/admin/AdminFooter";
 import AdminFAQ from "./pages/admin/AdminFAQ";
-import AdminPackages from "./pages/admin/AdminPackages";
 import AdminUsers from "./pages/admin/AdminUsers";
-import AdminComparison from "./pages/admin/AdminComparison";
 import AdminTranslations from "./pages/admin/AdminTranslations";
 
 // Import new auth pages
@@ -155,6 +153,7 @@ const AppContent = () => {
                   <Route path="/" element={<Homepage1 />} />
                   <Route path="/features" element={<Features />} />
                   <Route path="/pricing" element={<Pricing />} />
+
                   <Route path="/contact" element={<Contact />} />
                   
                   {/* Authentication Routes */}
@@ -201,26 +200,8 @@ const AppContent = () => {
                       <Profile />
                     </ProtectedRoute>
                   } />
-                  <Route path="/subscription" element={
-                    <ProtectedRoute>
-                      <Subscription />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/checkout" element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/test-checkout" element={
-                    <div className="min-h-screen flex items-center justify-center">
-                      <div className="text-center">
-                        <h1 className="text-2xl font-bold mb-4">Test Checkout Route Working!</h1>
-                        <p>If you can see this, routing is working.</p>
-                        <a href="/checkout?plan=pro" className="text-blue-600 underline">Try going to checkout</a>
-                      </div>
-                    </div>
-                  } />
-                  <Route path="/checkout-test" element={<Checkout />} />
+
+
                   <Route path="/help" element={<Help />} />
                   <Route path="/privacy" element={<Privacy />} />
                    <Route path="/terms" element={<Terms />} />
@@ -231,9 +212,7 @@ const AppContent = () => {
                   <Route path="/admin/images" element={<AdminImages />} />
                   <Route path="/admin/footer" element={<AdminFooter />} />
                   <Route path="/admin/faq" element={<AdminFAQ />} />
-                  <Route path="/admin/packages" element={<AdminPackages />} />
                   <Route path="/admin/users" element={<AdminUsers />} />
-                  <Route path="/admin/comparison" element={<AdminComparison />} />
                   <Route path="/admin/translations" element={<AdminTranslations />} />
                   
                   <Route path="*" element={<NotFound />} />

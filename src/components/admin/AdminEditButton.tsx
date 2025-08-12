@@ -11,12 +11,12 @@ import { Database } from '@/integrations/supabase/types';
 
 type HomepageContent = Database['public']['Tables']['homepage_content']['Row'];
 type FeaturesContent = Database['public']['Tables']['features_content']['Row'];
-type PricingContent = Database['public']['Tables']['pricing_content']['Row'];
+
 
 interface AdminEditButtonProps {
   sectionId: string;
-  currentContent?: HomepageContent | FeaturesContent | PricingContent;
-  contentType?: 'homepage' | 'features' | 'pricing';
+  currentContent?: HomepageContent | FeaturesContent;
+  contentType?: 'homepage' | 'features';
   updateContent: (sectionId: string, updates: Record<string, unknown>) => Promise<unknown>;
   refetch?: () => Promise<void>;
 }
@@ -53,7 +53,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
         title_color: currentContent.title_color || '#1F2937',
         subtitle_color: currentContent.subtitle_color || '#6B7280',
         description_color: currentContent.description_color || '#666666',
-        background_color: (currentContent as FeaturesContent | PricingContent).background_color || '#FFFFFF',
+        background_color: (currentContent as FeaturesContent).background_color || '#FFFFFF',
         image_url: currentContent.image_url || ''
       });
     }
@@ -358,7 +358,7 @@ export function AdminEditButton({ sectionId, currentContent, contentType = 'home
             </div>
           </div>
           
-          {(contentType === 'features' || contentType === 'pricing') && (
+          {contentType === 'features' && (
             <div>
               <Label htmlFor="background_color">Background Color</Label>
               <Input

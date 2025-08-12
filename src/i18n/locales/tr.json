@@ -30,6 +30,7 @@
     "contact": "İletişim",
     "features": "Özellikler",
     "pricing": "Fiyatlandırma",
+
     "home": "Ana Sayfa"
   },
   "navigation": {
@@ -211,7 +212,7 @@
     "pageManagement": "Sayfa Yönetimi",
     "footerManagement": "Alt Bilgi Yönetimi",
     "faqManagement": "SSS Yönetimi",
-    "pricingManagement": "Fiyatlandırma Yönetimi",
+
     "adminSetup": "Yönetici Kurulumu",
     "resetData": "Tüm Verileri Sıfırla",
     "resetDataDescription": "Tüm işlemleri ve bütçeleri kalıcı olarak silin",

@@ -176,7 +176,7 @@ export default function AdminFAQ() {
           </Link>
           <h1 className="text-3xl font-bold text-foreground">Manage FAQ</h1>
           <p className="text-muted-foreground mt-2">
-            Manage frequently asked questions for your pricing page
+            Manage frequently asked questions for your website
           </p>
         </div>
 

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Palette, FileText, Link, HelpCircle, Package } from "lucide-react";
+import { Palette, FileText, Link, HelpCircle } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { useUserRole } from "@/hooks/useUserRole";
 
@@ -44,13 +44,7 @@ const AdminManagementCard = ({ user }: AdminManagementCardProps) => {
       path: "/admin/faq",
       color: "text-orange-600"
     },
-    {
-      title: "Pricing Management",
-      description: "Manage pricing packages and content",
-      icon: Package,
-      path: "/admin/packages", 
-      color: "text-red-600"
-    }
+
   ];
 
   return (

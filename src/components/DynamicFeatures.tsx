@@ -608,7 +608,7 @@ export function DynamicFeatures() {
                 <li><a href="/" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Overview</a></li>
                 <li><a href="/features" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Features</a></li>
                 <li><a href="/integrations" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Integrations</a></li>
-                <li><a href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">Pricing</a></li>
+
               </ul>
             </div>
 
