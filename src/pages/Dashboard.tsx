@@ -15,10 +15,12 @@ import {
 import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "@/contexts/TransactionContext";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { transactions, categories } = useTransactions();
+  const { preferences, formatCurrency } = useSettings();
   
   // Calculate financial metrics
   const totalIncome = transactions
@@ -57,6 +59,16 @@ const Dashboard = () => {
   const totalBudget = categories.reduce((sum, cat) => sum + cat.budget, 0);
   const totalSpent = categories.reduce((sum, cat) => sum + cat.spent, 0);
   const budgetProgress = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+
+  // Get budget period display text
+  const getBudgetPeriodText = () => {
+    const period = preferences?.budgetPeriod || 'monthly';
+    switch (period) {
+      case 'quarterly': return 'Quarterly';
+      case 'yearly': return 'Yearly';
+      default: return 'Monthly';
+    }
+  };
   
   // Get top spending categories
   const topCategories = categories
@@ -64,15 +76,7 @@ const Dashboard = () => {
     .sort((a, b) => b.spent - a.spent)
     .slice(0, 3);
   
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+
   
   return (
     <DashboardLayout>
@@ -127,7 +131,7 @@ const Dashboard = () => {
                 <div className="flex items-center gap-2 mt-2">
                   <span className="inline-flex items-center gap-1 text-xs sm:text-sm text-green-600 dark:text-green-400">
                     <TrendingUp className="w-2 h-2 sm:w-3 sm:h-3" />
-                    {formatCurrency(monthlyIncome - monthlyExpenses)} this month
+                    {formatCurrency(monthlyIncome - monthlyExpenses)} this {getBudgetPeriodText().toLowerCase()}
                   </span>
                 </div>
               </CardContent>
@@ -172,7 +176,7 @@ const Dashboard = () => {
             {/* Budget Summary */}
             <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 dark:border-slate-700/30">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Monthly Budget</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">{getBudgetPeriodText()} Budget</CardTitle>
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <ShieldCheck className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>

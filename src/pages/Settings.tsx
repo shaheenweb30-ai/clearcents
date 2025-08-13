@@ -6,42 +6,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
+
 import { 
-  User as UserIcon, 
-  Bell, 
   Palette, 
   Globe, 
   CreditCard,
   Download,
   Trash2,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Clock,
   Settings as SettingsIcon,
   Save,
   RefreshCw,
   AlertTriangle,
   CheckCircle,
-  Info,
   Shield,
-  Plus,
-  ChevronDown
+  ChevronDown,
+  Plus
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState("profile");
-  const [savingProfile, setSavingProfile] = useState(false);
+  const [activeTab, setActiveTab] = useState("preferences");
   const [savingPreferences, setSavingPreferences] = useState(false);
   const [savedStates, setSavedStates] = useState({
-    profile: false,
     preferences: false
   });
   
@@ -49,31 +39,34 @@ export default function Settings() {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { user } = useAuth();
-  const { preferences, userProfile, updatePreferences, updateUserProfile } = useSettings();
+  const { preferences, updatePreferences } = useSettings();
 
-  // Form states
-  const [profileForm, setProfileForm] = useState({
-    firstName: userProfile?.firstName || "",
-    lastName: userProfile?.lastName || "",
-    email: userProfile?.email || "",
-    phone: userProfile?.phone || "",
-    address: userProfile?.address || "",
-    timezone: userProfile?.timezone || "UTC",
-    language: userProfile?.language || "en"
-  });
+  // Safety check - ensure preferences exist
+  if (!preferences) {
+    return (
+      <DashboardLayout>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <SettingsIcon className="w-8 h-8 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Loading Settings</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">Please wait while we load your settings...</p>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+
 
   const [preferencesForm, setPreferencesForm] = useState({
-    theme: preferences?.theme || 'system' as 'light' | 'dark' | 'system',
     currency: preferences?.currency || 'USD',
     budgetPeriod: (preferences?.budgetPeriod ?? 'monthly') as 'monthly' | 'quarterly' | 'yearly',
     dateFormat: preferences?.dateFormat || 'MM/DD/YYYY',
-    timeFormat: preferences?.timeFormat || '12h' as '12h' | '24h',
-    notifications: preferences?.notifications || {
-      transactions: true,
-      budgets: true,
-      reports: true,
-      security: true
-    }
+    timeFormat: preferences?.timeFormat || '12h' as '12h' | '24h'
   });
 
   const [currencySearchTerm, setCurrencySearchTerm] = useState("");
@@ -177,80 +170,41 @@ export default function Settings() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam && ['profile', 'preferences', 'security', 'admin'].includes(tabParam)) {
-      setActiveTab(tabParam as 'profile' | 'preferences' | 'security' | 'admin');
+    if (tabParam && ['preferences', 'billing', 'admin'].includes(tabParam)) {
+      setActiveTab(tabParam as 'preferences' | 'billing' | 'admin');
+    } else if (tabParam && tabParam === 'profile') {
+      // Redirect invalid profile tab to preferences
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('tab', 'preferences');
+      window.history.replaceState({}, '', newUrl.toString());
+      setActiveTab('preferences');
     }
   }, []);
 
   // Load user preferences
   useEffect(() => {
-    if (preferences) {
+    try {
+      if (preferences) {
+        setPreferencesForm({
+          currency: preferences.currency || 'USD',
+          budgetPeriod: preferences.budgetPeriod || 'monthly',
+          dateFormat: preferences.dateFormat || 'MM/DD/YYYY',
+          timeFormat: preferences.timeFormat || '12h'
+        });
+      }
+    } catch (error) {
+      console.error('Error loading preferences:', error);
+      // Set default values if there's an error
       setPreferencesForm({
-        theme: preferences.theme || 'system',
-        currency: preferences.currency || 'USD',
-        budgetPeriod: preferences.budgetPeriod || 'monthly',
-        dateFormat: preferences.dateFormat || 'MM/DD/YYYY',
-        timeFormat: preferences.timeFormat || '12h',
-        notifications: {
-          transactions: preferences.notifications?.transactions ?? true,
-          budgets: preferences.notifications?.budgets ?? true,
-          reports: preferences.notifications?.reports ?? true,
-          security: preferences.notifications?.security ?? true,
-        }
+        currency: 'USD',
+        budgetPeriod: 'monthly',
+        dateFormat: 'MM/DD/YYYY',
+        timeFormat: '12h'
       });
     }
   }, [preferences]);
 
-  // Update profile form when userProfile changes
-  useEffect(() => {
-    if (userProfile) {
-      setProfileForm({
-        firstName: userProfile.firstName || "",
-        lastName: userProfile.lastName || "",
-        email: userProfile.email || "",
-        phone: userProfile.phone || "",
-        address: userProfile.address || "",
-        timezone: userProfile.timezone || "UTC",
-        language: userProfile.language || "en"
-      });
-    }
-  }, [userProfile]);
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSavingProfile(true);
-    
-    try {
-      // Update the context with new profile data
-      updateUserProfile({
-        firstName: profileForm.firstName,
-        lastName: profileForm.lastName,
-        address: profileForm.address,
-        timezone: profileForm.timezone,
-        language: profileForm.language
-      });
-
-      setSavedStates(prev => ({ ...prev, profile: true }));
-      toast({
-        title: "Profile Updated! ✨",
-        description: "Your profile information has been saved successfully.",
-      });
-
-      // Reset saved state after 3 seconds
-      setTimeout(() => {
-        setSavedStates(prev => ({ ...prev, profile: false }));
-      }, 3000);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setSavingProfile(false);
-    }
-  };
 
   const handlePreferencesUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -259,12 +213,17 @@ export default function Settings() {
     try {
       // Update the context with new preferences
       updatePreferences({
-        theme: preferencesForm.theme,
+        theme: 'light', // Always light theme
         currency: preferencesForm.currency,
         budgetPeriod: preferencesForm.budgetPeriod,
         dateFormat: preferencesForm.dateFormat,
         timeFormat: preferencesForm.timeFormat,
-        notifications: preferencesForm.notifications
+        notifications: {
+          transactions: false,
+          budgets: false,
+          reports: false,
+          security: false
+        }
       });
 
       setSavedStates(prev => ({ ...prev, preferences: true }));
@@ -333,31 +292,28 @@ export default function Settings() {
     );
   }
 
-  return (
-    <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold shadow-lg mb-3 sm:mb-4">
-              <SettingsIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-              Application Settings
+  try {
+    return (
+      <DashboardLayout>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Header */}
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold shadow-lg mb-3 sm:mb-4">
+                <SettingsIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                Application Settings
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-2 sm:mb-3">
+                Settings & Preferences
+              </h1>
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400">Customize your experience and manage your account</p>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-2 sm:mb-3">
-              Settings & Preferences
-            </h1>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400">Customize your experience and manage your account</p>
-          </div>
 
           {/* Settings Tabs */}
           <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg border border-white/20 dark:border-slate-700/30">
             <CardContent className="p-0">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4 bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-lg m-6">
-                  <TabsTrigger value="profile" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
-                    <UserIcon className="w-4 h-4 mr-2" />
-                    Profile
-                  </TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3 bg-slate-100/50 dark:bg-slate-700/50 p-1 rounded-lg m-6">
                   <TabsTrigger value="preferences" className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
                     <Palette className="w-4 h-4 mr-2" />
                     Preferences
@@ -372,112 +328,9 @@ export default function Settings() {
                   </TabsTrigger>
                 </TabsList>
 
-                {/* Profile Tab */}
-                <TabsContent value="profile" className="p-6 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">Profile Information</h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Update your personal information and contact details</p>
-                    </div>
-                    {savedStates.profile && (
-                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Saved!
-                      </Badge>
-                    )}
-                  </div>
 
-                  <form onSubmit={handleProfileUpdate} className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
-                          value={profileForm.firstName}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, firstName: e.target.value }))}
-                          placeholder="Enter first name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
-                          value={profileForm.lastName}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, lastName: e.target.value }))}
-                          placeholder="Enter last name"
-                        />
-                      </div>
-                      <div className="space-y-2 sm:col-span-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                          id="email"
-                          value={profileForm.email}
-                          disabled
-                          className="bg-slate-50 dark:bg-slate-700"
-                        />
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          Email cannot be changed for security reasons
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                          id="phone"
-                          value={profileForm.phone}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
-                          placeholder="Enter phone number"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="timezone">Timezone</Label>
-                        <select
-                          id="timezone"
-                          value={profileForm.timezone}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, timezone: e.target.value }))}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                        >
-                          <option value="UTC">UTC</option>
-                          <option value="America/New_York">Eastern Time</option>
-                          <option value="America/Chicago">Central Time</option>
-                          <option value="America/Denver">Mountain Time</option>
-                          <option value="America/Los_Angeles">Pacific Time</option>
-                          <option value="Europe/London">London</option>
-                          <option value="Europe/Paris">Paris</option>
-                          <option value="Asia/Tokyo">Tokyo</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2 sm:col-span-2">
-                        <Label htmlFor="address">Address</Label>
-                        <Input
-                          id="address"
-                          value={profileForm.address}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
-                          placeholder="Enter your address"
-                        />
-                      </div>
-                    </div>
 
-                    <div className="flex justify-end">
-                      <Button
-                        type="submit"
-                        disabled={savingProfile}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                      >
-                        {savingProfile ? (
-                          <>
-                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="w-4 h-4 mr-2" />
-                            Save Profile
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </form>
-                </TabsContent>
+
 
                 {/* Preferences Tab */}
                 <TabsContent value="preferences" className="p-6 space-y-6">
@@ -501,16 +354,9 @@ export default function Settings() {
                         <div className="space-y-3">
                           <div className="space-y-2">
                             <Label htmlFor="theme">Theme</Label>
-                            <select
-                              id="theme"
-                              value={preferencesForm.theme}
-                              onChange={(e) => setPreferencesForm(prev => ({ ...prev, theme: e.target.value as 'light' | 'dark' | 'system' }))}
-                              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                            >
-                              <option value="light">Light</option>
-                              <option value="dark">Dark</option>
-                              <option value="system">System</option>
-                            </select>
+                            <div className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 dark:bg-slate-700 dark:text-slate-200">
+                              Light (Fixed)
+                            </div>
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="currency">Currency</Label>
@@ -581,67 +427,7 @@ export default function Settings() {
                       </div>
                     </div>
 
-                                         <div className="space-y-4">
-                       <h4 className="font-medium text-slate-700 dark:text-slate-300">Notifications</h4>
-                       <div className="space-y-3">
-                         <div className="flex items-center justify-between">
-                           <div>
-                             <Label htmlFor="transactionNotif">Transaction Notifications</Label>
-                             <p className="text-sm text-slate-500 dark:text-slate-400">Get notified when transactions are added</p>
-                           </div>
-                           <Switch
-                             id="transactionNotif"
-                             checked={preferencesForm.notifications.transactions}
-                             onCheckedChange={(checked) => setPreferencesForm(prev => ({
-                               ...prev,
-                               notifications: { ...prev.notifications, transactions: checked }
-                             }))}
-                           />
-                         </div>
-                         <div className="flex items-center justify-between">
-                           <div>
-                             <Label htmlFor="budgetNotif">Budget Alerts</Label>
-                             <p className="text-sm text-slate-500 dark:text-slate-400">Get notified when you're close to budget limits</p>
-                           </div>
-                           <Switch
-                             id="budgetNotif"
-                             checked={preferencesForm.notifications.budgets}
-                             onCheckedChange={(checked) => setPreferencesForm(prev => ({
-                               ...prev,
-                               notifications: { ...prev.notifications, budgets: checked }
-                             }))}
-                           />
-                         </div>
-                         <div className="flex items-center justify-between">
-                           <div>
-                             <Label htmlFor="reportNotif">Report Notifications</Label>
-                             <p className="text-sm text-slate-500 dark:text-slate-400">Get notified when new reports are available</p>
-                           </div>
-                           <Switch
-                             id="reportNotif"
-                             checked={preferencesForm.notifications.reports}
-                             onCheckedChange={(checked) => setPreferencesForm(prev => ({
-                               ...prev,
-                               notifications: { ...prev.notifications, reports: checked }
-                             }))}
-                           />
-                         </div>
-                         <div className="flex items-center justify-between">
-                           <div>
-                             <Label htmlFor="securityNotif">Security Notifications</Label>
-                             <p className="text-sm text-slate-500 dark:text-slate-400">Get notified about security events</p>
-                           </div>
-                           <Switch
-                             id="securityNotif"
-                             checked={preferencesForm.notifications.security}
-                             onCheckedChange={(checked) => setPreferencesForm(prev => ({
-                               ...prev,
-                               notifications: { ...prev.notifications, security: checked }
-                             }))}
-                           />
-                         </div>
-                       </div>
-                     </div>
+
 
                     <div className="flex justify-end">
                       <Button
@@ -770,58 +556,30 @@ export default function Settings() {
             </CardContent>
           </Card>
 
-          {/* Welcome Message */}
-          <Card className="rounded-xl border-0 bg-gradient-to-r from-green-500/10 to-blue-500/10 dark:from-green-500/20 dark:to-blue-500/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-green-200/50 dark:border-green-700/50">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-slate-200">
-                    Settings Working!
-                  </CardTitle>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Now using your actual settings and profile data
-                  </p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 sm:p-4 border border-green-200/50 dark:border-green-700/50">
-                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 mb-3">
-                  The Settings page is now fully functional and connected to your settings system! You can:
-                </p>
-                <ul className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 space-y-2 mb-4">
-                  <li>• Update your profile information and contact details</li>
-                  <li>• Customize app appearance, currency, and formatting</li>
-                  <li>• Manage notification preferences</li>
-                  <li>• View billing and subscription information</li>
-                  <li>• Access administrative settings and account management</li>
-                </ul>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/profile')}
-                    className="rounded-full border-green-200 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/50"
-                  >
-                    View Profile
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/dashboard')}
-                    className="rounded-full border-green-200 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/50"
-                  >
-                    Go to Dashboard
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
         </div>
       </div>
     </DashboardLayout>
   );
+  } catch (error) {
+    console.error('Settings page error:', error);
+    return (
+      <DashboardLayout>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-red-700 dark:text-red-300 mb-2">Settings Error</h3>
+              <p className="text-red-600 dark:text-red-400 mb-4">There was an error loading the settings page. Please try refreshing.</p>
+              <Button onClick={() => window.location.reload()} className="rounded-full">
+                Refresh Page
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 }

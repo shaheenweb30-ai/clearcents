@@ -45,12 +45,14 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { useUserPlan } from "@/hooks/useUserPlan";
+import { useSettings } from "@/contexts/SettingsContext";
 import UpgradePopup from "@/components/UpgradePopup";
 
 const Reports = () => {
   const navigate = useNavigate();
   const { transactions, categories } = useTransactions();
   const { isFreePlan, limits } = useUserPlan();
+  const { formatCurrency } = useSettings();
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   
   const [selectedReportType, setSelectedReportType] = useState<'overview' | 'detailed' | 'custom'>('overview');
@@ -175,12 +177,7 @@ const Reports = () => {
     };
   }, [filteredTransactions, categories]);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
+
 
   const getEmergencyFundColor = (status: string) => {
     switch (status) {

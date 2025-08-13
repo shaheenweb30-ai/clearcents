@@ -34,6 +34,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { useUserPlan } from "@/hooks/useUserPlan";
+import { useSettings } from "@/contexts/SettingsContext";
 import UpgradePopup from "@/components/UpgradePopup";
 import {
   DropdownMenu,
@@ -47,12 +48,13 @@ const CategoriesBudget = () => {
   const navigate = useNavigate();
   const { categories, setBudget, deleteTransaction, deleteCategory, addTransaction } = useTransactions();
   const { isFreePlan, limits } = useUserPlan();
+  const { preferences, formatCurrency } = useSettings();
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   
   // State for categories and budgets
   const [showAddBudget, setShowAddBudget] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
-  const [newBudget, setNewBudget] = useState({ categoryId: '', amount: '', period: 'monthly' });
+  const [newBudget, setNewBudget] = useState({ categoryId: '', amount: '' });
   
   // State for category editing
   const [showEditCategory, setShowEditCategory] = useState(false);
@@ -68,6 +70,16 @@ const CategoriesBudget = () => {
   const hasReachedBudgetLimit = isFreePlan && limits.maxBudgets && categories.filter(cat => cat.budget > 0).length >= limits.maxBudgets;
   const remainingCategories = (limits.maxCategories || 10) - categories.length;
   const remainingBudgets = (limits.maxBudgets || 10) - categories.filter(cat => cat.budget > 0).length;
+
+  // Get budget period display text
+  const getBudgetPeriodText = () => {
+    const period = preferences?.budgetPeriod || 'monthly';
+    switch (period) {
+      case 'quarterly': return 'Quarterly';
+      case 'yearly': return 'Yearly';
+      default: return 'Monthly';
+    }
+  };
 
   const getBudgetStatus = (spent: number, budget: number) => {
     if (budget === 0) return { color: 'text-slate-600 dark:text-slate-400', icon: Eye, status: 'No Budget Set' };
@@ -89,7 +101,7 @@ const CategoriesBudget = () => {
     
     setBudget(newBudget.categoryId, parseFloat(newBudget.amount));
     
-    setNewBudget({ categoryId: '', amount: '', period: 'monthly' });
+    setNewBudget({ categoryId: '', amount: '' });
     setShowAddBudget(false);
     setEditingCategory(null);
   };
@@ -307,7 +319,7 @@ const CategoriesBudget = () => {
                   ${totalBudget.toLocaleString()}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Monthly budget
+                  {getBudgetPeriodText()} budget
                 </p>
                 {isFreePlan && (
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -329,7 +341,7 @@ const CategoriesBudget = () => {
                   ${totalSpent.toLocaleString()}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Monthly spending
+                  {getBudgetPeriodText()} spending
                 </p>
               </CardContent>
             </Card>
@@ -507,7 +519,7 @@ const CategoriesBudget = () => {
                             size="sm"
                             onClick={() => {
                               setEditingCategory({ id: category.id, budget: category.budget });
-                              setNewBudget({ categoryId: category.id, amount: category.budget.toString(), period: 'monthly' });
+                              setNewBudget({ categoryId: category.id, amount: category.budget.toString() });
                               setShowAddBudget(true);
                             }}
                             className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -528,7 +540,7 @@ const CategoriesBudget = () => {
                               setShowUpgradePopup(true);
                               return;
                             }
-                            setNewBudget({ categoryId: category.id, amount: '', period: 'monthly' });
+                            setNewBudget({ categoryId: category.id, amount: '' });
                             setShowAddBudget(true);
                           }}
                           className="w-full text-xs border-dashed"
@@ -584,16 +596,16 @@ const CategoriesBudget = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="budget-period">Period</Label>
+                  <Label>Budget Period</Label>
                   <div className="flex h-10 items-center px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-md border border-input">
-                    Monthly
+                    {getBudgetPeriodText()}
                   </div>
                 </div>
                 <div className="flex justify-end space-x-2 pt-4">
                   <Button variant="outline" onClick={() => {
                     setShowAddBudget(false);
                     setEditingCategory(null);
-                    setNewBudget({ categoryId: '', amount: '', period: 'monthly' });
+                    setNewBudget({ categoryId: '', amount: '' });
                   }}>
                     Cancel
                   </Button>

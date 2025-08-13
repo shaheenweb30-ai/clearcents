@@ -30,6 +30,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "@/contexts/TransactionContext";
 import { useUserPlan } from "@/hooks/useUserPlan";
+import { useSettings } from "@/contexts/SettingsContext";
 import UpgradePopup from "@/components/UpgradePopup";
 
 const categoryOptions = [
@@ -42,6 +43,7 @@ const Transactions = () => {
   const navigate = useNavigate();
   const { transactions, addTransaction, deleteTransaction } = useTransactions();
   const { isFreePlan, limits } = useUserPlan();
+  const { formatCurrency } = useSettings();
   const [showAddForm, setShowAddForm] = useState(false);
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -165,12 +167,7 @@ const Transactions = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
