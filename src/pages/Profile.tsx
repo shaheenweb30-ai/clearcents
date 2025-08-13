@@ -19,14 +19,12 @@ import {
   Camera,
 
   Calendar,
-  Globe,
   CheckCircle,
   AlertCircle,
   Eye,
   EyeOff,
   Crown,
   Sparkles,
-  BarChart3,
   Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -355,37 +353,6 @@ const Profile = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-lg bg-slate-50/50 dark:bg-slate-700/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                    <Globe className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-slate-700 dark:text-slate-300">Language & Region</h4>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Set your preferred language and timezone</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="rounded-full">
-                  Configure
-                </Button>
-              </div>
-
-              <div className="flex items-center justify-between p-4 rounded-lg bg-slate-50/50 dark:bg-slate-700/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-slate-700 dark:text-slate-300">Data & Privacy</h4>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Manage your data and privacy settings</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="rounded-full">
-                  Manage
-                </Button>
-              </div>
-
-              <Separator />
 
               <div className="flex items-center justify-between p-4 rounded-lg bg-red-50/50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-800/30">
                 <div className="flex items-center gap-3">
@@ -409,56 +376,7 @@ const Profile = () => {
             </CardContent>
           </Card>
 
-          {/* Welcome Message */}
-          <Card className="rounded-xl border-0 bg-gradient-to-r from-green-500/10 to-blue-500/10 dark:from-green-500/20 dark:to-blue-500/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-green-200/50 dark:border-green-700/50">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-slate-200">
-                    Profile Working!
-                  </CardTitle>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Now using your actual authentication data
-                  </p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-white/50 dark:bg-slate-800/50 rounded-lg p-3 sm:p-4 border border-green-200/50 dark:border-green-700/50">
-                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 mb-3">
-                  The Profile page is now fully functional and connected to your authentication system! You can:
-                </p>
-                <ul className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 space-y-2 mb-4">
-                  <li>• View and edit your profile information</li>
-                  <li>• Manage security settings and passwords</li>
-                  <li>• Configure account preferences</li>
-                  <li>• Sign out securely</li>
-                  <li>• Access all your account settings</li>
-                </ul>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/dashboard')}
-                    className="rounded-full border-green-200 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/50"
-                  >
-                    Go to Dashboard
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/transactions')}
-                    className="rounded-full border-green-200 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/50"
-                  >
-                    View Transactions
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
         </div>
 
         {/* Password Change Dialog */}
