@@ -1,9 +1,8 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Crown, Sparkles, Zap, CheckCircle, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Crown, Sparkles, ArrowRight, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface UpgradePopupProps {
   isOpen: boolean;
@@ -65,57 +64,46 @@ const UpgradePopup: React.FC<UpgradePopupProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-center text-xl font-bold text-slate-800 dark:text-slate-200">
-            🚀 Upgrade to Pro
+        <DialogHeader className="text-center">
+          <DialogTitle className="text-xl font-bold text-slate-800 dark:text-slate-200">
+            Upgrade to Pro
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
           {/* Limit Message */}
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/20 dark:to-red-900/20 rounded-full flex items-center justify-center">
               <Crown className="w-8 h-8 text-orange-600 dark:text-orange-400" />
             </div>
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">
+              {getFeatureTitle()}
+            </h3>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
               {getLimitMessage()}
             </p>
-            <p className="text-slate-800 dark:text-slate-200 font-medium mt-2">
-              Current: {currentCount} / {maxCount}
-            </p>
           </div>
 
-          {/* Pro Plan Benefits */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-lg p-4 border border-blue-200/50 dark:border-blue-700/30">
-            <div className="flex items-center gap-2 mb-3">
-              <Crown className="w-5 h-5 text-yellow-600" />
-              <h3 className="font-semibold text-slate-800 dark:text-slate-200">
-                Pro Plan Benefits
-              </h3>
-            </div>
-            
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>Unlimited transactions</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>Unlimited categories & budgets</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>50+ AI insights per month</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>Advanced analytics & reports</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>Team collaboration features</span>
-              </div>
-            </div>
+          {/* Pro Features */}
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4">
+            <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
+              Pro Plan Includes:
+            </h4>
+            <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+              <li>• Unlimited {limitType === 'transactions' ? 'transactions' : limitType === 'categories' ? 'categories' : limitType === 'budgets' ? 'budgets' : 'AI insights'}</li>
+              <li>• Advanced analytics & reports</li>
+              <li>• Team collaboration</li>
+              <li>• Priority support</li>
+              <li>• API access</li>
+            </ul>
           </div>
 
           {/* Pricing */}

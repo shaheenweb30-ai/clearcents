@@ -47,7 +47,7 @@ const Transactions = () => {
     { id: 'TXN-24020101', name: 'Spotify Premium', amount: -40, type: 'expense', date: 'February 27, 2025 08:00 AM', status: 'Failed' },
   ];
 
-  const subscriptions = [
+
     { name: 'Youtube', amount: 20, logo: '🎥' },
     { name: 'Spotify', amount: 69, logo: '🎵' },
     { name: 'Dribbble Pro', amount: 59, logo: '🎨' },
@@ -400,31 +400,7 @@ const Transactions = () => {
               </CardContent>
             </Card>
 
-            {/* Subscriptions List */}
-            <Card className="border-gray-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Subscriptions List</h3>
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
-                </div>
-                <div className="space-y-3 mb-4">
-                  {subscriptions.map((sub) => (
-                    <div key={sub.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-sm">
-                          {sub.logo}
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">{sub.name}</span>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">${sub.amount}</span>
-                    </div>
-                  ))}
-                </div>
-                <Button className="w-full bg-blue-600 text-white hover:bg-blue-700">
-                  Manage Subscriptions
-                </Button>
-              </CardContent>
-            </Card>
+
           </div>
         </div>
       </div>

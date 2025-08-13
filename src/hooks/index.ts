@@ -10,10 +10,10 @@ export { useHomepageContent } from './useHomepageContent';
 export { useImages } from './useImages';
 export { useOptimizedBrandingSettings } from './useOptimizedBrandingSettings';
 export { useOptimizedHomepageContent } from './useOptimizedHomepageContent';
-export { useOptimizedPricingContent } from './useOptimizedPricingContent';
+
 export { usePages } from './usePages';
-export { usePricingComparison } from './usePricingComparison';
-export { usePricingContent } from './usePricingContent';
+
+
 export { useRealtimeDashboard } from './useRealtimeDashboard';
 export { useRealtimeUpdates } from './useRealtimeUpdates';
 export { useUserRole } from './useUserRole';

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { 
@@ -50,10 +50,9 @@ const CategoriesBudget = () => {
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   
   // State for categories and budgets
-  const [selectedPeriod, setSelectedPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
   const [showAddBudget, setShowAddBudget] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
-  const [newBudget, setNewBudget] = useState({ categoryId: '', amount: '', period: 'monthly' as 'weekly' | 'monthly' | 'yearly' });
+  const [newBudget, setNewBudget] = useState({ categoryId: '', amount: '', period: 'monthly' });
   
   // State for category editing
   const [showEditCategory, setShowEditCategory] = useState(false);
@@ -65,10 +64,10 @@ const CategoriesBudget = () => {
   const [newCategoryForm, setNewCategoryForm] = useState({ name: '', icon: '', color: '' });
 
   // Check if user has reached limits
-  const hasReachedCategoryLimit = isFreePlan && categories.length >= limits.maxCategories;
-  const hasReachedBudgetLimit = isFreePlan && categories.filter(cat => cat.budget > 0).length >= limits.maxBudgets;
-  const remainingCategories = limits.maxCategories - categories.length;
-  const remainingBudgets = limits.maxBudgets - categories.filter(cat => cat.budget > 0).length;
+  const hasReachedCategoryLimit = isFreePlan && limits.maxCategories && categories.length >= limits.maxCategories;
+  const hasReachedBudgetLimit = isFreePlan && limits.maxBudgets && categories.filter(cat => cat.budget > 0).length >= limits.maxBudgets;
+  const remainingCategories = (limits.maxCategories || 10) - categories.length;
+  const remainingBudgets = (limits.maxBudgets || 10) - categories.filter(cat => cat.budget > 0).length;
 
   const getBudgetStatus = (spent: number, budget: number) => {
     if (budget === 0) return { color: 'text-slate-600 dark:text-slate-400', icon: Eye, status: 'No Budget Set' };
@@ -222,7 +221,7 @@ const CategoriesBudget = () => {
                   <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
                     <Crown className="w-4 h-4 text-slate-500" />
                     <span className="text-slate-600 dark:text-slate-400">
-                      Free Plan: {categories.length} / {limits.maxCategories} categories, {categories.filter(cat => cat.budget > 0).length} / {limits.maxBudgets} budgets
+                      Free Plan: {categories.length} / {limits.maxCategories || 10} categories, {categories.filter(cat => cat.budget > 0).length} / {limits.maxBudgets || 10} budgets
                     </span>
                   </div>
                   {(remainingCategories <= 2 && remainingCategories > 0) && (
@@ -270,21 +269,7 @@ const CategoriesBudget = () => {
             </div>
           </div>
 
-          {/* Period Selector */}
-          <div className="flex items-center justify-center">
-            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full p-2 border border-white/20 dark:border-slate-700/30 shadow-lg">
-              <Select value={selectedPeriod} onValueChange={(value: 'weekly' | 'monthly' | 'yearly') => setSelectedPeriod(value)}>
-                <SelectTrigger className="w-32 border-0 bg-transparent focus:ring-0">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -322,7 +307,7 @@ const CategoriesBudget = () => {
                   ${totalBudget.toLocaleString()}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  {selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1)} budget
+                  Monthly budget
                 </p>
                 {isFreePlan && (
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -344,7 +329,7 @@ const CategoriesBudget = () => {
                   ${totalSpent.toLocaleString()}
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  {selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1)} spending
+                  Monthly spending
                 </p>
               </CardContent>
             </Card>
@@ -378,7 +363,7 @@ const CategoriesBudget = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
-                        Free Plan: {categories.length} / {limits.maxCategories} categories, {categories.filter(cat => cat.budget > 0).length} / {limits.maxBudgets} budgets
+                        Free Plan: {categories.length} / {limits.maxCategories || 10} categories, {categories.filter(cat => cat.budget > 0).length} / {limits.maxBudgets || 10} budgets
                       </h4>
                       <p className="text-xs text-slate-600 dark:text-slate-400">
                         {hasReachedCategoryLimit || hasReachedBudgetLimit ? 'Limit reached' : 'Upgrade to Pro for unlimited access'}
@@ -522,7 +507,7 @@ const CategoriesBudget = () => {
                             size="sm"
                             onClick={() => {
                               setEditingCategory({ id: category.id, budget: category.budget });
-                              setNewBudget({ categoryId: category.id, amount: category.budget.toString(), period: selectedPeriod });
+                              setNewBudget({ categoryId: category.id, amount: category.budget.toString(), period: 'monthly' });
                               setShowAddBudget(true);
                             }}
                             className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
@@ -543,7 +528,7 @@ const CategoriesBudget = () => {
                               setShowUpgradePopup(true);
                               return;
                             }
-                            setNewBudget({ categoryId: category.id, amount: '', period: selectedPeriod });
+                            setNewBudget({ categoryId: category.id, amount: '', period: 'monthly' });
                             setShowAddBudget(true);
                           }}
                           className="w-full text-xs border-dashed"
@@ -570,7 +555,7 @@ const CategoriesBudget = () => {
                 {hasReachedBudgetLimit && !editingCategory && (
                   <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-3 mt-2">
                     <p className="text-sm text-orange-800 dark:text-orange-200">
-                      You've reached your limit of {limits.maxBudgets} budgets on the Free plan. 
+                      You've reached your limit of {limits.maxBudgets || 10} budgets on the Free plan. 
                       <Button 
                         variant="link" 
                         className="p-0 h-auto text-orange-800 dark:text-orange-200 underline"
@@ -600,16 +585,9 @@ const CategoriesBudget = () => {
                 </div>
                 <div>
                   <Label htmlFor="budget-period">Period</Label>
-                  <Select value={newBudget.period} onValueChange={(value: 'weekly' | 'monthly' | 'yearly') => setNewBudget({...newBudget, period: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex h-10 items-center px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-md border border-input">
+                    Monthly
+                  </div>
                 </div>
                 <div className="flex justify-end space-x-2 pt-4">
                   <Button variant="outline" onClick={() => {
@@ -689,7 +667,7 @@ const CategoriesBudget = () => {
                 {hasReachedCategoryLimit && (
                   <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-3 mt-2">
                     <p className="text-sm text-orange-800 dark:text-orange-200">
-                      You've reached your limit of {limits.maxCategories} categories on the Free plan. 
+                      You've reached your limit of {limits.maxCategories || 10} categories on the Free plan. 
                       <Button 
                         variant="link" 
                         className="p-0 h-auto text-orange-800 dark:text-orange-200 underline"
@@ -812,7 +790,7 @@ const CategoriesBudget = () => {
         onClose={() => setShowUpgradePopup(false)}
         limitType={hasReachedBudgetLimit ? "budgets" : "categories"}
         currentCount={hasReachedBudgetLimit ? categories.filter(cat => cat.budget > 0).length : categories.length}
-        maxCount={hasReachedBudgetLimit ? limits.maxBudgets : limits.maxCategories}
+        maxCount={hasReachedBudgetLimit ? (limits.maxBudgets || 10) : (limits.maxCategories || 10)}
       />
     </DashboardLayout>
   );

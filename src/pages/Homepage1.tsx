@@ -404,7 +404,7 @@ export default function Homepage1() {
                   </div>
                 </div>
 
-                {/* Subscription Cards Stack */}
+                {/* Feature Cards Stack */}
                 <div className="space-y-3 mb-4 relative z-10">
                   {/* Netflix Card */}
                   <div className="group/card bg-white/90 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between transform rotate-1 hover:rotate-0 transition-all duration-500 hover:-translate-y-1 shadow-lg hover:shadow-xl border border-gray-100">
@@ -624,7 +624,7 @@ export default function Homepage1() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-red-600 transition-colors duration-300">The blind spots</h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
-                  Recurring subscriptions, sneaky fees, and hidden charges that drain your budget without you even noticing.
+                  Recurring expenses, sneaky fees, and hidden charges that drain your budget without you even noticing.
                 </p>
                 <div className="mt-6 flex items-center text-red-500 font-medium">
                   <span className="mr-2">→</span>
@@ -1041,7 +1041,7 @@ export default function Homepage1() {
                   </div>
                 </div>
                 <p className="text-gray-600 leading-relaxed mb-6 text-lg">
-                  "The recurring detection feature is a game-changer. It automatically found subscriptions I'd forgotten about, saving me $45/month."
+                  "The recurring detection feature is a game-changer. It automatically found expenses I'd forgotten about, saving me $45/month."
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex space-x-1">

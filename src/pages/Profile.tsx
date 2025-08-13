@@ -17,7 +17,7 @@ import {
   Mail, 
   Lock, 
   Camera,
-  Shield,
+
   Calendar,
   Globe,
   CheckCircle,
@@ -323,21 +323,7 @@ const Profile = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-lg bg-slate-50/50 dark:bg-slate-700/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-slate-700 dark:text-slate-300">Two-Factor Authentication</h4>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Add an extra layer of security</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="rounded-full">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Enable
-                </Button>
-              </div>
+
 
               <div className="flex items-center justify-between p-4 rounded-lg bg-slate-50/50 dark:bg-slate-700/50">
                 <div className="flex items-center gap-3">

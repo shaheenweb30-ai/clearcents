@@ -137,10 +137,7 @@ export function UserProfileDropdown() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link to="/admin/packages" className="flex items-center">
-                    <Package className="w-4 h-4 mr-2" />
-                    Package Configurator
-                  </Link>
+                  
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>

@@ -317,7 +317,7 @@ const AdminUsers = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
             <p className="text-gray-600 mt-1">
-              Manage all registered users and their roles. Subscribers are users with paid subscriptions.
+              Manage all registered users and their roles.
             </p>
             {users.filter(u => u.role === 'admin').length > 0 && (
               <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">

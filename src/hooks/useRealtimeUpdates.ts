@@ -8,7 +8,7 @@ export function useRealtimeUpdates() {
   console.log('useRealtimeUpdates: QueryClient obtained:', !!queryClient);
 
   useEffect(() => {
-    console.log('useRealtimeUpdates: Skipping subscriptions for testing');
+    
     return () => {};
   }, [queryClient]);
 } 

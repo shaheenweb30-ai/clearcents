@@ -24,7 +24,7 @@ const FAQ_ITEMS = [
     answer: "Any time. CSV/PDF exports are available."
   },
   {
-    question: "Is there a free plan?",
+    
     answer: "Yes. Start free—no card required."
   }
 ];

@@ -65,8 +65,8 @@ const Transactions = () => {
   const [customCategory, setCustomCategory] = useState('');
 
   // Check if user has reached transaction limit
-  const hasReachedLimit = isFreePlan && transactions.length >= limits.maxTransactions;
-  const remainingTransactions = limits.maxTransactions - transactions.length;
+  const hasReachedLimit = isFreePlan && limits.maxTransactions && transactions.length >= limits.maxTransactions;
+  const remainingTransactions = (limits.maxTransactions || 10) - transactions.length;
 
   // Calculate totals
   const totalIncome = transactions
@@ -115,7 +115,7 @@ const Transactions = () => {
     const isNewCategory = !transactions.some(t => t.category === finalCategory);
     if (isNewCategory && isFreePlan) {
       const currentCategories = Array.from(new Set(transactions.map(t => t.category)));
-      if (currentCategories.length >= limits.maxCategories) {
+      if (limits.maxCategories && currentCategories.length >= limits.maxCategories) {
         setLimitType('categories');
         setShowUpgradePopup(true);
         return;
@@ -202,7 +202,7 @@ const Transactions = () => {
                   <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
                     <Crown className="w-4 h-4 text-slate-500" />
                     <span className="text-slate-600 dark:text-slate-400">
-                      Free Plan: {transactions.length} / {limits.maxTransactions} transactions, {Array.from(new Set(transactions.map(t => t.category))).length} / {limits.maxCategories} categories
+                      Free Plan: {transactions.length} / {limits.maxTransactions || 10} transactions, {Array.from(new Set(transactions.map(t => t.category))).length} / {limits.maxCategories || 10} categories
                     </span>
                   </div>
                   {remainingTransactions <= 3 && remainingTransactions > 0 && (
@@ -210,7 +210,7 @@ const Transactions = () => {
                       {remainingTransactions} transactions left
                     </Badge>
                   )}
-                  {Array.from(new Set(transactions.map(t => t.category))).length >= limits.maxCategories && (
+                  {limits.maxCategories && Array.from(new Set(transactions.map(t => t.category))).length >= limits.maxCategories && (
                     <Badge variant="destructive">
                       Category limit reached
                     </Badge>
@@ -252,7 +252,7 @@ const Transactions = () => {
                     {hasReachedLimit && (
                       <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-3 mt-2">
                         <p className="text-sm text-orange-800 dark:text-orange-200">
-                          You've reached your limit of {limits.maxTransactions} transactions on the Free plan. 
+                          You've reached your limit of {limits.maxTransactions || 10} transactions on the Free plan. 
                           <Button 
                             variant="link" 
                             className="p-0 h-auto text-orange-800 dark:text-orange-200 underline"
@@ -469,7 +469,7 @@ const Transactions = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
-                        Free Plan: {transactions.length} / {limits.maxTransactions} transactions
+                        Free Plan: {transactions.length} / {limits.maxTransactions || 10} transactions
                       </h4>
                       <p className="text-xs text-slate-600 dark:text-slate-400">
                         {hasReachedLimit ? 'Limit reached' : `${remainingTransactions} remaining`}
@@ -698,7 +698,7 @@ const Transactions = () => {
         onClose={() => setShowUpgradePopup(false)}
         limitType={limitType}
         currentCount={limitType === 'transactions' ? transactions.length : Array.from(new Set(transactions.map(t => t.category))).length}
-        maxCount={limitType === 'transactions' ? limits.maxTransactions : limits.maxCategories}
+        maxCount={limitType === 'transactions' ? (limits.maxTransactions || 10) : (limits.maxCategories || 10)}
       />
     </DashboardLayout>
   );

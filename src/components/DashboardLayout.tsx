@@ -129,7 +129,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Image Gallery", href: "/admin/images", icon: Image },
     { name: "Footer Links", href: "/admin/footer", icon: FileText },
     { name: "FAQ Management", href: "/admin/faq", icon: HelpCircle },
-    { name: "Package Settings", href: "/admin/packages", icon: Package },
+
   ];
 
   const administrationNavigation = [

@@ -102,7 +102,7 @@ const DangerZoneCard = ({ user }: DangerZoneCardProps) => {
                     <li>All budget categories and transactions</li>
                     <li>Reports and financial data</li>
                     <li>Account settings and preferences</li>
-                    <li>Subscription and billing information</li>
+    
                   </ul>
                 </AlertDialogDescription>
               </AlertDialogHeader>

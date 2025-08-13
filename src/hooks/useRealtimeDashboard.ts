@@ -42,7 +42,7 @@ interface DashboardData {
   monthlyBudgetTotal: number;
   monthlyBudgetSpent: number;
   aiInsightCount: number;
-  subscriptions: Array<{
+
     id: string;
     name: string;
     amount: number;
@@ -78,7 +78,7 @@ export const useRealtimeDashboard = (startDate?: string, endDate?: string) => {
     monthlyBudgetTotal: 0,
     monthlyBudgetSpent: 0,
     aiInsightCount: 0,
-    subscriptions: [],
+
     fixedCostsTotal: 0,
     categoryBudgets: [],
     recentTransactions: [],
@@ -330,29 +330,7 @@ export const useRealtimeDashboard = (startDate?: string, endDate?: string) => {
       // Simple AI insight count heuristic: risky categories >= 75% used
       const aiInsightCount = categoryBudgets.filter(cb => cb.percentage >= 75).length || 0;
 
-      // Detect subscription-like transactions
-      let subscriptions: Array<{
-        id: string;
-        name: string;
-        amount: number;
-        status: 'Active';
-        color: string;
-      }> = [];
-      try {
-        const subscriptionKeywords = /(netflix|spotify|hulu|youtube|prime|icloud|dropbox|adobe|notion|slack|zoom)/i;
-        subscriptions = (transactions || [])
-          .filter(t => subscriptionKeywords.test(t.description || '') && t.amount < 0)
-          .slice(0, 3)
-          .map((t) => ({
-            id: t.id,
-            name: t.description,
-            amount: Math.abs(t.amount),
-            status: 'Active' as const,
-            color: subscriptionKeywords.exec(t.description || '')?.[0].toLowerCase().includes('spotify') ? '#10b981' : '#ef4444'
-          }));
-      } catch (error) {
-        console.warn('Dashboard: Error detecting subscriptions:', error);
-      }
+
 
       let fixedCostsTotal = 0;
       try {
@@ -372,7 +350,7 @@ export const useRealtimeDashboard = (startDate?: string, endDate?: string) => {
         monthlyBudgetTotal,
         monthlyBudgetSpent,
         aiInsightCount,
-        subscriptions,
+
         fixedCostsTotal,
         categoryBudgets,
         recentTransactions: transactions?.slice(0, 5) || [],
@@ -393,14 +371,14 @@ export const useRealtimeDashboard = (startDate?: string, endDate?: string) => {
     }
   }, [user, selectedPeriod, preferences.fixedCosts, startDate, endDate]);
 
-  // Set up real-time subscription for transactions
+  
   useEffect(() => {
     if (!user) return;
 
     // Initial fetch
     fetchDashboardData();
 
-    // Set up real-time subscription
+    
     const channel = supabase
       .channel('dashboard-transactions')
       .on(

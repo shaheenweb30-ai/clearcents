@@ -91,7 +91,7 @@ const Help = () => {
     },
     {
       question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. You can update your payment method in the Subscription settings. All payments are processed securely through Stripe.",
+      answer: "We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. You can update your payment method in the Settings. All payments are processed securely through Stripe.",
       category: "billing"
     },
     {
