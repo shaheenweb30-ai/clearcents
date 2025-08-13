@@ -25,7 +25,8 @@ import {
   EyeOff,
   Crown,
   Sparkles,
-  Plus
+  Plus,
+  Trash2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -371,6 +372,31 @@ const Profile = () => {
                   onClick={handleSignOut}
                 >
                   Sign Out
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 rounded-lg bg-red-50/50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-800/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                    <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-red-700 dark:text-red-300">Delete Account</h4>
+                    <p className="text-sm text-red-600 dark:text-red-400">Permanently delete your account and all data</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full border-red-200 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950/50"
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                      // Handle account deletion logic here
+                      console.log('Account deletion requested');
+                    }
+                  }}
+                >
+                  Delete Account
                 </Button>
               </div>
             </CardContent>

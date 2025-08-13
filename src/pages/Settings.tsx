@@ -248,23 +248,7 @@ export default function Settings() {
     }
   };
 
-  const handleAccountDeletion = async () => {
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      try {
-        // In a real app, you'd call the account deletion API here
-        toast({
-          title: "Account Deletion Requested",
-          description: "Your account deletion request has been submitted. You will receive a confirmation email.",
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to submit account deletion request. Please try again.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
+
 
   const filteredCurrencies = allCurrencies.filter(currency =>
     currency.name.toLowerCase().includes(currencySearchTerm.toLowerCase()) ||
@@ -520,18 +504,10 @@ export default function Settings() {
                       <CardContent>
                         <div className="space-y-3">
                           <div>
-                            <h4 className="font-medium text-red-700 dark:text-red-300 mb-2">Delete Account</h4>
+                            <h4 className="font-medium text-red-700 dark:text-red-300 mb-2">Account Management</h4>
                             <p className="text-sm text-red-600 dark:text-red-400 mb-3">
-                              Once you delete your account, there is no going back. Please be certain.
+                              Manage your account settings and preferences.
                             </p>
-                            <Button
-                              variant="outline"
-                              onClick={handleAccountDeletion}
-                              className="border-red-200 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950/50"
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Delete Account
-                            </Button>
                           </div>
                         </div>
                       </CardContent>
