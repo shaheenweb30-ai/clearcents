@@ -30,6 +30,7 @@
     "contact": "اتصل بنا",
     "features": "المميزات",
     "pricing": "الأسعار",
+
     "home": "الرئيسية"
   },
   "navigation": {
@@ -211,7 +212,7 @@
     "pageManagement": "إدارة الصفحات",
     "footerManagement": "إدارة التذييل",
     "faqManagement": "إدارة الأسئلة الشائعة",
-    "pricingManagement": "إدارة الأسعار",
+
     "adminSetup": "إعداد المدير",
     "resetData": "إعادة تعيين جميع البيانات",
     "resetDataDescription": "حذف جميع المعاملات والميزانيات نهائياً",

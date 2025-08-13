@@ -4,14 +4,14 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { AdminEditButton } from './AdminEditButton';
 import { useOptimizedHomepageContent } from '@/hooks/useOptimizedHomepageContent';
 import { useFeaturesContent } from '@/hooks/useFeaturesContent';
-import { useOptimizedPricingContent } from '@/hooks/useOptimizedPricingContent';
+
 
 interface AdminContentWrapperProps {
   sectionId: string;
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
-  contentType?: 'homepage' | 'features' | 'pricing';
+  contentType?: 'homepage' | 'features';
 }
 
 export function AdminContentWrapper({ 
@@ -33,25 +33,19 @@ export function AdminContentWrapper({
   });
   const { getContentBySection: getHomepageContent, updateContent: updateHomepageContent, refetch: refetchHomepage } = useOptimizedHomepageContent();
   const { getContentBySection: getFeaturesContent, updateContent: updateFeaturesContent, refetch: refetchFeatures } = useFeaturesContent();
-  const { getContentBySection: getPricingContent, updateContent: updatePricingContent, refetch: refetchPricing } = useOptimizedPricingContent();
+
   
   const currentContent = contentType === 'features' 
     ? getFeaturesContent(sectionId) 
-    : contentType === 'pricing'
-    ? getPricingContent(sectionId)
-    : getHomepageContent(sectionId);
+          : getHomepageContent(sectionId);
 
   const updateFunction = contentType === 'features' 
     ? updateFeaturesContent 
-    : contentType === 'pricing'
-    ? updatePricingContent
-    : updateHomepageContent;
+          : updateHomepageContent;
 
   const refetchFunction = contentType === 'features' 
     ? refetchFeatures 
-    : contentType === 'pricing'
-    ? refetchPricing
-    : refetchHomepage;
+          : refetchHomepage;
 
   return (
     <div className={`relative ${className}`} style={style}>

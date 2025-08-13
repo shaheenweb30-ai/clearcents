@@ -297,6 +297,7 @@ const Footer = () => {
             >
               <FooterLink href="/features">Features</FooterLink>
               <FooterLink href="/pricing">Pricing</FooterLink>
+              
               <FooterLink href="/getting-started">Getting started</FooterLink>
               <FooterLink href="/blog">Blog</FooterLink>
             </FooterSection>
