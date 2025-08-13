@@ -31,13 +31,15 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
       buttonText = user ? 'Current Plan' : 'Get Started Free';
     } else if (key === 'pro' && user) {
       buttonText = 'Upgrade to Pro';
+    } else if (key === 'enterprise') {
+      buttonText = 'Contact Sales';
     }
     
     return {
       key,
       name: (content?.title || (key.charAt(0).toUpperCase() + key.slice(1))) as string,
       cta: buttonText,
-      ctaVariant: (key === 'free' ? 'outline' : 'default') as 'outline' | 'default',
+      ctaVariant: (key === 'free' ? 'outline' : key === 'enterprise' ? 'secondary' : 'default') as 'outline' | 'default' | 'secondary',
       features: (content?.features || []) as string[],
       smallPrint: (content?.description || '') as string,
       popular: Boolean(content?.is_popular),
@@ -93,27 +95,26 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
   };
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-br from-white via-gray-50 to-blue-50/30 relative overflow-hidden">
+    <section className="py-12 lg:py-16 bg-gradient-to-br from-white via-gray-50 to-blue-50/30 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-10 right-20 w-16 h-16 sm:w-24 sm:h-24 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
-        <div className="absolute bottom-10 left-20 w-20 h-20 sm:w-32 sm:h-32 bg-purple-200 rounded-full opacity-15 animate-bounce"></div>
-        <div className="absolute top-1/2 right-1/4 w-12 h-12 sm:w-16 sm:h-16 bg-green-200 rounded-full opacity-20 animate-ping"></div>
+        <div className="absolute top-10 right-20 w-16 h-16 sm:w-20 sm:h-20 bg-blue-200 rounded-full opacity-10 animate-pulse"></div>
+        <div className="absolute bottom-10 left-20 w-16 h-16 sm:w-20 sm:h-20 bg-purple-200 rounded-full opacity-15 animate-bounce"></div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h2 className="font-nunito font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-4 sm:mb-6">
+        <div className="text-center mb-12">
+          <h2 className="font-nunito font-bold text-3xl md:text-4xl lg:text-5xl leading-tight mb-4">
             Choose Your Plan
           </h2>
-          <p className="font-nunito text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            Start with our free plan and upgrade to Pro when you need more features. No hidden fees, no surprises.
+          <p className="font-nunito text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            Start with our free plan and upgrade to Pro when you need more features.
           </p>
         </div>
 
-        {/* Billing Toggle - Only show for Pro plan */}
-        <div className="flex justify-center mb-8 sm:mb-12">
+        {/* Billing Toggle */}
+        <div className="flex justify-center mb-10">
           <div className="bg-white rounded-full p-1 shadow-lg border border-gray-200">
             <div className="flex space-x-1">
               <button
@@ -141,8 +142,8 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
           </div>
         </div>
 
-        {/* Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 max-w-5xl mx-auto">
+        {/* Plans Grid - 3-column layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {plans.map((plan) => (
             <Card 
               key={plan.key} 
@@ -165,46 +166,46 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
               )}
               
               <CardHeader className={`text-center pb-4 ${plan.popular || (plan.key === 'free' && !!user) ? 'pt-12' : 'pt-6'}`}>
-                <div className="flex items-center justify-center mb-2">
+                <div className="flex items-center justify-center mb-3">
                   {plan.key === 'free' && <Sparkles className="w-5 h-5 text-green-600 mr-2" />}
                   {plan.key === 'pro' && <Crown className="w-5 h-5 text-yellow-600 mr-2" />}
                   {plan.key === 'enterprise' && <Crown className="w-5 h-5 text-purple-600 mr-2" />}
-                  <h3 className="font-nunito font-bold text-xl sm:text-2xl lg:text-3xl">
+                  <h3 className="font-nunito font-bold text-xl lg:text-2xl">
                     {plan.name}
                   </h3>
                 </div>
                 
-                <div className="mb-4">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+                <div className="mb-3">
+                  <span className="text-3xl lg:text-4xl font-bold text-gray-900">
                     {plan.key === 'enterprise' ? '' : '$'}
                   </span>
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+                  <span className="text-3xl lg:text-4xl font-bold text-gray-900">
                     {plan.key === 'enterprise' ? 'Contact us' : getDisplayPrice(plan.price)}
                   </span>
                   {plan.key !== 'enterprise' && plan.key !== 'free' && (
-                    <span className="text-lg sm:text-xl text-gray-600 ml-1">
+                    <span className="text-lg text-gray-600 ml-1">
                       /{billing.cycle === 'yearly' ? 'year' : 'month'}
                     </span>
                   )}
                   {plan.key === 'free' && (
-                    <span className="text-lg sm:text-xl text-gray-600 ml-1">
+                    <span className="text-lg text-gray-600 ml-1">
                       /forever
                     </span>
                   )}
                 </div>
                 
                 {plan.smallPrint && (
-                  <p className="text-sm text-gray-600 mb-4">{plan.smallPrint}</p>
+                  <p className="text-sm text-gray-600">{plan.smallPrint}</p>
                 )}
               </CardHeader>
               
-              <CardContent className="px-4 sm:px-6 pb-6">
-                {/* Features List */}
-                <ul className="space-y-3 mb-6 sm:mb-8">
+              <CardContent className="px-4 pb-6">
+                {/* Features List - More compact */}
+                <ul className="space-y-2.5 mb-6">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-start space-x-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-gray-700">{feature}</span>
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-gray-700">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -213,7 +214,7 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
                 <Button
                   variant={plan.ctaVariant}
                   size="lg"
-                  className="w-full font-semibold text-sm sm:text-base"
+                  className="w-full font-semibold"
                   onClick={() => handleCtaClick(plan.key)}
                   disabled={plan.key === 'free' && !!user}
                 >
@@ -231,12 +232,12 @@ export const PlansSimple = ({ billing, onBillingChange }: PlansSimpleProps) => {
           ))}
         </div>
         
-        {/* Bottom CTA */}
-        <div className="text-center mt-8 sm:mt-12 lg:mt-16">
-          <p className="text-sm sm:text-base text-gray-600 mb-4">
+        {/* Bottom CTA - More compact */}
+        <div className="text-center mt-12">
+          <p className="text-sm text-gray-600 mb-3">
             Need help choosing? <button className="text-blue-600 hover:text-blue-700 font-medium underline">Contact our sales team</button>
           </p>
-          <p className="text-xs sm:text-sm text-gray-500">
+          <p className="text-xs text-gray-500">
             All plans include a 30-day money-back guarantee. Cancel anytime.
           </p>
         </div>

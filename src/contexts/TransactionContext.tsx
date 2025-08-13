@@ -26,6 +26,7 @@ interface TransactionContextType {
   categories: Category[];
   addTransaction: (transaction: Omit<Transaction, 'id' | 'created_at'>) => void;
   deleteTransaction: (id: string) => void;
+  deleteCategory: (categoryName: string) => void;
   setBudget: (categoryId: string, amount: number) => void;
   getCategoryByName: (name: string) => Category | undefined;
 }
@@ -142,6 +143,12 @@ export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ childre
     setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
+  const deleteCategory = (categoryName: string) => {
+    // Delete all transactions in this category
+    setTransactions(prev => prev.filter(t => t.category !== categoryName));
+    // Categories will be automatically updated via useEffect when transactions change
+  };
+
   const setBudget = (categoryId: string, amount: number) => {
     setCategories(prev => prev.map(cat => 
       cat.id === categoryId 
@@ -159,6 +166,7 @@ export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ childre
     categories,
     addTransaction,
     deleteTransaction,
+    deleteCategory,
     setBudget,
     getCategoryByName
   };

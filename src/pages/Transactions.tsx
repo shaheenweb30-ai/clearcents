@@ -22,11 +22,15 @@ import {
   Filter,
   Download,
   Eye,
-  EyeOff
+  EyeOff,
+  Crown,
+  Sparkles
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "@/contexts/TransactionContext";
+import { useUserPlan } from "@/hooks/useUserPlan";
+import UpgradePopup from "@/components/UpgradePopup";
 
 const categoryOptions = [
   'Salary', 'Freelance', 'Investment', 'Other Income',
@@ -37,10 +41,15 @@ const categoryOptions = [
 const Transactions = () => {
   const navigate = useNavigate();
   const { transactions, addTransaction, deleteTransaction } = useTransactions();
+  const { isFreePlan, limits } = useUserPlan();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
+  
+  // Add state for tracking which limit was reached
+  const [limitType, setLimitType] = useState<'transactions' | 'categories'>('transactions');
   
   // New transaction form state
   const [newTransaction, setNewTransaction] = useState({
@@ -54,6 +63,10 @@ const Transactions = () => {
   // Add state for custom category input
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
+
+  // Check if user has reached transaction limit
+  const hasReachedLimit = isFreePlan && transactions.length >= limits.maxTransactions;
+  const remainingTransactions = limits.maxTransactions - transactions.length;
 
   // Calculate totals
   const totalIncome = transactions
@@ -83,12 +96,30 @@ const Transactions = () => {
   });
 
   const handleAddTransaction = () => {
+    // Check if user has reached the transaction limit
+    if (hasReachedLimit) {
+      setLimitType('transactions');
+      setShowUpgradePopup(true);
+      return;
+    }
+
     // Use custom category if provided, otherwise use selected category
     const finalCategory = showCustomCategory && customCategory.trim() ? customCategory.trim() : newTransaction.category;
     
     if (!newTransaction.amount || !finalCategory) {
       alert('Please fill in all required fields');
       return;
+    }
+
+    // Check if this is a new category and if it would exceed the category limit
+    const isNewCategory = !transactions.some(t => t.category === finalCategory);
+    if (isNewCategory && isFreePlan) {
+      const currentCategories = Array.from(new Set(transactions.map(t => t.category)));
+      if (currentCategories.length >= limits.maxCategories) {
+        setLimitType('categories');
+        setShowUpgradePopup(true);
+        return;
+      }
     }
 
     // Add transaction using the shared context
@@ -164,6 +195,33 @@ const Transactions = () => {
                 Track and manage money flow
               </h1>
               <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400">Fast entry, powerful filters, real-time totals</p>
+              
+              {/* Plan Limit Indicator */}
+              {isFreePlan && (
+                <div className="mt-3 flex items-center gap-2 text-sm">
+                  <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+                    <Crown className="w-4 h-4 text-slate-500" />
+                    <span className="text-slate-600 dark:text-slate-400">
+                      Free Plan: {transactions.length} / {limits.maxTransactions} transactions, {Array.from(new Set(transactions.map(t => t.category))).length} / {limits.maxCategories} categories
+                    </span>
+                  </div>
+                  {remainingTransactions <= 3 && remainingTransactions > 0 && (
+                    <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
+                      {remainingTransactions} transactions left
+                    </Badge>
+                  )}
+                  {Array.from(new Set(transactions.map(t => t.category))).length >= limits.maxCategories && (
+                    <Badge variant="destructive">
+                      Category limit reached
+                    </Badge>
+                  )}
+                  {hasReachedLimit && (
+                    <Badge variant="destructive">
+                      Transaction limit reached
+                    </Badge>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <Button 
@@ -176,14 +234,39 @@ const Transactions = () => {
               </Button>
               <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
                 <DialogTrigger asChild>
-                  <Button className="w-full sm:w-auto rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 h-12">
+                  <Button 
+                    className={`w-full sm:w-auto rounded-full shadow-lg hover:shadow-xl transition-all duration-200 h-12 ${
+                      hasReachedLimit 
+                        ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600' 
+                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+                    }`}
+                    disabled={hasReachedLimit}
+                  >
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Transaction
+                    {hasReachedLimit ? 'Limit Reached' : 'Add Transaction'}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>Add New Transaction</DialogTitle>
+                    {hasReachedLimit && (
+                      <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-3 mt-2">
+                        <p className="text-sm text-orange-800 dark:text-orange-200">
+                          You've reached your limit of {limits.maxTransactions} transactions on the Free plan. 
+                          <Button 
+                            variant="link" 
+                            className="p-0 h-auto text-orange-800 dark:text-orange-200 underline"
+                            onClick={() => {
+                              setShowAddForm(false);
+                              setLimitType('transactions');
+                              setShowUpgradePopup(true);
+                            }}
+                          >
+                            Upgrade to Pro
+                          </Button> for unlimited transactions.
+                        </p>
+                      </div>
+                    )}
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -286,8 +369,11 @@ const Transactions = () => {
                       <Button variant="outline" onClick={() => setShowAddForm(false)}>
                         Cancel
                       </Button>
-                      <Button onClick={handleAddTransaction}>
-                        Add Transaction
+                      <Button 
+                        onClick={handleAddTransaction}
+                        disabled={hasReachedLimit}
+                      >
+                        {hasReachedLimit ? 'Limit Reached' : 'Add Transaction'}
                       </Button>
                     </div>
                   </div>
@@ -312,6 +398,11 @@ const Transactions = () => {
                 <p className="text-xs text-slate-600 dark:text-slate-400">
                   {transactions.length === 0 ? 'No transactions yet' : 'Transactions recorded'}
                 </p>
+                {isFreePlan && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    {hasReachedLimit ? 'Limit reached' : `${remainingTransactions} remaining`}
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -367,6 +458,43 @@ const Transactions = () => {
             </Card>
           </div>
 
+          {/* Upgrade CTA Banner - Only show for free users */}
+          {isFreePlan && (
+            <Card className="rounded-xl border-0 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 backdrop-blur-sm shadow-lg border border-blue-200/50 dark:border-blue-700/30">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                      <Crown className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
+                        Free Plan: {transactions.length} / {limits.maxTransactions} transactions
+                      </h4>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        {hasReachedLimit ? 'Limit reached' : `${remainingTransactions} remaining`}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => {
+                        setLimitType('transactions');
+                        setShowUpgradePopup(true);
+                      }}
+                      size="sm"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs px-4 py-2 rounded-full"
+                    >
+                      <Crown className="w-3 h-3 mr-1" />
+                      Upgrade
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Filters and Search */}
           <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg border border-white/20 dark:border-slate-700/30">
             <CardContent className="p-4 sm:p-6">
@@ -393,19 +521,19 @@ const Transactions = () => {
                       <SelectItem value="expense">Expense</SelectItem>
                     </SelectContent>
                   </Select>
-                                      <Select value={filterCategory} onValueChange={setFilterCategory}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        {allCategories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <Select value={filterCategory} onValueChange={setFilterCategory}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {allCategories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>
@@ -516,7 +644,7 @@ const Transactions = () => {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <Receipt className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  <Receipt className="w-4 h-4 sm:w-5 sm:w-5 text-white" />
                 </div>
                 <div>
                   <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-slate-200">
@@ -544,9 +672,10 @@ const Transactions = () => {
                   <Button 
                     onClick={() => setShowAddForm(true)}
                     className="rounded-full bg-green-600 hover:bg-green-700 text-white"
+                    disabled={hasReachedLimit}
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Transaction
+                    {hasReachedLimit ? 'Limit Reached' : 'Add Transaction'}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -562,6 +691,15 @@ const Transactions = () => {
           </Card>
         </div>
       </div>
+
+      {/* Upgrade Popup */}
+      <UpgradePopup
+        isOpen={showUpgradePopup}
+        onClose={() => setShowUpgradePopup(false)}
+        limitType={limitType}
+        currentCount={limitType === 'transactions' ? transactions.length : Array.from(new Set(transactions.map(t => t.category))).length}
+        maxCount={limitType === 'transactions' ? limits.maxTransactions : limits.maxCategories}
+      />
     </DashboardLayout>
   );
 };

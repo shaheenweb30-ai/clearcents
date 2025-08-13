@@ -38,15 +38,20 @@ import {
   Clock,
   Award,
   Shield,
-  Plus
+  Plus,
+  Lock
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "@/contexts/TransactionContext";
+import { useUserPlan } from "@/hooks/useUserPlan";
+import UpgradePopup from "@/components/UpgradePopup";
 
 const Reports = () => {
   const navigate = useNavigate();
   const { transactions, categories } = useTransactions();
+  const { isFreePlan, limits } = useUserPlan();
+  const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   
   const [selectedReportType, setSelectedReportType] = useState<'overview' | 'detailed' | 'custom'>('overview');
   const [startDate, setStartDate] = useState<string>(() => {
@@ -193,7 +198,7 @@ const Reports = () => {
       case 'good': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
       case 'fair': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
       case 'poor': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-      default: return 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300';
+      default: return 'bg-slate-100 text-slate-800 dark:bg-green-900/30 dark:text-slate-300';
     }
   };
 
@@ -211,6 +216,7 @@ const Reports = () => {
     </div>
   );
 
+  // If no transactions, show empty state
   if (transactions.length === 0) {
     return (
       <DashboardLayout>
@@ -227,6 +233,117 @@ const Reports = () => {
     );
   }
 
+  // For free users, show blurred interface with upgrade CTA
+  if (isFreePlan) {
+    return (
+      <DashboardLayout>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
+          <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+            {/* Header */}
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold shadow-lg mb-3 sm:mb-4">
+                <ChartBar className="w-3 h-3 sm:w-4 sm:h-4" />
+                Financial Reports
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 mb-2 sm:mb-3">
+                Advanced Financial Insights
+              </h1>
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 mb-6">
+                Unlock comprehensive analysis of your spending, income, and financial health
+              </p>
+            </div>
+
+            {/* Upgrade CTA Card */}
+            <Card className="rounded-xl border-0 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 backdrop-blur-sm shadow-lg border border-blue-200/50 dark:border-blue-700/30 max-w-2xl mx-auto">
+              <CardContent className="p-8 text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Lock className="w-10 h-10 text-white" />
+                </div>
+                
+                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4">
+                  Reports Locked
+                </h2>
+                
+                <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md mx-auto">
+                  Advanced financial reports and analytics are available exclusively to Pro users. 
+                  Upgrade to unlock comprehensive insights into your financial health.
+                </p>
+
+                <div className="space-y-4">
+                  <Button 
+                    onClick={() => setShowUpgradePopup(true)}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Upgrade to Pro
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Blurred Preview of Reports */}
+            <div className="relative">
+              {/* Blurred Content */}
+              <div className="filter blur-sm pointer-events-none opacity-60">
+                <div className="space-y-6 sm:space-y-8">
+                  {/* Blurred Summary Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                    {[1, 2, 3, 4].map((i) => (
+                      <Card key={i} className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg border border-white/20 dark:border-slate-700/30">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Sample Data</CardTitle>
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <ChartBar className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-slate-100">
+                            $0.00
+                          </div>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                            Sample data
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {/* Blurred Charts */}
+                  <Card className="rounded-xl border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-lg border border-white/20 dark:border-slate-700/30">
+                    <CardHeader>
+                      <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-slate-200">
+                        Sample Chart
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-64 flex items-center justify-center">
+                      <div className="text-center text-slate-400">
+                        <BarChart3 className="w-16 h-16 mx-auto mb-2" />
+                        <p>Chart preview</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent dark:from-slate-950/80 pointer-events-none"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Upgrade Popup */}
+        <UpgradePopup
+          isOpen={showUpgradePopup}
+          onClose={() => setShowUpgradePopup(false)}
+          limitType="aiInsights"
+          currentCount={0}
+          maxCount={0}
+        />
+      </DashboardLayout>
+    );
+  }
+
+  // Full reports for Pro users
   return (
     <DashboardLayout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/20 p-4 sm:p-6">
@@ -329,7 +446,7 @@ const Reports = () => {
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Net Balance</CardTitle>
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                  <DollarSign className="h-3 w-3 sm:h-4 sm:h-4 text-white" />
                 </div>
               </CardHeader>
               <CardContent>
@@ -346,7 +463,7 @@ const Reports = () => {
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Emergency Fund</CardTitle>
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <Shield className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                  <Shield className="h-3 w-3 sm:h-4 sm:h-4 text-white" />
                 </div>
               </CardHeader>
               <CardContent>
